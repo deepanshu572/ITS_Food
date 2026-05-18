@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>APP</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <style>
+      .main {
+        background: #f7f7f7;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main margin_box">
+      <div class="header_nav">
+        <div class="category_left_head">
+          <i class="bi bi-arrow-left-short"></i>
+          <h4>Checkout</h4>
+        </div>
+      </div>
+      <div class="cart_data">
+        <div
+          class="cart_data_sec discount_data alert alert-dismissible fade show"
+          role="alert"
+        >
+          <h4>🥳 You save ₹ 40 on this order</h4>
+
+          <button
+            type="button"
+            class="btn_close_custom"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          >
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+        <div class="cart_data_sec cart_data_sec1 ">
+     
+          <div class="cart_data_box">
+            <div class="cart_data_items">
+              <div class="cart_data_item_left">
+                <div class="cart_item_img">
+                  <img
+                    width="100px"
+                    src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500"
+                    alt=""
+                  />
+                </div>
+                <div class="cart_item_txt">
+                  <h4>
+                    Tata Salt Vacuum Evaporated Iodised Edible Common Salt, 1 kg
+                    Pouch
+                  </h4>
+                  <small>10kg</small>
+                  <span>
+                    <p>₹900</p>
+                    <del>₹1400</del>
+                  </span>
+                </div>
+              </div>
+              <div class="cart_data_item_btn">
+                <button>-</button>
+                <input type="number" value="10" />
+                <button>+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cart_data_sec cart_data_sec3">
+          <!-- <div class="cart_sec_box cart_sec1_box">
+            <div class="left_cart_box_sec">
+              <i class="bi bi-stopwatch-fill"></i>
+
+              <h4>Delivery in 30-35 mins</h4>
+            </div>
+          </div> -->
+          <div
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasBottomAddress"
+            aria-controls="offcanvasBottomAddress"
+            class="cart_sec_box cart_sec2_box"
+            style="border: 0 !important;"
+          >
+            <div class="left_cart_box_sec" >
+              <i class="bi bi-geo-alt-fill" style="color: green;"></i>
+              <div class="">
+                <h4>Delivering to <b>Home</b></h4>
+                <p>Badal Kumar Soni, Argora Ranchi, (834001)</p>
+              </div>
+            </div>
+            <i class="bi bi-chevron-right"></i>
+          </div>
+          <div class="cart_sec_box cart_sec3_box">
+            <div class="left_cart_box_sec">
+              <i class="bi bi-telephone-fill" style="color: rgb(200, 0, 0);"></i>
+              <h4>Badal kumar soni, +91-7484884014</h4>
+            </div>
+          </div>
+          <div
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasBottomBillSec"
+            aria-controls="offcanvasBottomBillSec"
+            class="cart_sec_box cart_sec4_box"
+          >
+            <div class="left_cart_box_sec">
+              <i class="bi bi-file-earmark-text-fill" style="color: rgba(231, 150, 0, 0.751);"></i>
+              <div class="">
+                <h4>Total Bill ₹169.3</h4>
+                <p>Incl. taxes and charges</p>
+              </div>
+            </div>
+            <i class="bi bi-chevron-right"></i>
+          </div>
+        </div>
+        <div class="cart_data_sec cart_data_sec2">
+          <div class="top_cart_gift">
+            <div class="top_cart_gift_left">
+              <h4>Claim Your Free Gift</h4>
+            </div>
+
+            <div class="top_cart_gift_right">
+              <img src="../assets/image/icons/gif2.svg" alt="" />
+            </div>
+          </div>
+          <div class="bottom_coupons">
+            <div class="img_coupons">
+              <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <div class="txt_coupons">
+              <h4>You saved ₹36 on delivery</h4>
+              <p>Auto - applied as your order is above ₹199</p>
+            </div>
+          </div>
+          <div
+            class="last_cart_gift"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasBottomCoupons"
+            aria-controls="offcanvasBottomCoupons"
+          >
+            <div class="gift_head_wrap">
+              <img src="../assets/image/icons/coupons.svg" alt="" />
+              <h4>View All Coupons</h4>
+            </div>
+            <div class="check">
+              <i class="bi bi-chevron-down"></i>
+            </div>
+          </div>
+        </div>
+       
+         <div class="cart_data_sec cart_similar_prd">
+            <div class="similar_head">
+                <h4>Complete your meal with</h4>
+                <a href="">See all <i class="bi bi-arrow-right-circle-fill"></i></a>
+            </div>
+            <div class="resturant_product_wrapper" id="resturantProduct">
+                
+            </div>
+        </div>
+      </div>
+      <div class="footer footer_cart">
+        <div class="footer_cart_wrap">
+          <div
+            class="footer_cart_left"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasBottomPay"
+            aria-controls="offcanvasBottomPay"
+          >
+            <div class="">
+              <img src="../assets/image/icons/pay.svg" alt="" />
+              <h4>PAY USING</h4>
+              <i class="bi bi-caret-up-fill"></i>
+            </div>
+            <p id="payMethod">Cash on Delivery</p>
+          </div>
+          <div class="footer_cart_right btn_reuse">
+            <button>
+              <b>₹1200 </b> MRP (Tax incuded)
+              <i class="bi bi-caret-right-fill"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Select Canvas -->
+    <div
+      class="offcanvas offcanvas-bottom reuse_modal_box"
+      tabindex="-1"
+      id="offcanvasBottomPay"
+      aria-labelledby="offcanvasBottomPayLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasBottomAddressLabel">
+          Select Payment Option
+        </h5>
+
+        <button type="button" data-bs-dismiss="offcanvas" aria-label="Close">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+      <div class="offcanvas-body small">
+        <div class="payment_options reuse_options">
+          <label class="payment_option reuse_option selected_option">
+            <div class="left_pay_box reuse_left_box">
+              <input type="radio" name="payment" value="online" hidden />
+              <i class="bi bi-bank"></i>
+
+              <h5>Online Payment</h5>
+            </div>
+            <i class="bi bi-check-circle-fill"></i>
+          </label>
+
+          <label class="payment_option reuse_option">
+            <div class="left_pay_box reuse_left_box">
+              <input type="radio" name="payment" value="cod" hidden />
+              <i class="bi bi-cash-stack"></i>
+              <h5>Cash on Delivery</h5>
+            </div>
+            <i class="bi bi-check-circle-fill"></i>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Address Select Canvas -->
+
+    <div
+      class="offcanvas offcanvas-bottom address_canvas reuse_modal_box"
+      tabindex="-1"
+      id="offcanvasBottomAddress"
+      aria-labelledby="offcanvasBottomAddressLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasBottomAddressLabel">
+          Select Delivery Address
+        </h5>
+
+        <button type="button" data-bs-dismiss="offcanvas" aria-label="Close">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+      <div class="offcanvas-body small">
+        <div class="btn_add_address btn_reuse">
+          <button
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasBottomAddAddress"
+            aria-controls="offcanvasBottomAddAddress"
+          >
+            + Add New <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+        <div class="saved_address">
+          <b>Saved addresses</b>
+          <div class="saved_address_data selected_address">
+            <div class="selected_box">Selected</div>
+            <div class="saved_address_item">
+              <div class="saved_address_left">
+                <div class="saved_icon">
+                  <i class="bi bi-house-door-fill"></i>
+                </div>
+                <div class="saved_txt">
+                  <h5>Deepanshu Kumar</h5>
+                  <p>
+                    Rospa tower, mainroad, kalam academy, mahatma gandhi rd,
+                    Ranchi
+                  </p>
+                  <div class="phone">
+                    <i class="bi bi-telephone"></i>
+                    <p>+91-<b>7903737980</b></p>
+                  </div>
+                </div>
+              </div>
+              <div class="saved_address_right">
+                <i class="bi bi-three-dots-vertical"></i>
+              </div>
+            </div>
+          </div>
+          <div class="saved_address_data">
+            <div class="saved_address_item">
+              <div class="saved_address_left">
+                <div class="saved_icon">
+                  <i class="bi bi-house-door-fill"></i>
+                </div>
+                <div class="saved_txt">
+                  <h5>Deepanshu Kumar</h5>
+                  <p>
+                    Rospa tower, mainroad, kalam academy, mahatma gandhi rd,
+                    Ranchi
+                  </p>
+                  <div class="phone">
+                    <i class="bi bi-telephone"></i>
+                    <p>+91-<b>7903737980</b></p>
+                  </div>
+                </div>
+              </div>
+              <div class="saved_address_right">
+                <i class="bi bi-three-dots-vertical"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Address Canvas -->
+
+    <div
+      class="offcanvas offcanvas-bottom add_address_canvas reuse_modal_box"
+      tabindex="-1"
+      id="offcanvasBottomAddAddress"
+      aria-labelledby="offcanvasBottomAddAddressLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasBottomAddressLabel">
+          Add Address
+        </h5>
+
+        <button type="button" data-bs-dismiss="offcanvas" aria-label="Close">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+      <div class="offcanvas-body small">
+        <div class="add_address_wrap">
+          <p id="roleSelect" class="hidden"></p>
+          <div class="add_address_highlight">
+            A detailed address will help our delivery partner reach your
+            doorstep easily.
+          </div>
+          <form class="add_address_form_sec">
+            <h4>Save address as*</h4>
+            <div class="form_address_wrap">
+              <div class="form_icons">
+                <div class="form_icon role_active">
+                  <i class="bi bi-house-add"></i>
+                  <p>Home</p>
+                </div>
+                <div class="form_icon">
+                  <i class="bi bi-buildings"></i>
+                  <p>Work</p>
+                </div>
+                <div class="form_icon">
+                  <i class="bi bi-people"></i>
+                  <p>Friends & Family</p>
+                </div>
+                <div class="form_icon">
+                  <i class="bi bi-geo-alt"></i>
+                  <p>Other</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="address_form">
+              <!-- Address Fields -->
+              <input
+                type="text"
+                placeholder="Flat / House no / Building name *"
+                class="form_input"
+              />
+
+              <input
+                type="text"
+                placeholder="Apartment / Road / Area (Recommended) *"
+                class="form_input"
+              />
+
+              <textarea
+                placeholder="e.g. Ring the bell on the red gate (Optional)"
+                maxlength="200"
+                class="form_textarea"
+              ></textarea>
+
+              <input
+                type="text"
+                placeholder="Nearby landmark (optional)"
+                class="form_input"
+              />
+
+              <!-- Section Title -->
+              <p class="section_title">
+                Enter your details for seamless delivery experience
+              </p>
+
+              <!-- User Details -->
+              <input type="text" placeholder="Your Name *" class="form_input" />
+
+              <input
+                type="tel"
+                placeholder="Your phone number *"
+                class="form_input"
+              />
+
+              <input
+                type="tel"
+                placeholder="Alternate phone number (Optional)"
+                class="form_input"
+              />
+            </div>
+            <div class="button_save_add btn_reuse">
+              <button>Save Address</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- price section  Canvas -->
+
+    <div
+      class="offcanvas offcanvas-bottom reuse_modal_box bill_sec"
+      tabindex="-1"
+      id="offcanvasBottomBillSec"
+      aria-labelledby="offcanvasBottomBillSecLabel"
+    >
+      <div class="offcanvas-body small">
+        <div class="cart_data_sec4">
+          <div class="bill_wrapper">
+            <div class="flex_header">
+              <h4>Bill details</h4>
+              <button
+                type="button"
+                data-bs-dismiss="offcanvas"
+                aria-label="Close"
+              >
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+
+            <div class="bill_format_data">
+              <div class="bill_field">
+                <div class="left_bill_field">
+                  <i class="bi bi-card-text"></i>
+                  <p>Sub Total</p>
+                </div>
+                <div class="right_bill_field">
+                  <small>₹1200</small>
+                </div>
+              </div>
+              <div class="bill_field green">
+                <div class="left_bill_field">
+                  <i class="bi bi-tags-fill"></i>
+                  <p>Product Discount</p>
+                </div>
+                <div class="right_bill_field">
+                  <small>-₹1200</small>
+                </div>
+              </div>
+              <div class="bill_field green">
+                <div class="left_bill_field">
+                  <img src="../assets/image/icons/coupons2.svg" alt="" />
+                  <p>Promo Discount</p>
+                </div>
+                <div class="right_bill_field">
+                  <small>-₹1200</small>
+                </div>
+              </div>
+              <div class="bill_field">
+                <div class="left_bill_field">
+                  <img
+                    style="width: 15px"
+                    src="../assets/image/icons/delivery.png"
+                    alt=""
+                  />
+                  <p>Delivery Charge</p>
+                </div>
+                <div class="right_bill_field">
+                  <small>₹1200</small>
+                </div>
+              </div>
+              <div class="bill_field">
+                <div class="left_bill_field">
+                  <i class="bi bi-handbag-fill"></i>
+                  <p>Handling Charge</p>
+                </div>
+                <div class="right_bill_field">
+                  <small>₹1200</small>
+                </div>
+              </div>
+              <div class="img-design"></div>
+              <div class="bill_field bill_total">
+                <div class="left_bill_field">
+                  <p>Grand Total</p>
+                </div>
+                <div class="right_bill_field">
+                  <small>₹4200</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- coupons Canvas -->
+
+    <div
+      class="offcanvas offcanvas-bottom reuse_modal_box"
+      tabindex="-1"
+      id="offcanvasBottomCoupons"
+      aria-labelledby="offcanvasBottomCouponsLabel"
+    >
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasBottomCouponsLabel">
+          Offcanvas bottom
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="offcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="offcanvas-body small">coupons data</div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+    <script src="../assets/js/owl.carousel.min.js"></script>
+
+    <script src="../assets/js/script.js"></script>
+  </body>
+</html>

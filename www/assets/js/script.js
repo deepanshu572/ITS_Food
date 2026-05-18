@@ -1,7 +1,7 @@
 console.log("done!");
 
 function handleToggle(name, inpName) {
-  console.log(name, inpName)
+  console.log(name, inpName);
   if ($(`#${inpName}`).attr("type") == "text") {
     $(`#${inpName}`).attr("type", "password");
     $(`#${name}`).removeClass("bi bi-eye").addClass("bi bi-eye-slash");
@@ -240,8 +240,7 @@ function handleVerifyOtp(e) {
 function handleUpdatePassword(e) {
   e.preventDefault();
 
-  if($("#updatePassword").val() !== $("#reUpdatePassword").val()){
-
+  if ($("#updatePassword").val() !== $("#reUpdatePassword").val()) {
     alert("password not matched !");
     return;
   }
@@ -252,150 +251,147 @@ function handleUpdatePassword(e) {
     $("#btnReset").html("<span class='loader'></span> Updating...");
     $("#btnReset").prop("disabled", true);
   }
-  
 
   setTimeout(() => {
     load = false;
 
     // location.href = "home.html";
     const offcanvas = new bootstrap.Offcanvas(
-    document.getElementById("offcanvasPassword")
-  );
+      document.getElementById("offcanvasPassword"),
+    );
 
-  offcanvas.show();
-        $("#btnReset").html("Verified");
+    offcanvas.show();
+    $("#btnReset").html("Verified");
 
     $("#btnReset").prop("disabled", false);
   }, 1500);
 }
 
 function getProduct1() {
-  let getPrdHtml="";
+  let getPrdHtml = "";
 
   const products = [
-  {
-    id: 1,
-    discount: "FLAT ₹150 OFF",
-    liked: true,
-    image: "../assets/image/temp/homePrd1.svg",
-    title: "Food Bazaar Bazaar Bazaar Bazaar Bazaar Rast...",
-    deliveryTime: "36 mins",
-    distance: "3 km",
-  },
-  {
-    id: 2,
-    discount: "FLAT ₹100 OFF",
-    liked: false,
-    image: "../assets/image/temp/homePrd2.svg",
-    title: "Fresh Mart Grocery Store",
-    deliveryTime: "25 mins",
-    distance: "1.5 km",
-  },
-  {
-    id: 3,
-    discount: "UPTO 50% OFF",
-    liked: true,
-    image: "../assets/image/temp/homePrd3.svg",
-    title: "Organic Veggie Hub",
-    deliveryTime: "40 mins",
-    distance: "4 km",
-  },
-  {
-    id: 4,
-    discount: "FREE DELIVERY",
-    liked: false,
-    image: "https://b.zmtcdn.com/data/pictures/5/22411715/8fc8b5070d266246de26f97a6f0e80e2_o2_featured_v2.jpg?output-format=webp",
-    title: "Daily Needs Super Store",
-    deliveryTime: "18 mins",
-    distance: "900 m",
-  },
-  {
-    id: 5,
-    discount: "FLAT ₹200 OFF",
-    liked: true,
-    image: "https://b.zmtcdn.com/data/pictures/6/21466036/9b5ea50c0d48a881b2cd6f3070d7127f_o2_featured_v2.jpg",
-    title: "Mega Food Plaza",
-    deliveryTime: "30 mins",
-    distance: "2.2 km",
-  },
-  {
-    id: 6,
-    discount: "FLAT ₹200 OFF",
-    liked: true,
-    image: "https://b.zmtcdn.com/data/pictures/chains/1/18625991/8fa1a185a369be06f27c0fc9b4adce08_featured_v2.jpg",
-    title: "Mega Food Plaza",
-    deliveryTime: "30 mins",
-    distance: "2.2 km",
-  },
-   {
-    id: 6,
-    discount: "FLAT ₹200 OFF",
-    liked: false,
-    image:
-      "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
-    title: "Burger King Point",
-    deliveryTime: "22 mins",
-    distance: "1 km",
-  },
+    {
+      id: 1,
+      discount: "FLAT ₹150 OFF",
+      liked: true,
+      image: "../assets/image/temp/homePrd1.svg",
+      title: "Food Bazaar Bazaar Bazaar Bazaar Bazaar Rast...",
+      deliveryTime: "36 mins",
+      distance: "3 km",
+    },
+    {
+      id: 2,
+      discount: "FLAT ₹100 OFF",
+      liked: false,
+      image: "../assets/image/temp/homePrd2.svg",
+      title: "Fresh Mart Grocery Store",
+      deliveryTime: "25 mins",
+      distance: "1.5 km",
+    },
+    {
+      id: 3,
+      discount: "UPTO 50% OFF",
+      liked: true,
+      image: "../assets/image/temp/homePrd3.svg",
+      title: "Organic Veggie Hub",
+      deliveryTime: "40 mins",
+      distance: "4 km",
+    },
+    {
+      id: 4,
+      discount: "FREE DELIVERY",
+      liked: false,
+      image:
+        "https://b.zmtcdn.com/data/pictures/5/22411715/8fc8b5070d266246de26f97a6f0e80e2_o2_featured_v2.jpg?output-format=webp",
+      title: "Daily Needs Super Store",
+      deliveryTime: "18 mins",
+      distance: "900 m",
+    },
+    {
+      id: 5,
+      discount: "FLAT ₹200 OFF",
+      liked: true,
+      image:
+        "https://b.zmtcdn.com/data/pictures/6/21466036/9b5ea50c0d48a881b2cd6f3070d7127f_o2_featured_v2.jpg",
+      title: "Mega Food Plaza",
+      deliveryTime: "30 mins",
+      distance: "2.2 km",
+    },
+    {
+      id: 6,
+      discount: "FLAT ₹200 OFF",
+      liked: true,
+      image:
+        "https://b.zmtcdn.com/data/pictures/chains/1/18625991/8fa1a185a369be06f27c0fc9b4adce08_featured_v2.jpg",
+      title: "Mega Food Plaza",
+      deliveryTime: "30 mins",
+      distance: "2.2 km",
+    },
+    {
+      id: 6,
+      discount: "FLAT ₹200 OFF",
+      liked: false,
+      image: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
+      title: "Burger King Point",
+      deliveryTime: "22 mins",
+      distance: "1 km",
+    },
 
-  // 6 MORE ARRAY
+    // 6 MORE ARRAY
 
-  {
-    id: 7,
-    discount: "20% OFF",
-    liked: true,
-    image:
-      "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500",
-    title: "Pizza Town",
-    deliveryTime: "28 mins",
-    distance: "2.8 km",
-  },
-  {
-    id: 8,
-    discount: "FREE DELIVERY",
-    liked: false,
-    image:
-      "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500",
-    title: "Spicy Chicken Hub",
-    deliveryTime: "35 mins",
-    distance: "3.5 km",
-  },
-  {
-    id: 9,
-    discount: "FLAT ₹80 OFF",
-    liked: true,
-    image:
-      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
-    title: "Healthy Salad Point",
-    deliveryTime: "20 mins",
-    distance: "1.2 km",
-  },
-  {
-    id: 10,
-    discount: "30% OFF",
-    liked: false,
-    image:
-      "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=500",
-    title: "Coffee Cafe",
-    deliveryTime: "15 mins",
-    distance: "700 m",
-  },
-  {
-    id: 11,
-    discount: "BUY 1 GET 1",
-    liked: true,
-    image:
-      "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
-    title: "Italian Pizza House",
-    deliveryTime: "32 mins",
-    distance: "2 km",
-  },
-  
+    {
+      id: 7,
+      discount: "20% OFF",
+      liked: true,
+      image:
+        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500",
+      title: "Pizza Town",
+      deliveryTime: "28 mins",
+      distance: "2.8 km",
+    },
+    {
+      id: 8,
+      discount: "FREE DELIVERY",
+      liked: false,
+      image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500",
+      title: "Spicy Chicken Hub",
+      deliveryTime: "35 mins",
+      distance: "3.5 km",
+    },
+    {
+      id: 9,
+      discount: "FLAT ₹80 OFF",
+      liked: true,
+      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
+      title: "Healthy Salad Point",
+      deliveryTime: "20 mins",
+      distance: "1.2 km",
+    },
+    {
+      id: 10,
+      discount: "30% OFF",
+      liked: false,
+      image:
+        "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=500",
+      title: "Coffee Cafe",
+      deliveryTime: "15 mins",
+      distance: "700 m",
+    },
+    {
+      id: 11,
+      discount: "BUY 1 GET 1",
+      liked: true,
+      image:
+        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
+      title: "Italian Pizza House",
+      deliveryTime: "32 mins",
+      distance: "2 km",
+    },
+  ];
 
-];
-
-products?.forEach((item)=>{
-   getPrdHtml+=`
+  products?.forEach((item) => {
+    getPrdHtml += `
     <div class="product_box">
           <div class="product_top_sec">
             <div class="disc_tag">
@@ -415,140 +411,137 @@ products?.forEach((item)=>{
               <h5>${item?.distance}</h5>
             </div>
           </div>
-        </div>`
-})
+        </div>`;
+  });
 
   $("#prd1").html(getPrdHtml);
-  
 }
 getProduct1();
 function getProduct2() {
-  let getPrdHtml="";
+  let getPrdHtml = "";
 
   const products = [
-  {
-    id: 1,
-    discount: "FLAT ₹150 OFF",
-    liked: true,
-    image: "../assets/image/temp/homePrd1.svg",
-    title: "Food Bazaar Bazaar Bazaar Bazaar Bazaar Rast...",
-    deliveryTime: "36 mins",
-    distance: "3 km",
-  },
-  {
-    id: 2,
-    discount: "FLAT ₹100 OFF",
-    liked: false,
-    image: "../assets/image/temp/homePrd2.svg",
-    title: "Fresh Mart Grocery Store",
-    deliveryTime: "25 mins",
-    distance: "1.5 km",
-  },
-  {
-    id: 3,
-    discount: "UPTO 50% OFF",
-    liked: true,
-    image: "../assets/image/temp/homePrd3.svg",
-    title: "Organic Veggie Hub",
-    deliveryTime: "40 mins",
-    distance: "4 km",
-  },
-  {
-    id: 4,
-    discount: "FREE DELIVERY",
-    liked: false,
-    image: "https://b.zmtcdn.com/data/pictures/5/22411715/8fc8b5070d266246de26f97a6f0e80e2_o2_featured_v2.jpg?output-format=webp",
-    title: "Daily Needs Super Store",
-    deliveryTime: "18 mins",
-    distance: "900 m",
-  },
-  {
-    id: 5,
-    discount: "FLAT ₹200 OFF",
-    liked: true,
-    image: "https://b.zmtcdn.com/data/pictures/6/21466036/9b5ea50c0d48a881b2cd6f3070d7127f_o2_featured_v2.jpg",
-    title: "Mega Food Plaza",
-    deliveryTime: "30 mins",
-    distance: "2.2 km",
-  },
-  {
-    id: 6,
-    discount: "FLAT ₹200 OFF",
-    liked: true,
-    image: "https://b.zmtcdn.com/data/pictures/chains/1/18625991/8fa1a185a369be06f27c0fc9b4adce08_featured_v2.jpg",
-    title: "Mega Food Plaza",
-    deliveryTime: "30 mins",
-    distance: "2.2 km",
-  },
-   {
-    id: 6,
-    discount: "FLAT ₹200 OFF",
-    liked: false,
-    image:
-      "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
-    title: "Burger King Point",
-    deliveryTime: "22 mins",
-    distance: "1 km",
-  },
+    {
+      id: 1,
+      discount: "FLAT ₹150 OFF",
+      liked: true,
+      image: "../assets/image/temp/homePrd1.svg",
+      title: "Food Bazaar Bazaar Bazaar Bazaar Bazaar Rast...",
+      deliveryTime: "36 mins",
+      distance: "3 km",
+    },
+    {
+      id: 2,
+      discount: "FLAT ₹100 OFF",
+      liked: false,
+      image: "../assets/image/temp/homePrd2.svg",
+      title: "Fresh Mart Grocery Store",
+      deliveryTime: "25 mins",
+      distance: "1.5 km",
+    },
+    {
+      id: 3,
+      discount: "UPTO 50% OFF",
+      liked: true,
+      image: "../assets/image/temp/homePrd3.svg",
+      title: "Organic Veggie Hub",
+      deliveryTime: "40 mins",
+      distance: "4 km",
+    },
+    {
+      id: 4,
+      discount: "FREE DELIVERY",
+      liked: false,
+      image:
+        "https://b.zmtcdn.com/data/pictures/5/22411715/8fc8b5070d266246de26f97a6f0e80e2_o2_featured_v2.jpg?output-format=webp",
+      title: "Daily Needs Super Store",
+      deliveryTime: "18 mins",
+      distance: "900 m",
+    },
+    {
+      id: 5,
+      discount: "FLAT ₹200 OFF",
+      liked: true,
+      image:
+        "https://b.zmtcdn.com/data/pictures/6/21466036/9b5ea50c0d48a881b2cd6f3070d7127f_o2_featured_v2.jpg",
+      title: "Mega Food Plaza",
+      deliveryTime: "30 mins",
+      distance: "2.2 km",
+    },
+    {
+      id: 6,
+      discount: "FLAT ₹200 OFF",
+      liked: true,
+      image:
+        "https://b.zmtcdn.com/data/pictures/chains/1/18625991/8fa1a185a369be06f27c0fc9b4adce08_featured_v2.jpg",
+      title: "Mega Food Plaza",
+      deliveryTime: "30 mins",
+      distance: "2.2 km",
+    },
+    {
+      id: 6,
+      discount: "FLAT ₹200 OFF",
+      liked: false,
+      image: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
+      title: "Burger King Point",
+      deliveryTime: "22 mins",
+      distance: "1 km",
+    },
 
-  // 6 MORE ARRAY
+    // 6 MORE ARRAY
 
-  {
-    id: 7,
-    discount: "20% OFF",
-    liked: true,
-    image:
-      "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500",
-    title: "Pizza Town",
-    deliveryTime: "28 mins",
-    distance: "2.8 km",
-  },
-  {
-    id: 8,
-    discount: "FREE DELIVERY",
-    liked: false,
-    image:
-      "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500",
-    title: "Spicy Chicken Hub",
-    deliveryTime: "35 mins",
-    distance: "3.5 km",
-  },
-  {
-    id: 9,
-    discount: "FLAT ₹80 OFF",
-    liked: true,
-    image:
-      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
-    title: "Healthy Salad Point",
-    deliveryTime: "20 mins",
-    distance: "1.2 km",
-  },
-  {
-    id: 10,
-    discount: "30% OFF",
-    liked: false,
-    image:
-      "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=500",
-    title: "Coffee Cafe",
-    deliveryTime: "15 mins",
-    distance: "700 m",
-  },
-  {
-    id: 11,
-    discount: "BUY 1 GET 1",
-    liked: true,
-    image:
-      "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
-    title: "Italian Pizza House",
-    deliveryTime: "32 mins",
-    distance: "2 km",
-  },
-  
+    {
+      id: 7,
+      discount: "20% OFF",
+      liked: true,
+      image:
+        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500",
+      title: "Pizza Town",
+      deliveryTime: "28 mins",
+      distance: "2.8 km",
+    },
+    {
+      id: 8,
+      discount: "FREE DELIVERY",
+      liked: false,
+      image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500",
+      title: "Spicy Chicken Hub",
+      deliveryTime: "35 mins",
+      distance: "3.5 km",
+    },
+    {
+      id: 9,
+      discount: "FLAT ₹80 OFF",
+      liked: true,
+      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
+      title: "Healthy Salad Point",
+      deliveryTime: "20 mins",
+      distance: "1.2 km",
+    },
+    {
+      id: 10,
+      discount: "30% OFF",
+      liked: false,
+      image:
+        "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=500",
+      title: "Coffee Cafe",
+      deliveryTime: "15 mins",
+      distance: "700 m",
+    },
+    {
+      id: 11,
+      discount: "BUY 1 GET 1",
+      liked: true,
+      image:
+        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
+      title: "Italian Pizza House",
+      deliveryTime: "32 mins",
+      distance: "2 km",
+    },
+  ];
 
-];
-
-products?.forEach((item)=>{
-   getPrdHtml+=`
+  products?.forEach((item) => {
+    getPrdHtml += `
     <div class="product_box">
           <div class="product_top_sec">
             <div class="disc_tag">
@@ -568,129 +561,127 @@ products?.forEach((item)=>{
               <h5>${item?.distance}</h5>
             </div>
           </div>
-        </div>`
-})
+        </div>`;
+  });
 
   $("#prd2Last").html(getPrdHtml);
-  
 }
 getProduct2();
 
 function getCarousel1() {
+  const restaurants = [
+    {
+      id: 1,
+      hotelName: "Second Wife Restaurant",
+      category: "Biryani • North Indian • Mughlai",
+      rating: 4.0,
+      deliveryTime: "30-45 mins",
+      distance: "3 km",
 
-const restaurants = [
-  {
-    id: 1,
-    hotelName: "Second Wife Restaurant",
-    category: "Biryani • North Indian • Mughlai",
-    rating: 4.0,
-    deliveryTime: "30-45 mins",
-    distance: "3 km",
+      products: [
+        {
+          name: "Chicken Dum Biryani",
+          price: "₹199",
+          image:
+            "https://images.unsplash.com/photo-1563379091339-03246963d29c?w=500",
+        },
+        {
+          name: "Mutton Biryani",
+          price: "₹249",
+          image:
+            "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=500",
+        },
+        {
+          name: "Chicken Korma",
+          price: "₹179",
+          image:
+            "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=500",
+        },
+        {
+          name: "Butter Naan Combo",
+          price: "₹149",
+          image:
+            "https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?w=500",
+        },
+      ],
+    },
 
-    products: [
-      {
-        name: "Chicken Dum Biryani",
-        price: "₹199",
-        image:
-          "https://images.unsplash.com/photo-1563379091339-03246963d29c?w=500",
-      },
-      {
-        name: "Mutton Biryani",
-        price: "₹249",
-        image:
-          "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=500",
-      },
-      {
-        name: "Chicken Korma",
-        price: "₹179",
-        image:
-          "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=500",
-      },
-      {
-        name: "Butter Naan Combo",
-        price: "₹149",
-        image:
-          "https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?w=500",
-      },
-    ],
-  },
+    {
+      id: 2,
+      hotelName: "Burger Point",
+      category: "Burger • Fast Food • Snacks",
+      rating: 4.3,
+      deliveryTime: "20-30 mins",
+      distance: "2 km",
 
-  {
-    id: 2,
-    hotelName: "Burger Point",
-    category: "Burger • Fast Food • Snacks",
-    rating: 4.3,
-    deliveryTime: "20-30 mins",
-    distance: "2 km",
+      products: [
+        {
+          name: "Cheese Burger",
+          price: "₹129",
+          image:
+            "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500",
+        },
+        {
+          name: "Double Patty Burger",
+          price: "₹199",
+          image:
+            "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
+        },
+        {
+          name: "Chicken Burger",
+          price: "₹159",
+          image:
+            "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=500",
+        },
+        {
+          name: "French Fries Combo",
+          price: "₹99",
+          image:
+            "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=500",
+        },
+      ],
+    },
 
-    products: [
-      {
-        name: "Cheese Burger",
-        price: "₹129",
-        image:
-          "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500",
-      },
-      {
-        name: "Double Patty Burger",
-        price: "₹199",
-        image:
-          "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
-      },
-      {
-        name: "Chicken Burger",
-        price: "₹159",
-        image:
-          "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=500",
-      },
-      {
-        name: "French Fries Combo",
-        price: "₹99",
-        image:
-          "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=500",
-      },
-    ],
-  },
+    {
+      id: 3,
+      hotelName: "Pizza Hub",
+      category: "Pizza • Italian • Cheese Burst",
+      rating: 4.5,
+      deliveryTime: "25-40 mins",
+      distance: "4 km",
 
-  {
-    id: 3,
-    hotelName: "Pizza Hub",
-    category: "Pizza • Italian • Cheese Burst",
-    rating: 4.5,
-    deliveryTime: "25-40 mins",
-    distance: "4 km",
+      products: [
+        {
+          name: "Cheese Pizza",
+          price: "₹299",
+          image:
+            "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
+        },
+        {
+          name: "Farmhouse Pizza",
+          price: "₹349",
+          image:
+            "https://images.unsplash.com/photo-1548365328-9f547fb0953b?w=500",
+        },
+        {
+          name: "Pepperoni Pizza",
+          price: "₹399",
+          image:
+            "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=500",
+        },
+        {
+          name: "Veg Loaded Pizza",
+          price: "₹279",
+          image:
+            "https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=500",
+        },
+      ],
+    },
+  ];
+  let productContainer = "";
 
-    products: [
-      {
-        name: "Cheese Pizza",
-        price: "₹299",
-        image:
-          "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
-      },
-      {
-        name: "Farmhouse Pizza",
-        price: "₹349",
-        image:
-          "https://images.unsplash.com/photo-1548365328-9f547fb0953b?w=500",
-      },
-      {
-        name: "Pepperoni Pizza",
-        price: "₹399",
-        image:
-          "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=500",
-      },
-      {
-        name: "Veg Loaded Pizza",
-        price: "₹279",
-        image:
-          "https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=500",
-      },
-    ],
-  },
-];
-  let productContainer = '';
-
-restaurants.forEach((item, index) => {
-  productContainer += `
+  restaurants.forEach((item, index) => {
+    productContainer += `
   
   <div class="product_card">
 
@@ -704,7 +695,7 @@ restaurants.forEach((item, index) => {
              <div class="product_txt">${prd?.name} ${prd?.price}</div>
           </div>
          
-        `
+        `,
         )
         .join("")}
 
@@ -737,140 +728,137 @@ restaurants.forEach((item, index) => {
 
   </div>
   `;
-});
+  });
 
-$("#prd2").html(productContainer)
+  $("#prd2").html(productContainer);
 }
 getCarousel1();
 
-
-function getRestutantProduct() {
-  let resturantPrdHtml="";
+function getRestutantShop() {
+  let resturantPrdHtml = "";
 
   const products = [
-  {
-    id: 1,
-    discount: "FLAT ₹150 OFF",
-    liked: true,
-    image: "../assets/image/temp/homePrd1.svg",
-    title: "Food Bazaar Bazaar Bazaar Bazaar Bazaar Rast...",
-    deliveryTime: "36 mins",
-    distance: "3 km",
-  },
-  {
-    id: 2,
-    discount: "FLAT ₹100 OFF",
-    liked: false,
-    image: "../assets/image/temp/homePrd2.svg",
-    title: "Fresh Mart Grocery Store",
-    deliveryTime: "25 mins",
-    distance: "1.5 km",
-  },
-  {
-    id: 3,
-    discount: "UPTO 50% OFF",
-    liked: true,
-    image: "../assets/image/temp/homePrd3.svg",
-    title: "Organic Veggie Hub",
-    deliveryTime: "40 mins",
-    distance: "4 km",
-  },
-  {
-    id: 4,
-    discount: "FREE DELIVERY",
-    liked: false,
-    image: "https://b.zmtcdn.com/data/pictures/5/22411715/8fc8b5070d266246de26f97a6f0e80e2_o2_featured_v2.jpg?output-format=webp",
-    title: "Daily Needs Super Store",
-    deliveryTime: "18 mins",
-    distance: "900 m",
-  },
-  {
-    id: 5,
-    discount: "FLAT ₹200 OFF",
-    liked: true,
-    image: "https://b.zmtcdn.com/data/pictures/6/21466036/9b5ea50c0d48a881b2cd6f3070d7127f_o2_featured_v2.jpg",
-    title: "Mega Food Plaza",
-    deliveryTime: "30 mins",
-    distance: "2.2 km",
-  },
-  {
-    id: 6,
-    discount: "FLAT ₹200 OFF",
-    liked: true,
-    image: "https://b.zmtcdn.com/data/pictures/chains/1/18625991/8fa1a185a369be06f27c0fc9b4adce08_featured_v2.jpg",
-    title: "Mega Food Plaza",
-    deliveryTime: "30 mins",
-    distance: "2.2 km",
-  },
-   {
-    id: 6,
-    discount: "FLAT ₹200 OFF",
-    liked: false,
-    image:
-      "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
-    title: "Burger King Point",
-    deliveryTime: "22 mins",
-    distance: "1 km",
-  },
+    {
+      id: 1,
+      discount: "FLAT ₹150 OFF",
+      liked: true,
+      image: "../assets/image/temp/homePrd1.svg",
+      title: "Food Bazaar Bazaar Bazaar Bazaar Bazaar Rast...",
+      deliveryTime: "36 mins",
+      distance: "3 km",
+    },
+    {
+      id: 2,
+      discount: "FLAT ₹100 OFF",
+      liked: false,
+      image: "../assets/image/temp/homePrd2.svg",
+      title: "Fresh Mart Grocery Store",
+      deliveryTime: "25 mins",
+      distance: "1.5 km",
+    },
+    {
+      id: 3,
+      discount: "UPTO 50% OFF",
+      liked: true,
+      image: "../assets/image/temp/homePrd3.svg",
+      title: "Organic Veggie Hub",
+      deliveryTime: "40 mins",
+      distance: "4 km",
+    },
+    {
+      id: 4,
+      discount: "FREE DELIVERY",
+      liked: false,
+      image:
+        "https://b.zmtcdn.com/data/pictures/5/22411715/8fc8b5070d266246de26f97a6f0e80e2_o2_featured_v2.jpg?output-format=webp",
+      title: "Daily Needs Super Store",
+      deliveryTime: "18 mins",
+      distance: "900 m",
+    },
+    {
+      id: 5,
+      discount: "FLAT ₹200 OFF",
+      liked: true,
+      image:
+        "https://b.zmtcdn.com/data/pictures/6/21466036/9b5ea50c0d48a881b2cd6f3070d7127f_o2_featured_v2.jpg",
+      title: "Mega Food Plaza",
+      deliveryTime: "30 mins",
+      distance: "2.2 km",
+    },
+    {
+      id: 6,
+      discount: "FLAT ₹200 OFF",
+      liked: true,
+      image:
+        "https://b.zmtcdn.com/data/pictures/chains/1/18625991/8fa1a185a369be06f27c0fc9b4adce08_featured_v2.jpg",
+      title: "Mega Food Plaza",
+      deliveryTime: "30 mins",
+      distance: "2.2 km",
+    },
+    {
+      id: 6,
+      discount: "FLAT ₹200 OFF",
+      liked: false,
+      image: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
+      title: "Burger King Point",
+      deliveryTime: "22 mins",
+      distance: "1 km",
+    },
 
-  // 6 MORE ARRAY
+    // 6 MORE ARRAY
 
-  {
-    id: 7,
-    discount: "20% OFF",
-    liked: true,
-    image:
-      "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500",
-    title: "Pizza Town",
-    deliveryTime: "28 mins",
-    distance: "2.8 km",
-  },
-  {
-    id: 8,
-    discount: "FREE DELIVERY",
-    liked: false,
-    image:
-      "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500",
-    title: "Spicy Chicken Hub",
-    deliveryTime: "35 mins",
-    distance: "3.5 km",
-  },
-  {
-    id: 9,
-    discount: "FLAT ₹80 OFF",
-    liked: true,
-    image:
-      "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
-    title: "Healthy Salad Point",
-    deliveryTime: "20 mins",
-    distance: "1.2 km",
-  },
-  {
-    id: 10,
-    discount: "30% OFF",
-    liked: false,
-    image:
-      "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=500",
-    title: "Coffee Cafe",
-    deliveryTime: "15 mins",
-    distance: "700 m",
-  },
-  {
-    id: 11,
-    discount: "BUY 1 GET 1",
-    liked: true,
-    image:
-      "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
-    title: "Italian Pizza House",
-    deliveryTime: "32 mins",
-    distance: "2 km",
-  },
-  
+    {
+      id: 7,
+      discount: "20% OFF",
+      liked: true,
+      image:
+        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500",
+      title: "Pizza Town",
+      deliveryTime: "28 mins",
+      distance: "2.8 km",
+    },
+    {
+      id: 8,
+      discount: "FREE DELIVERY",
+      liked: false,
+      image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500",
+      title: "Spicy Chicken Hub",
+      deliveryTime: "35 mins",
+      distance: "3.5 km",
+    },
+    {
+      id: 9,
+      discount: "FLAT ₹80 OFF",
+      liked: true,
+      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
+      title: "Healthy Salad Point",
+      deliveryTime: "20 mins",
+      distance: "1.2 km",
+    },
+    {
+      id: 10,
+      discount: "30% OFF",
+      liked: false,
+      image:
+        "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=500",
+      title: "Coffee Cafe",
+      deliveryTime: "15 mins",
+      distance: "700 m",
+    },
+    {
+      id: 11,
+      discount: "BUY 1 GET 1",
+      liked: true,
+      image:
+        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
+      title: "Italian Pizza House",
+      deliveryTime: "32 mins",
+      distance: "2 km",
+    },
+  ];
 
-];
-
-products?.forEach((item)=>{
-  resturantPrdHtml+=`
+  products?.forEach((item) => {
+    resturantPrdHtml += `
        <a href="restaurantDetail.html" class="bottom_product_wrap">
                         <div class="bottom_product_img">
                             <img src="${item?.image}" alt="">
@@ -901,9 +889,235 @@ products?.forEach((item)=>{
                         </div>
                     </a>
   `;
-})
+  });
 
-  $("#resturantProducts").html(resturantPrdHtml)
-  
+  $("#resturantShopProducts").html(resturantPrdHtml);
+}
+getRestutantShop();
+
+function getCarousel2Resturant() {
+  const restaurantBanner = [
+    {
+      id: 1,
+      name: "Food Offer Banner",
+      image:
+        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1400",
+    },
+    {
+      id: 2,
+      name: "Restaurant Promo Banner",
+      image:
+        "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1400",
+    },
+    {
+      id: 3,
+      name: "Pizza Special Banner",
+      image:
+        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1400",
+    },
+    {
+      id: 4,
+      name: "Burger Combo Banner",
+      image:
+        "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1400",
+    },
+    {
+      id: 5,
+      name: "Healthy Food Banner",
+      image:
+        "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=1400",
+    },
+  ];
+  let bannerContainer = `
+  <div class="owl-carousel owl-theme product_slider">
+`;
+
+  restaurantBanner?.forEach((item) => {
+    bannerContainer += `
+    <div class="item">
+      <img src="${item?.image}" alt="banner-image">
+    </div>
+  `;
+  });
+
+  bannerContainer += `</div>`;
+  $("#shopDetailCrousel").html(bannerContainer);
+}
+getCarousel2Resturant();
+
+function getRestutantProduct() {
+  let resturantPrdHtml = "";
+
+  const products = [
+    {
+      id: 1,
+      name: "Veg Biryani",
+      price: "135",
+      rating: 3.5,
+      reviews: 25,
+      liked: true,
+      varient: false,
+      image: "../assets/image/temp/homePrd1.svg",
+      description:
+        "A flavorful and aromatic rice dish infused with rich spices and fresh vegetables.",
+    },
+    {
+      id: 2,
+      name: "Chicken Burger",
+      price: "189",
+      rating: 4.2,
+      reviews: 48,
+      liked: false,
+      varient: false,
+      image: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
+      description:
+        "Juicy chicken burger loaded with cheese, lettuce, and signature sauces.",
+    },
+    {
+      id: 3,
+      name: "Cheese Pizza",
+      price: "299",
+      rating: 4.5,
+      reviews: 70,
+      liked: true,
+      varient: true,
+      image:
+        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
+      description:
+        "Loaded with mozzarella cheese and baked to perfection with fresh toppings.",
+    },
+    {
+      id: 4,
+      name: "Healthy Salad",
+      price: "120",
+      rating: 4.0,
+      reviews: 18,
+      liked: false,
+      varient: true,
+      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
+      description:
+        "Fresh and healthy salad made with organic vegetables and special dressing.",
+    },
+  ];
+
+  products?.forEach((item) => {
+    resturantPrdHtml += `
+    
+    <div class="resturant_products" >
+    
+      <div class="resturant_prd_left">
+      
+        <img  src="../assets/image/icons/success.svg" alt="" />
+        
+        <h4>${item?.name}</h4>
+        
+        <p>₹${item?.price}</p>
+
+        <div class="prd_star">
+          <i class="bi bi-star-fill"></i>
+          <p>${item?.rating}</p>
+          <p>(${item?.reviews})</p>
+        </div>
+
+        <div class="save_btn ${item?.liked ? "fill-select" : ""}">
+          <i class="bi ${item?.liked ? "bi-bookmark-fill" : "bi-bookmark"}"></i>
+          <p>${item?.liked ? "Saved" : "Save to Eatlist"}</p>
+        </div>
+
+        <div class="desc_prd">
+          <p>
+            ${item?.description}
+            <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasProductBox" aria-controls="offcanvasProductBox">more</button>
+          </p>
+        </div>
+
+      </div>
+
+      <div class="resturant_prd_right">
+      
+        <img onclick='handleModalData(${JSON.stringify(item)})' data-bs-toggle="offcanvas" data-bs-target="#offcanvasProductBox" aria-controls="offcanvasProductBox" src="${item?.image}" alt="${item?.name}">
+
+             ${
+               item?.varient ? (
+                 `<div
+                   class="btn_add_data"
+                   onclick='handleModalCartData(${JSON.stringify(item)})'
+                   type="button"
+                   data-bs-toggle="offcanvas"
+                   data-bs-target="#offcanvasProductModal"
+                   aria-controls="offcanvasProductModal"
+                 >
+                   Add
+                 </div>`
+               ) : (
+                  ` <div
+                     class="btn_add_data AddBtn"
+                     id="AddBtn"
+                      onclick="handleToggle(this)"
+                     type="button"
+                   >
+                     Add
+                   </div>
+                   <div class="btn_add_data button_data " style="display : none;">
+                     <button class="plus">-</button>
+                     <input type="number" value="1" />
+                     <button>+</button>
+                   </div>`
+               )
+             }
+       
+
+      </div>
+
+    </div>
+
+  `;
+  });
+
+  $("#resturantProduct").html(resturantPrdHtml);
 }
 getRestutantProduct();
+
+function handleModalData(data) {
+  console.log(data);
+  let productDataHtml = "";
+  productDataHtml += `  <img
+          src="${data?.image}"
+          alt=""
+        />
+        <div class="product_wrapper">
+          <div class="flex_wrapper">
+            <div class="resturant_prd_left">
+              <img src="../assets/image/icons/success.svg" alt="" />
+
+              <h4>${data?.name}</h4>
+
+              <p>₹${data?.price}</p>
+
+              <div class="prd_star">
+                <i class="bi bi-star-fill"></i>
+                <p>${data?.rating}</p>
+                <p>(${data?.reviews})</p>
+              </div>
+            </div>
+            <button>Add</button>
+          </div>
+          <p>
+               ${data?.description}
+          </p>
+        </div>`;
+
+  $("#ProductData").html(productDataHtml);
+}
+
+function handleModalCartData(data) {
+  $("#prdName").text(data?.name);
+  $("#PrdImage").attr("src", data?.image);
+}
+
+function handleToggle(el) {
+  let parent = el.closest(".resturant_prd_right");
+
+  parent.querySelector(".AddBtn").style.display = "none";
+  parent.querySelector(".button_data").style.display = "flex";
+}
