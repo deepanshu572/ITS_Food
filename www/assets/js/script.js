@@ -392,7 +392,7 @@ function getProduct1() {
 
   products?.forEach((item) => {
     getPrdHtml += `
-    <div class="product_box">
+    <a href="restaurants.html" class="product_box">
           <div class="product_top_sec">
             <div class="disc_tag">
             ${item?.discount}
@@ -411,7 +411,7 @@ function getProduct1() {
               <h5>${item?.distance}</h5>
             </div>
           </div>
-        </div>`;
+        </a>`;
   });
 
   $("#prd1").html(getPrdHtml);
@@ -542,7 +542,7 @@ function getProduct2() {
 
   products?.forEach((item) => {
     getPrdHtml += `
-    <div class="product_box">
+    <a href="restaurants.html" class="product_box">
           <div class="product_top_sec">
             <div class="disc_tag">
             ${item?.discount}
@@ -561,7 +561,7 @@ function getProduct2() {
               <h5>${item?.distance}</h5>
             </div>
           </div>
-        </div>`;
+        </a>`;
   });
 
   $("#prd2Last").html(getPrdHtml);
@@ -683,7 +683,7 @@ function getCarousel1() {
   restaurants.forEach((item, index) => {
     productContainer += `
   
-  <div class="product_card">
+  <a href="restaurants.html" class="product_card">
 
     <div class="owl-carousel owl-theme product_slider product_slider_${index}">
       
@@ -726,7 +726,7 @@ function getCarousel1() {
       </div>
     </div>
 
-  </div>
+  </a>
   `;
   });
 
@@ -947,6 +947,7 @@ getCarousel2Resturant();
 
 function getRestutantProduct() {
   let resturantPrdHtml = "";
+  let similarPrdHtml = "";
 
   const products = [
     {
@@ -1038,8 +1039,8 @@ function getRestutantProduct() {
         <img onclick='handleModalData(${JSON.stringify(item)})' data-bs-toggle="offcanvas" data-bs-target="#offcanvasProductBox" aria-controls="offcanvasProductBox" src="${item?.image}" alt="${item?.name}">
 
              ${
-               item?.varient ? (
-                 `<div
+               item?.varient
+                 ? `<div
                    class="btn_add_data"
                    onclick='handleModalCartData(${JSON.stringify(item)})'
                    type="button"
@@ -1049,8 +1050,7 @@ function getRestutantProduct() {
                  >
                    Add
                  </div>`
-               ) : (
-                  ` <div
+                 : ` <div
                      class="btn_add_data AddBtn"
                      id="AddBtn"
                       onclick="handleToggle(this)"
@@ -1063,7 +1063,6 @@ function getRestutantProduct() {
                      <input type="number" value="1" />
                      <button>+</button>
                    </div>`
-               )
              }
        
 
@@ -1072,9 +1071,23 @@ function getRestutantProduct() {
     </div>
 
   `;
+    similarPrdHtml += ` <div class="similar_product_box">
+              <div class="similar_prd_img">
+                <img src="${item?.image}" alt="">
+                <button>+</button>
+              </div>
+              <div class="similar_prd_txt">
+                <h5>${item?.name}</h5>
+                 <span>
+                <del>₹500</del>
+              <p>₹${item?.price}</p>
+              </span>
+              </div>
+            </div>`;
   });
 
   $("#resturantProduct").html(resturantPrdHtml);
+  $("#recomendationPrd").html(similarPrdHtml);
 }
 getRestutantProduct();
 
@@ -1120,4 +1133,533 @@ function handleToggle(el) {
 
   parent.querySelector(".AddBtn").style.display = "none";
   parent.querySelector(".button_data").style.display = "flex";
+}
+
+function getOrders() {
+  const orders = [
+    {
+      id: 1,
+      restaurantName: "Food Bazaar Rajdhani",
+      location: "Ratu Road, Ranchi",
+      orderDate: "09 Jul 2025",
+      orderTime: "2:26PM",
+      totalBill: "148.16",
+      status: "Delivered",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
+      items: [
+        {
+          name: "Chicken Biryani",
+          status: "failed",
+          icon: "../assets/image/icons/failed.svg",
+        },
+        {
+          name: "Veg Biryani",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+
+    {
+      id: 2,
+      restaurantName: "Burger Point",
+      location: "Main Road, Ranchi",
+      orderDate: "10 Jul 2025",
+      orderTime: "1:10PM",
+      totalBill: "299.00",
+      status: "Pending",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
+      items: [
+        {
+          name: "Chicken Burger",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+
+    {
+      id: 3,
+      restaurantName: "Pizza Hub",
+      location: "Lalpur, Ranchi",
+      orderDate: "11 Jul 2025",
+      orderTime: "7:45PM",
+      totalBill: "420.50",
+      status: "Delivered",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1548365328-9f547fb0953b?w=500",
+      items: [
+        {
+          name: "Cheese Pizza",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+        {
+          name: "Cold Drink",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+
+    {
+      id: 4,
+      restaurantName: "Healthy Bowl",
+      location: "Kanke Road, Ranchi",
+      orderDate: "12 Jul 2025",
+      orderTime: "3:20PM",
+      totalBill: "180.00",
+      status: "Cancelled",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
+      items: [
+        {
+          name: "Healthy Salad",
+          status: "failed",
+          icon: "../assets/image/icons/failed.svg",
+        },
+      ],
+    },
+
+    {
+      id: 5,
+      restaurantName: "Tandoori Nights",
+      location: "Doranda, Ranchi",
+      orderDate: "13 Jul 2025",
+      orderTime: "9:00PM",
+      totalBill: "560.99",
+      status: "Delivered",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500",
+      items: [
+        {
+          name: "Paneer Tikka",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+        {
+          name: "Butter Naan",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+
+    {
+      id: 6,
+      restaurantName: "Momo Express",
+      location: "Harmu, Ranchi",
+      orderDate: "14 Jul 2025",
+      orderTime: "5:30PM",
+      totalBill: "220.40",
+      status: "Delivered",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1526318896980-cf78c088247c?w=500",
+      items: [
+        {
+          name: "Chicken Momos",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+
+    {
+      id: 7,
+      restaurantName: "Sweet Cravings",
+      location: "Upper Bazar, Ranchi",
+      orderDate: "15 Jul 2025",
+      orderTime: "8:15PM",
+      totalBill: "310.25",
+      status: "Delivered",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=500",
+      items: [
+        {
+          name: "Chocolate Cake",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+        {
+          name: "Ice Cream",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+
+    {
+      id: 8,
+      restaurantName: "South Spice",
+      location: "Circular Road, Ranchi",
+      orderDate: "16 Jul 2025",
+      orderTime: "11:50AM",
+      totalBill: "275.00",
+      status: "Pending",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=500",
+      items: [
+        {
+          name: "Masala Dosa",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+
+    {
+      id: 9,
+      restaurantName: "Roll Factory",
+      location: "Booty More, Ranchi",
+      orderDate: "17 Jul 2025",
+      orderTime: "6:40PM",
+      totalBill: "199.90",
+      status: "Delivered",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500",
+      items: [
+        {
+          name: "Egg Roll",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+        {
+          name: "Chicken Roll",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+
+    {
+      id: 10,
+      restaurantName: "Coffee Cafe",
+      location: "Morabadi, Ranchi",
+      orderDate: "18 Jul 2025",
+      orderTime: "4:05PM",
+      totalBill: "145.00",
+      status: "Delivered",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=500",
+      items: [
+        {
+          name: "Cold Coffee",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+        {
+          name: "Sandwich",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+  ];
+  let ordersHtml = "";
+
+  orders.forEach((order) => {
+    let itemsHtml = "";
+
+    order.items.forEach((item) => {
+      itemsHtml += `
+      <div class="order_middle_box">
+        <img src="${item.icon}" alt="">
+        <p>${item.name}</p>
+      </div>
+    `;
+    });
+
+    ordersHtml += `
+    <div onclick="location.href='orderDetails.html?id=${order?.id}'" class="order_data_item">
+      
+      <div class="order_top_wrap">
+        <div class="order_item_img">
+          <img src="${order.restaurantImage}" alt="">
+        </div>
+
+        <div class="order_item_txt">
+          <h4>${order.restaurantName}</h4>
+          <p>${order.location}</p>
+        </div>
+      </div>
+
+      <div class="order_middle_wrap">
+        ${itemsHtml}
+      </div>
+
+      <div class="order_bottom_wrap">
+        <div class="order_bottom_top">
+          <h5>
+            Order placed on 
+            <b>${order.orderDate},</b> ${order.orderTime}
+          </h5>
+
+          <p>Total Bill <b>₹${order.totalBill}</b></p>
+        </div>
+
+        <div class="order_bottom_bottom status">
+          <h5>${order.status}</h5>
+          <a href="">View Detail</a>
+        </div>
+      </div>
+
+    </div>
+  `;
+  });
+
+  $("#ordersData").html(ordersHtml);
+}
+getOrders();
+
+function getOrderDetail() {
+  const orders = [
+    {
+      id: 1,
+      restaurantName: "Food Bazaar Rajdhani",
+      location: "Ratu Road, Ranchi",
+      orderDate: "09 Jul 2025",
+      orderTime: "2:26PM",
+      totalBill: "148.16",
+      status: "Delivered",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
+      items: [
+        {
+          name: "Chicken Biryani",
+          status: "failed",
+          icon: "../assets/image/icons/failed.svg",
+        },
+        {
+          name: "Veg Biryani",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+
+    {
+      id: 2,
+      restaurantName: "Burger Point",
+      location: "Main Road, Ranchi",
+      orderDate: "10 Jul 2025",
+      orderTime: "1:10PM",
+      totalBill: "299.00",
+      status: "Pending",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
+      items: [
+        {
+          name: "Chicken Burger",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+
+    {
+      id: 3,
+      restaurantName: "Pizza Hub",
+      location: "Lalpur, Ranchi",
+      orderDate: "11 Jul 2025",
+      orderTime: "7:45PM",
+      totalBill: "420.50",
+      status: "Delivered",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1548365328-9f547fb0953b?w=500",
+      items: [
+        {
+          name: "Cheese Pizza",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+        {
+          name: "Cold Drink",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+
+    {
+      id: 4,
+      restaurantName: "Healthy Bowl",
+      location: "Kanke Road, Ranchi",
+      orderDate: "12 Jul 2025",
+      orderTime: "3:20PM",
+      totalBill: "180.00",
+      status: "Cancelled",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
+      items: [
+        {
+          name: "Healthy Salad",
+          status: "failed",
+          icon: "../assets/image/icons/failed.svg",
+        },
+      ],
+    },
+
+    {
+      id: 5,
+      restaurantName: "Tandoori Nights",
+      location: "Doranda, Ranchi",
+      orderDate: "13 Jul 2025",
+      orderTime: "9:00PM",
+      totalBill: "560.99",
+      status: "Delivered",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500",
+      items: [
+        {
+          name: "Paneer Tikka",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+        {
+          name: "Butter Naan",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+
+    {
+      id: 6,
+      restaurantName: "Momo Express",
+      location: "Harmu, Ranchi",
+      orderDate: "14 Jul 2025",
+      orderTime: "5:30PM",
+      totalBill: "220.40",
+      status: "Delivered",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1526318896980-cf78c088247c?w=500",
+      items: [
+        {
+          name: "Chicken Momos",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+
+    {
+      id: 7,
+      restaurantName: "Sweet Cravings",
+      location: "Upper Bazar, Ranchi",
+      orderDate: "15 Jul 2025",
+      orderTime: "8:15PM",
+      totalBill: "310.25",
+      status: "Delivered",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=500",
+      items: [
+        {
+          name: "Chocolate Cake",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+        {
+          name: "Ice Cream",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+
+    {
+      id: 8,
+      restaurantName: "South Spice",
+      location: "Circular Road, Ranchi",
+      orderDate: "16 Jul 2025",
+      orderTime: "11:50AM",
+      totalBill: "275.00",
+      status: "Pending",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=500",
+      items: [
+        {
+          name: "Masala Dosa",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+
+    {
+      id: 9,
+      restaurantName: "Roll Factory",
+      location: "Booty More, Ranchi",
+      orderDate: "17 Jul 2025",
+      orderTime: "6:40PM",
+      totalBill: "199.90",
+      status: "Delivered",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500",
+      items: [
+        {
+          name: "Egg Roll",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+        {
+          name: "Chicken Roll",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+
+    {
+      id: 10,
+      restaurantName: "Coffee Cafe",
+      location: "Morabadi, Ranchi",
+      orderDate: "18 Jul 2025",
+      orderTime: "4:05PM",
+      totalBill: "145.00",
+      status: "Delivered",
+      restaurantImage:
+        "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=500",
+      items: [
+        {
+          name: "Cold Coffee",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+        {
+          name: "Sandwich",
+          status: "success",
+          icon: "../assets/image/icons/success.svg",
+        },
+      ],
+    },
+  ];
+  const params = new URLSearchParams(window.location.search);
+
+  const id = params.get("id");
+  console.log(id)
+  let prdDataHtml="";
+
+  let filteredData = orders.find(
+  (item) => item.id === Number(id)
+);
+console.log(filteredData)
+
+$("#shopImg").attr("src", filteredData?.restaurantImage);
+$("#shopName").html(filteredData?.restaurantName);
+$("#shopAddress").html(filteredData?.location);
+
+    filteredData?.items?.forEach((prd)=>{
+        prdDataHtml+=` <div class="order_middle_box">
+                <img src="${prd?.icon}" alt="">
+                <p>${prd?.name}</p>
+            </div>`
+    });
+  
+  $("#prdData").html(prdDataHtml)
+
+  // alert(id);
+
+  // alert();
 }

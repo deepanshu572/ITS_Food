@@ -20,10 +20,10 @@
   <body>
     <div class="main margin_box">
       <div class="header_nav">
-        <div class="category_left_head">
-          <i class="bi bi-arrow-left-short"></i>
+        <a href="restaurantDetail.html" class="category_left_head">
+         <img src="../assets/image/icons/leftArrow.svg" alt="">
           <h4>Checkout</h4>
-        </div>
+        </a>
       </div>
       <div class="cart_data">
         <div
@@ -48,8 +48,7 @@
               <div class="cart_data_item_left">
                 <div class="cart_item_img">
                   <img
-                    width="100px"
-                    src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500"
+                    src="../assets/image/icons/failed.svg"
                     alt=""
                   />
                 </div>
@@ -58,22 +57,89 @@
                     Tata Salt Vacuum Evaporated Iodised Edible Common Salt, 1 kg
                     Pouch
                   </h4>
-                  <small>10kg</small>
-                  <span>
-                    <p>₹900</p>
-                    <del>₹1400</del>
-                  </span>
+                   <div class="select_box">
+                    <select name="quantity" id="qty">
+                      <option value="half">Half</option>
+                      <option value="full">Full</option>
+                    </select>
+                   </div>
+                  <button>+ Add More items</button>
+                  
                 </div>
               </div>
-              <div class="cart_data_item_btn">
+              <div class="wrapper_right_cart_btn">
+                <div class="cart_data_item_btn">
                 <button>-</button>
                 <input type="number" value="10" />
                 <button>+</button>
               </div>
+              <span>
+                <del>₹800</del>
+              <p>₹299</p>
+              </span>
+              </div>
+              
+            </div>
+           
+          </div>
+        </div>
+         <div class="similar_product_addd_cart cart_data_sec">
+          <div class="similar_product_cart_header">
+            <div class="similar_product_icon"><i class="bi bi-ui-checks-grid"></i></div>
+            <h4>Complete your meal with</h4>
+          </div>
+          <div class="similar_product_wrapper_items" id="recomendationPrd">
+            <div class="similar_product_box">
+              <div class="similar_prd_img">
+                <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500" alt="">
+                <button>+</button>
+              </div>
+              <div class="similar_prd_txt">
+                <h5>Cheese Pizza</h5>
+                 <span>
+                <del>₹800</del>
+              <p>₹299</p>
+              </span>
+              </div>
             </div>
           </div>
         </div>
-        <div class="cart_data_sec cart_data_sec3">
+       
+        <div class="cart_data_sec cart_data_sec2">
+          <div class="top_cart_gift">
+            <div class="top_cart_gift_left">
+              <h4>Claim Your Free Gift</h4>
+            </div>
+
+            <div class="top_cart_gift_right">
+              <img src="../assets/image/icons/gif2.svg" alt="" />
+            </div>
+          </div>
+          <div class="bottom_coupons">
+            <div class="img_coupons">
+              <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <div class="txt_coupons">
+              <h4>You saved ₹36 on delivery</h4>
+              <p>Auto - applied as your order is above ₹199</p>
+            </div>
+          </div>
+          <div
+            class="last_cart_gift"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasBottomCoupons"
+            aria-controls="offcanvasBottomCoupons"
+          >
+            <div class="gift_head_wrap">
+              <img src="../assets/image/icons/coupons.svg" alt="" />
+              <h4>View All Coupons</h4>
+            </div>
+            <div class="check">
+              <i class="bi bi-chevron-down"></i>
+            </div>
+          </div>
+        </div>
+         <div class="cart_data_sec cart_data_sec3">
           <!-- <div class="cart_sec_box cart_sec1_box">
             <div class="left_cart_box_sec">
               <i class="bi bi-stopwatch-fill"></i>
@@ -119,42 +185,9 @@
             <i class="bi bi-chevron-right"></i>
           </div>
         </div>
-        <div class="cart_data_sec cart_data_sec2">
-          <div class="top_cart_gift">
-            <div class="top_cart_gift_left">
-              <h4>Claim Your Free Gift</h4>
-            </div>
-
-            <div class="top_cart_gift_right">
-              <img src="../assets/image/icons/gif2.svg" alt="" />
-            </div>
-          </div>
-          <div class="bottom_coupons">
-            <div class="img_coupons">
-              <i class="bi bi-check-circle-fill"></i>
-            </div>
-            <div class="txt_coupons">
-              <h4>You saved ₹36 on delivery</h4>
-              <p>Auto - applied as your order is above ₹199</p>
-            </div>
-          </div>
-          <div
-            class="last_cart_gift"
-            data-bs-toggle="offcanvas"
-            data-bs-target="#offcanvasBottomCoupons"
-            aria-controls="offcanvasBottomCoupons"
-          >
-            <div class="gift_head_wrap">
-              <img src="../assets/image/icons/coupons.svg" alt="" />
-              <h4>View All Coupons</h4>
-            </div>
-            <div class="check">
-              <i class="bi bi-chevron-down"></i>
-            </div>
-          </div>
-        </div>
        
-         <div class="cart_data_sec cart_similar_prd">
+       
+         <!-- <div class="cart_data_sec cart_similar_prd">
             <div class="similar_head">
                 <h4>Complete your meal with</h4>
                 <a href="">See all <i class="bi bi-arrow-right-circle-fill"></i></a>
@@ -162,7 +195,7 @@
             <div class="resturant_product_wrapper" id="resturantProduct">
                 
             </div>
-        </div>
+        </div> -->
       </div>
       <div class="footer footer_cart">
         <div class="footer_cart_wrap">
