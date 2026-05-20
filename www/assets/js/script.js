@@ -1,5 +1,28 @@
 console.log("done!");
 
+$(document).ready(function () {
+  $(".product_slider").owlCarousel({
+    loop: true,
+    margin: 10,
+    nav: false,
+    dots: true,
+    autoplay: true,
+    // autoplayTimeout: 5500,
+
+    responsive: {
+      0: {
+        items: 1,
+      },
+      768: {
+        items: 1,
+      },
+      1024: {
+        items: 1,
+      },
+    },
+  });
+});
+
 function handleToggle(name, inpName) {
   console.log(name, inpName);
   if ($(`#${inpName}`).attr("type") == "text") {
@@ -65,6 +88,7 @@ function handleRegister(e) {
   let name = $("#name").val().trim();
   let email = $("#email").val().trim();
   let password = $("#password").val().trim();
+  let phone = $("#mob").val().trim();
 
   if (!name || !email || !password) {
     alert("Please fill all fields");
@@ -73,50 +97,67 @@ function handleRegister(e) {
   let load = true;
 
   if (load) {
-    $("#btnRegister").html("<span class='loader'></span> submitting...");
+    $("#btnRegister").html("<span class='loader'></span> Submitting...");
     $("#btnRegister").prop("disabled", true);
   }
 
-  setTimeout(() => {
-    load = false;
+  $.ajax({
+    url: "http://localhost/ITS_Food_Backend/app/api/",
+    method: "POST",
+    dataType: "json",
 
-    location.href = "otp.html";
-    $("#btnRegister").prop("disabled", false);
-  }, 1500);
+    data: {
+      type: "handleRegister",
+      name,
+      phone,
+      email,
+      password,
+    },
 
-  //   $.ajax({
-  //     url: "",
-  //     method: "POST",
-  //     dataType: "json",
+    success: function (response) {
+      if (response.status === "success") {
+        load = false;
 
-  //     data: {
-  //       type: "handleRegister",
-  //       name,
-  //       email,
-  //       password,
-  //     },
+        $("#btnRegister").prop("disabled", false);
 
-  //     success: function (response) {
-  //       if (response.status === "success") {
-  //         console.log("Login successful!");
-  //       } else {
-  //         console.log(response.message || "Something went wrong");
-  //       }
-  //     },
+        location.href = "otp.html";
+        localStorage.setItem("name", name);
+        localStorage.setItem("phone", phone);
+        localStorage.setItem("email", email);
+        localStorage.setItem("password", password);
+      } else {
+        console.log(response.message || "Something went wrong");
+        alert(response.message);
+      }
+    },
 
-  //     error: function (xhr, status, error) {
-  //       console.log("AJAX Error:", error);
-  //     },
-  //   });
+    error: function (xhr, status, error) {
+      console.log("AJAX Error:", error);
+    },
+  });
 }
 
-function handleOtp(e) {
+function generateOTP(num) {
+  let digits = "0123456789";
+  let OTP = "";
+  for (let i = 0; i < num; i++) {
+    OTP += digits[Math.floor(Math.random() * 10)];
+  }
+  return OTP;
+}
+
+function sendOtpRegister() {
+  let number = localStorage.getItem("phone");
+  $("#num").html(number);
+  let otp = generateOTP(6);
+  localStorage.setItem("otp", otp);
+}
+
+function handleOtpRegister(e) {
   e.preventDefault();
   let enteredOtp = "";
+  let Otp = localStorage.getItem("otp");
 
-  $(".otp_input").each(function () {
-    enteredOtp += $(this).val();
-  });
   let load = true;
 
   if (load) {
@@ -124,36 +165,47 @@ function handleOtp(e) {
     $("#otpBtn").prop("disabled", true);
   }
 
-  setTimeout(() => {
-    load = false;
+  $(".otp_input").each(function () {
+    enteredOtp += $(this).val();
+  });
 
-    location.href = "home.html";
-    $("#otpBtn").prop("disabled", false);
-  }, 1500);
+  if (enteredOtp.includes(Otp)) {
+    let name = localStorage.getItem("name");
+    let phone = localStorage.getItem("phone");
+    let email = localStorage.getItem("email");
+    let password = localStorage.getItem("password");
+    alert("hhhhh");
 
-  // $.ajax({
-  //     url: "",
-  //     method: "POST",
-  //     dataType: "json",
+    // $.ajax({
+    //   url: "http://localhost/ITS_Food_Backend/app/api/",
+    //   method: "POST",
+    //   dataType: "json",
 
-  //     data: {
-  //       type: "handleLogin",
-  //       otp: enteredOtp,
-  //
-  //     },
+    //   data: {
+    //     type: "handleOtpRegister",
+    //     name,
+    //     phone,
+    //     email,
+    //     password,
+    //   },
 
-  //     success: function (response) {
-  //       if (response.status === "success") {
-  //         console.log("register successfull!");
-  //       } else {
-  //         console.log(response.message || "Something went wrong");
-  //       }
-  //     },
+    //   success: function (response) {
+    //     if (response.status === "success") {
+    //       console.log("register successfully!");
+    //     } else {
+    //       console.log(response.message || "Something went wrong");
+    //     }
+    //   },
 
-  //     error: function (xhr, status, error) {
-  //       console.log("AJAX Error:", error);
-  //     },
-  //   });
+    //   error: function (xhr, status, error) {
+    //     console.log("AJAX Error:", error);
+    //   },
+    // });
+    // load = false;
+
+    // location.href = "home.html";
+    // $("#otpBtn").prop("disabled", false);
+  }
 }
 
 let forgotBtn = document.querySelectorAll(".forgot_btn");
@@ -265,6 +317,271 @@ function handleUpdatePassword(e) {
 
     $("#btnReset").prop("disabled", false);
   }, 1500);
+}
+
+function getCategory() {
+  const Categoryproducts = [
+    {
+      id: 1,
+
+      image: "../assets/image/temp/homeCat1.png",
+      title: "veg Biriyani",
+    },
+    {
+      id: 2,
+      image: "../assets/image/temp/homeCat2.png",
+      title: "Burger",
+    },
+    {
+      image: "../assets/image/temp/homeCat3.png",
+      title: "non-veg",
+    },
+    {
+      id: 4,
+
+      image: "../assets/image/temp/homeCat2.png",
+      title: "sandwitch",
+    },
+    {
+      id: 2,
+      image: "../assets/image/temp/homeCat2.png",
+      title: "Burger",
+    },
+    {
+      id: 4,
+
+      image: "../assets/image/temp/homeCat2.png",
+      title: "sandwitch",
+    },
+    {
+      id: 1,
+
+      image: "../assets/image/temp/homeCat1.png",
+      title: "veg Biriyani",
+    },
+  ];
+  let categoryPrd = "";
+  Categoryproducts?.forEach((item) => {
+    categoryPrd += `
+       <div class="body_box">
+       <div class="body_img_box">
+            <img src="${item?.image}" alt="" />
+            </div>
+            <p>${item?.title}</p>
+          </div>
+      `;
+  });
+
+  $("#categoryShowcase1").html(categoryPrd);
+  $("#categoryPrd").html(categoryPrd);
+  $("#sugestCategoryData").html(categoryPrd);
+}
+
+getCategory();
+
+async function handleInput(e) {
+  const value = e.target.value;
+  console.log(value?.length);
+
+  if (value?.length == 0) {
+    return $("#searchData").html("");
+  }
+
+  let load = true;
+
+  if (load) {
+    $("#load").html("<span class='loader'></span>");
+  }
+
+  let response = await fetch(
+    "https://www.themealdb.com/api/json/v1/1/categories.php",
+  );
+
+  let data = await response.json();
+
+  if (data) {
+    load = false;
+    $("#load").html("<i class='bi bi-mic'></i>");
+  }
+
+  console.log(data?.categories);
+
+  let AllData = data?.categories?.filter((item) => {
+    return item?.strCategory?.includes(value);
+  });
+  let searchHtml = "";
+  console.log(AllData);
+
+  if (AllData.length > 0) {
+    AllData?.forEach((item) => {
+      searchHtml += `<a href="searchDetail.html?query=${item.strCategory}" class="search_txt">
+          <div class="search_txt_img_desc">
+            <img src="${item.strCategoryThumb}" alt="" />
+            <h4>${item?.strCategory}</h4>
+          </div>
+        <i class="bi bi-chevron-right"></i>
+        </a>
+      `;
+    });
+  } else {
+    searchHtml += `<div class="not_found"><img src="../assets/image/icons/notFound.gif" alt=""/>No Meal Found !</div>`;
+  }
+  $("#searchData").html(searchHtml);
+}
+
+function getInputValue() {
+  const params = new URLSearchParams(window.location.search);
+
+  const query = params.get("query");
+  $("#searchQuery").html(query);
+
+  let getPrdHtml = "";
+
+  const products = [
+    {
+      id: 1,
+      discount: "FLAT ₹150 OFF",
+      liked: true,
+      image: "../assets/image/temp/homePrd1.svg",
+      title: "Food Bazaar Bazaar Bazaar Bazaar Bazaar Rast...",
+      deliveryTime: "36 mins",
+      distance: "3 km",
+    },
+    {
+      id: 2,
+      discount: "FLAT ₹100 OFF",
+      liked: false,
+      image: "../assets/image/temp/homePrd2.svg",
+      title: "Fresh Mart Grocery Store",
+      deliveryTime: "25 mins",
+      distance: "1.5 km",
+    },
+    {
+      id: 3,
+      discount: "UPTO 50% OFF",
+      liked: true,
+      image: "../assets/image/temp/homePrd3.svg",
+      title: "Organic Veggie Hub",
+      deliveryTime: "40 mins",
+      distance: "4 km",
+    },
+    {
+      id: 4,
+      discount: "FREE DELIVERY",
+      liked: false,
+      image:
+        "https://b.zmtcdn.com/data/pictures/5/22411715/8fc8b5070d266246de26f97a6f0e80e2_o2_featured_v2.jpg?output-format=webp",
+      title: "Daily Needs Super Store",
+      deliveryTime: "18 mins",
+      distance: "900 m",
+    },
+    {
+      id: 5,
+      discount: "FLAT ₹200 OFF",
+      liked: true,
+      image:
+        "https://b.zmtcdn.com/data/pictures/6/21466036/9b5ea50c0d48a881b2cd6f3070d7127f_o2_featured_v2.jpg",
+      title: "Mega Food Plaza",
+      deliveryTime: "30 mins",
+      distance: "2.2 km",
+    },
+    {
+      id: 6,
+      discount: "FLAT ₹200 OFF",
+      liked: true,
+      image:
+        "https://b.zmtcdn.com/data/pictures/chains/1/18625991/8fa1a185a369be06f27c0fc9b4adce08_featured_v2.jpg",
+      title: "Mega Food Plaza",
+      deliveryTime: "30 mins",
+      distance: "2.2 km",
+    },
+    {
+      id: 6,
+      discount: "FLAT ₹200 OFF",
+      liked: false,
+      image: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
+      title: "Burger King Point",
+      deliveryTime: "22 mins",
+      distance: "1 km",
+    },
+
+    // 6 MORE ARRAY
+
+    {
+      id: 7,
+      discount: "20% OFF",
+      liked: true,
+      image:
+        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500",
+      title: "Pizza Town",
+      deliveryTime: "28 mins",
+      distance: "2.8 km",
+    },
+    {
+      id: 8,
+      discount: "FREE DELIVERY",
+      liked: false,
+      image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500",
+      title: "Spicy Chicken Hub",
+      deliveryTime: "35 mins",
+      distance: "3.5 km",
+    },
+    {
+      id: 9,
+      discount: "FLAT ₹80 OFF",
+      liked: true,
+      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
+      title: "Healthy Salad Point",
+      deliveryTime: "20 mins",
+      distance: "1.2 km",
+    },
+    {
+      id: 10,
+      discount: "30% OFF",
+      liked: false,
+      image:
+        "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=500",
+      title: "Coffee Cafe",
+      deliveryTime: "15 mins",
+      distance: "700 m",
+    },
+    {
+      id: 11,
+      discount: "BUY 1 GET 1",
+      liked: true,
+      image:
+        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
+      title: "Italian Pizza House",
+      deliveryTime: "32 mins",
+      distance: "2 km",
+    },
+  ];
+
+  products?.forEach((item) => {
+    getPrdHtml += `
+    <div class="product_box">
+          <div class="product_top_sec">
+            <div class="disc_tag">
+            ${item?.discount}
+            </div>
+            <div class="like">
+             <i class="bi bi-bookmark"></i>
+            </div>
+           <a href="restaurants.html"> <img  src="${item?.image}" alt="" /></a>
+          </div>
+          <div class="product_bottom_sec">
+            <h4>${item?.title}</h4>
+            <div class="bottom_last_sec">
+              <img src="../assets/image/icons/current.svg" alt="" />
+              <h5>${item?.deliveryTime}</h5>
+              <h5>•</h5>
+              <h5>${item?.distance}</h5>
+            </div>
+          </div>
+        </div>`;
+  });
+
+  $("#prdSearch").html(getPrdHtml);
 }
 
 function getProduct1() {
@@ -392,15 +709,15 @@ function getProduct1() {
 
   products?.forEach((item) => {
     getPrdHtml += `
-    <a href="restaurants.html" class="product_box">
+    <div class="product_box">
           <div class="product_top_sec">
             <div class="disc_tag">
             ${item?.discount}
             </div>
             <div class="like">
-              <i class="bi bi-heart-fill"></i>
+             <i class="bi bi-bookmark"></i>
             </div>
-            <img src="${item?.image}" alt="" />
+           <a href="restaurants.html"> <img  src="${item?.image}" alt="" /></a>
           </div>
           <div class="product_bottom_sec">
             <h4>${item?.title}</h4>
@@ -411,16 +728,16 @@ function getProduct1() {
               <h5>${item?.distance}</h5>
             </div>
           </div>
-        </a>`;
+        </div>`;
   });
 
   $("#prd1").html(getPrdHtml);
 }
 getProduct1();
 function getProduct2() {
-  let getPrdHtml = "";
+  let getSimilarPrdHtml = "";
 
-  const products = [
+  const recomendation = [
     {
       id: 1,
       discount: "FLAT ₹150 OFF",
@@ -540,17 +857,17 @@ function getProduct2() {
     },
   ];
 
-  products?.forEach((item) => {
-    getPrdHtml += `
-    <a href="restaurants.html" class="product_box">
+  recomendation?.forEach((item) => {
+    getSimilarPrdHtml += `
+     <div class="product_box">
           <div class="product_top_sec">
             <div class="disc_tag">
             ${item?.discount}
             </div>
             <div class="like">
-              <i class="bi bi-heart-fill"></i>
+             <i class="bi bi-bookmark"></i>
             </div>
-            <img src="${item?.image}" alt="" />
+           <a href="restaurants.html"> <img  src="${item?.image}" alt="" /></a>
           </div>
           <div class="product_bottom_sec">
             <h4>${item?.title}</h4>
@@ -561,10 +878,173 @@ function getProduct2() {
               <h5>${item?.distance}</h5>
             </div>
           </div>
-        </a>`;
+        </div>`;
   });
 
-  $("#prd2Last").html(getPrdHtml);
+  let productContainer = "";
+  const restaurants = [
+    {
+      id: 1,
+      hotelName: "Second Wife Restaurant",
+      category: "Biryani • North Indian • Mughlai",
+      rating: 4.0,
+      deliveryTime: "30-45 mins",
+      distance: "3 km",
+
+      products: [
+        {
+          name: "Chicken Dum Biryani",
+          price: "₹199",
+          image:
+            "https://images.unsplash.com/photo-1563379091339-03246963d29c?w=500",
+        },
+        {
+          name: "Mutton Biryani",
+          price: "₹249",
+          image:
+            "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=500",
+        },
+        {
+          name: "Chicken Korma",
+          price: "₹179",
+          image:
+            "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=500",
+        },
+        {
+          name: "Butter Naan Combo",
+          price: "₹149",
+          image:
+            "https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?w=500",
+        },
+      ],
+    },
+
+    {
+      id: 2,
+      hotelName: "Burger Point",
+      category: "Burger • Fast Food • Snacks",
+      rating: 4.3,
+      deliveryTime: "20-30 mins",
+      distance: "2 km",
+
+      products: [
+        {
+          name: "Cheese Burger",
+          price: "₹129",
+          image:
+            "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500",
+        },
+        {
+          name: "Double Patty Burger",
+          price: "₹199",
+          image:
+            "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
+        },
+        {
+          name: "Chicken Burger",
+          price: "₹159",
+          image:
+            "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=500",
+        },
+        {
+          name: "French Fries Combo",
+          price: "₹99",
+          image:
+            "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=500",
+        },
+      ],
+    },
+
+    {
+      id: 3,
+      hotelName: "Pizza Hub",
+      category: "Pizza • Italian • Cheese Burst",
+      rating: 4.5,
+      deliveryTime: "25-40 mins",
+      distance: "4 km",
+
+      products: [
+        {
+          name: "Cheese Pizza",
+          price: "₹299",
+          image:
+            "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
+        },
+        {
+          name: "Farmhouse Pizza",
+          price: "₹349",
+          image:
+            "https://images.unsplash.com/photo-1548365328-9f547fb0953b?w=500",
+        },
+        {
+          name: "Pepperoni Pizza",
+          price: "₹399",
+          image:
+            "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=500",
+        },
+        {
+          name: "Veg Loaded Pizza",
+          price: "₹279",
+          image:
+            "https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=500",
+        },
+      ],
+    },
+  ];
+
+  restaurants.forEach((item, index) => {
+    productContainer += `
+  
+  <a href="restaurants.html" class="product_card">
+      
+
+    <div class="owl-carousel owl-theme product_slider product_slider_${index}">
+      
+      ${item.products
+        .map(
+          (prd) => `
+          <div class="item">
+            <img src="${prd?.image}" alt="${prd?.name}">
+             <div class="product_txt">${prd?.name} ${prd?.price}</div>
+          </div>
+         
+        `,
+        )
+        .join("")}
+
+    </div>
+
+    <div class="product_info">
+     <div class="details">
+      <img src="../assets/image/icons/current.svg" alt="" />
+        <span>${item.deliveryTime}</span>
+        <span>•</span>
+        <span>${item.distance}</span>
+      </div>
+      <div class="product_head">
+      <h3>${item.hotelName}</h3>
+      <div class="product_rate"><i class="bi bi-star-fill"></i> ${item?.rating}</div>
+      </div>
+
+     
+
+      <div class="offer_sec">
+      <div>
+         <div><img src="../assets/image/icons/crown.svg" alt="" /></div> <p>Extra 10% OFF</p>
+         </div>
+        <div class="line"></div>
+        <div>
+        <img src="../assets/image/icons/current.svg" alt="" /><p>   Flash Sale : FLAT 50% OFF</p>
+        </div>
+      </div>
+    </div>
+
+  </a>
+  `;
+  });
+
+  $("#recomendation").html(getSimilarPrdHtml);
+  $("#prdSearch2").html(productContainer);
 }
 getProduct2();
 
@@ -684,6 +1164,7 @@ function getCarousel1() {
     productContainer += `
   
   <a href="restaurants.html" class="product_card">
+      
 
     <div class="owl-carousel owl-theme product_slider product_slider_${index}">
       
@@ -1638,26 +2119,24 @@ function getOrderDetail() {
   const params = new URLSearchParams(window.location.search);
 
   const id = params.get("id");
-  console.log(id)
-  let prdDataHtml="";
+  console.log(id);
+  let prdDataHtml = "";
 
-  let filteredData = orders.find(
-  (item) => item.id === Number(id)
-);
-console.log(filteredData)
+  let filteredData = orders.find((item) => item.id === Number(id));
+  console.log(filteredData);
 
-$("#shopImg").attr("src", filteredData?.restaurantImage);
-$("#shopName").html(filteredData?.restaurantName);
-$("#shopAddress").html(filteredData?.location);
+  $("#shopImg").attr("src", filteredData?.restaurantImage);
+  $("#shopName").html(filteredData?.restaurantName);
+  $("#shopAddress").html(filteredData?.location);
 
-    filteredData?.items?.forEach((prd)=>{
-        prdDataHtml+=` <div class="order_middle_box">
+  filteredData?.items?.forEach((prd) => {
+    prdDataHtml += ` <div class="order_middle_box">
                 <img src="${prd?.icon}" alt="">
                 <p>${prd?.name}</p>
-            </div>`
-    });
-  
-  $("#prdData").html(prdDataHtml)
+            </div>`;
+  });
+
+  $("#prdData").html(prdDataHtml);
 
   // alert(id);
 

@@ -25,14 +25,13 @@
         <form
           onsubmit="
             handleOtp(event);
-            return false;
           "
           class="form_otp_data wrapper"
         >
           <div class="form_otp_head reuse_head">
             <h4>Enter OTP to verify</h4>
             <p>
-              A 6 digit OTP has been sent to your phone number +1234567890
+              A 6 digit OTP has been sent to your phone number <b id="num"></b>
               <a href="#">Change</a>
             </p>
           </div>
@@ -73,18 +72,24 @@
       integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
       crossorigin="anonymous"
     ></script>
-    <script>
-      $(".otp_input").on("input", function () {
-        if ($(this).val().length === 1) {
-          $(this).next(".otp_input").focus();
-        }
-      });
-      $(".otp_input").on("keydown", function (e) {
-        if (e.key === "Backspace" && $(this).val() === "") {
-          $(this).prev(".otp_input").focus();
-        }
-      });
-    </script>
+   
     <script src="../assets/js/script.js"></script>
+     <script>
+      // $(".otp_input").on("input", function () {
+      //   if ($(this).val().length === 1) {
+      //     $(this).next(".otp_input").focus();
+      //   }
+      // });
+      // $(".otp_input").on("keydown", function (e) {
+      //   if (e.key === "Backspace" && $(this).val() === "") {
+      //     $(this).prev(".otp_input").focus();
+      //   }
+      // });
+
+
+      
+             sendOtpRegister();
+
+    </script>
   </body>
 </html>
