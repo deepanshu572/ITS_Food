@@ -19,54 +19,30 @@
           <a href="login.html" class="icon">
             <i class="bi bi-chevron-left"></i>
           </a>
-          <h4>OTP</h4>
+          <h4>Verification</h4>
           <div></div>
         </div>
-        <form
-          onsubmit="
-            handleVerifyOtp(event);
-            return false;
-          "
+        <div
+         
           class="form_otp_data wrapper"
         >
-          <div class="form_otp_head reuse_head">
-            <h4>Email Verification</h4>
+          <div class="forgot_header form_otp_head reuse_head">
+            <h4 id="selectedService"></h4>
             <p>
-              Enter the verification code we send you on:
-              <a href=""> dbi****@gmail.com</a>
+              Enter the <small id="service"></small> for forgot the password:
+             
             </p>
           </div>
-
-          <div class="form_otp_inputs">
-            <h5>Enter OTP</h5>
-            <div class="form_otp_input">
-              <div class="form_inp_otp_holder">
-                <input class="otp_input_verify" id="otp1" type="number" required />
-              </div>
-              <div class="form_inp_otp_holder">
-                <input class="otp_input_verify" id="otp2" type="number" required />
-              </div>
-              <div class="form_inp_otp_holder">
-                <input class="otp_input_verify" id="otp3" type="number" required />
-              </div>
-              <div class="form_inp_otp_holder">
-                <input class="otp_input_verify" id="otp4" type="number" required />
-              </div>
-              <div class="form_inp_otp_holder">
-                <input class="otp_input_verify" id="otp5" type="number" required />
-              </div>
-              <div class="form_inp_otp_holder">
-                <input class="otp_input_verify" id="otp6" type="number" required />
-              </div>
+          <div class="form_input">
+            <div id="requiredInp"></div>
+             <div class="verify_inp input_btn reuse_btn">
+              <button onclick="handleVerification()" id="btnVerify">continue</button>
             </div>
-            <p>Didn’t receive code? <b onclick="handleReSendOtp();"> Resend </b></p>
-
-            <div class="form_otp_btn reuse_btn">
-              <button id="verifyOtpBtn">Verify Otp</button>
-            </div>
-            <h6><i class="bi bi-stopwatch"></i> 00:26</h6>
+            
           </div>
-        </form>
+
+      
+        </div>
       </div>
     </div>
 
@@ -76,18 +52,10 @@
       integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
       crossorigin="anonymous"
     ></script>
-    <script>
-      $(".otp_input").on("input", function () {
-        if ($(this).val().length === 1) {
-          $(this).next(".otp_input").focus();
-        }
-      });
-      $(".otp_input").on("keydown", function (e) {
-        if (e.key === "Backspace" && $(this).val() === "") {
-          $(this).prev(".otp_input").focus();
-        }
-      });
-    </script>
+    
     <script src="../assets/js/script.js"></script>
+    <script>
+    getVerificationData();
+    </script>
   </body>
 </html>

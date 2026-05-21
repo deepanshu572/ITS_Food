@@ -1,5 +1,7 @@
+const apiUrl = "http://localhost/ITS_Food_Backend/app/api/";
+const imageUrl = "http://localhost/ITS_Food_Backend/admin/";
+const userId = localStorage.getItem("userId");
 console.log("done!");
-
 $(document).ready(function () {
   $(".product_slider").owlCarousel({
     loop: true,
@@ -37,10 +39,10 @@ function handleToggle(name, inpName) {
 function handleLogin(e) {
   e.preventDefault();
 
-  let email = $("#email").val();
+  let phone = $("#mob").val();
   let password = $("#password").val();
 
-  if (!email || !password) {
+  if (!phone || !password) {
     alert("Please fill all fields");
     return;
   }
@@ -51,36 +53,39 @@ function handleLogin(e) {
     $("#btnLogin").prop("disabled", true);
   }
 
-  setTimeout(() => {
-    load = false;
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "json",
+    data: {
+      type: "handleLogin",
+      phone,
+      password,
+    },
 
-    location.href = "home.html";
-    $("#btnLogin").prop("disabled", false);
-  }, 1500);
+    success: function (response) {
+      if (response.status === "success") {
+        console.log("Login successfully!");
+        load = false;
 
-  //   $.ajax({
-  //     url: "",
-  //     method: "POST",
-  //     dataType: "json",
+        localStorage.setItem("userId", response?.data?.id);
 
-  //     data: {
-  //       type: "handleLogin",
-  //       email: email,
-  //       password: password,
-  //     },
+        location.href = "home.html";
+        $("#btnLogin").prop("disabled", false);
+      } else {
+        alert(response.message || "Something went wrong");
+         $("#btnLogin").prop("disabled", false);
+             $("#btnLogin").html("Login");
 
-  //     success: function (response) {
-  //       if (response.status === "success") {
-  //         console.log("Login successful!");
-  //       } else {
-  //         console.log(response.message || "Something went wrong");
-  //       }
-  //     },
+      }
+    },
 
-  //     error: function (xhr, status, error) {
-  //       console.log("AJAX Error:", error);
-  //     },
-  //   });
+    error: function (xhr, status, error) {
+      console.log("AJAX Error:", error);
+      $("#btnLogin").prop("disabled", false);
+      $("#btnLogin").html("Login");
+    },
+  });
 }
 function handleRegister(e) {
   e.preventDefault();
@@ -90,7 +95,7 @@ function handleRegister(e) {
   let password = $("#password").val().trim();
   let phone = $("#mob").val().trim();
 
-  if (!name || !email || !password) {
+  if (!name || !password) {
     alert("Please fill all fields");
     return;
   }
@@ -110,7 +115,7 @@ function handleRegister(e) {
       type: "handleRegister",
       name,
       phone,
-      email,
+      email: email || "",
       password,
     },
 
@@ -174,50 +179,51 @@ function handleOtpRegister(e) {
     let phone = localStorage.getItem("phone");
     let email = localStorage.getItem("email");
     let password = localStorage.getItem("password");
-    alert("hhhhh");
 
-    // $.ajax({
-    //   url: "http://localhost/ITS_Food_Backend/app/api/",
-    //   method: "POST",
-    //   dataType: "json",
+    $.ajax({
+      url: "http://localhost/ITS_Food_Backend/app/api/",
+      method: "POST",
+      dataType: "json",
 
-    //   data: {
-    //     type: "handleOtpRegister",
-    //     name,
-    //     phone,
-    //     email,
-    //     password,
-    //   },
+      data: {
+        type: "handleOtpRegister",
+        name,
+        phone,
+        email,
+        password,
+      },
 
-    //   success: function (response) {
-    //     if (response.status === "success") {
-    //       console.log("register successfully!");
-    //     } else {
-    //       console.log(response.message || "Something went wrong");
-    //     }
-    //   },
+      success: function (response) {
+        if (response.status === "success") {
+          console.log("register successfully!");
+          localStorage.clear();
+          localStorage.setItem("userId", response?.userId);
+        } else {
+          console.log(response.message || "Something went wrong");
+        }
+      },
 
-    //   error: function (xhr, status, error) {
-    //     console.log("AJAX Error:", error);
-    //   },
-    // });
-    // load = false;
+      error: function (xhr, status, error) {
+        console.log("AJAX Error:", error);
+      },
+    });
+    load = false;
 
-    // location.href = "home.html";
-    // $("#otpBtn").prop("disabled", false);
+    location.href = "home.html";
+    $("#otpBtn").prop("disabled", false);
   }
 }
 
 let forgotBtn = document.querySelectorAll(".forgot_btn");
-console.log(forgotBtn);
 forgotBtn.forEach((item) => {
   item.addEventListener("click", () => {
     let data = item.querySelector(".forgot_left_txt p").innerText;
 
     forgotBtn?.forEach((el) => el.classList.remove("active_forgot"));
     item?.classList.add("active_forgot");
+    localStorage.setItem("selectedService", data);
+
     // console.log(item);
-    $("#selectedForgotType").val(data);
   });
 });
 
@@ -239,56 +245,98 @@ function handleForgotOtp() {
   }, 1500);
 }
 
-function handleReSendOtp() {
-  alert();
-  // code...
-}
+function getVerificationData() {
+  let requiredHtml = "";
 
-function handleVerifyOtp(e) {
-  e.preventDefault();
-  let enteredOtp = "";
+  let selectedService = localStorage.getItem("selectedService");
+  // if(selectedService)
 
-  $(".otp_input_verify").each(function () {
-    enteredOtp += $(this).val();
-  });
-  let load = true;
-
-  if (load) {
-    $("#verifyOtpBtn").html("<span class='loader'></span> verifying...");
-    $("#verifyOtpBtn").prop("disabled", true);
+  if (selectedService == "email") {
+    requiredHtml += `  <div class="form_inp">
+              <label for="email">Email Address</label>
+              <div class="inp">
+              <input type="text" id="email" placeholder="Enter email">
+              </div>
+            </div>`;
+    $("#service").text("email");
+  } else if (selectedService == "number") {
+    requiredHtml += `    <div class="form_inp">
+              <label for="mobLogin">Mobile no</label>
+              <div class="inp">
+              <input type="tel" id="mob" maxlength="10" placeholder="Enter number">
+              </div>
+            </div>`;
+    $("#service").text("number");
+  } else {
+    console.log("something wents wrong ! on localstorage  ");
   }
 
-  setTimeout(() => {
-    load = false;
-
-    location.href = "resetPassword.html";
-    $("#verifyOtpBtn").prop("disabled", false);
-  }, 1500);
-
-  // $.ajax({
-  //     url: "",
-  //     method: "POST",
-  //     dataType: "json",
-
-  //     data: {
-  //       type: "handleLogin",
-  //       otp: enteredOtp,
-  //
-  //     },
-
-  //     success: function (response) {
-  //       if (response.status === "success") {
-  //         console.log("register successfull!");
-  //       } else {
-  //         console.log(response.message || "Something went wrong");
-  //       }
-  //     },
-
-  //     error: function (xhr, status, error) {
-  //       console.log("AJAX Error:", error);
-  //     },
-  //   });
+  $("#requiredInp").html(requiredHtml);
 }
+function handleVerification() {
+  let selectedService = localStorage.getItem("selectedService");
+
+  if (selectedService == "email") {
+    let email = $("#email").val();
+    $("#btnVerify").html("<span class='loader'></span> submitting...");
+    $("#btnVerify").prop("disabled", true);
+    $.ajax({
+      url: apiUrl,
+      method: "POST",
+      dataType: "JSON",
+      data: {
+        type: "verifyEmail",
+        email,
+      },
+      success: function (response) {
+        if (response.status == "success") {
+          console.log(response);
+          localStorage.setItem("data", response.email);
+          location.href = "resetPassword.html";
+        } else {
+          console.log(response.message);
+          $("#btnVerify").prop("disabled", false);
+          $("#btnVerify").html("Continue");
+        }
+      },
+      error: function (xhr, status, error) {
+        console.log("AJAX Error:", error);
+        $("#btnVerify").prop("disabled", false);
+        $("#btnVerify").html("Login");
+      },
+    });
+  } else if (selectedService == "number") {
+    let number = $("#mob").val();
+    $.ajax({
+      url: apiUrl,
+      method: "POST",
+      dataType: "JSON",
+      data: {
+        type: "verifyNumber",
+        number,
+      },
+      success: function (response) {
+        if (response.status == "success") {
+          console.log(response);
+          localStorage.setItem("data", response.phone);
+          location.href = "resetPassword.html";
+        } else {
+          console.log(response.message);
+          $("#btnVerify").prop("disabled", false);
+          $("#btnVerify").html("Continue");
+        }
+      },
+      error: function (xhr, status, error) {
+        console.log("AJAX Error:", error);
+        $("#btnVerify").prop("disabled", false);
+        $("#btnVerify").html("Continue");
+      },
+    });
+  } else {
+    console.log("something wents wrong !");
+  }
+}
+
 function handleUpdatePassword(e) {
   e.preventDefault();
 
@@ -296,13 +344,43 @@ function handleUpdatePassword(e) {
     alert("password not matched !");
     return;
   }
+  let password = $("#updatePassword").val();
 
-  let load = true;
+  $("#btnReset").html("<span class='loader'></span> Updating...");
+  $("#btnReset").prop("disabled", true);
+  let selectedData = localStorage.getItem("data");
+  let selectedService = localStorage.getItem("selectedService");
+  
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "json",
+    data: {
+      type: "updatePassword",
+      password,
+      selectedData,
+      selectedService,
+    },
+    success: function (response) {
+      if (response == "success") {
+        console.log(response.message);
+        const offcanvas = new bootstrap.Offcanvas(
+          document.getElementById("offcanvasPassword"),
+        );
 
-  if (load) {
-    $("#btnReset").html("<span class='loader'></span> Updating...");
-    $("#btnReset").prop("disabled", true);
-  }
+        offcanvas.show();
+        $("#btnReset").html("Verified");
+        $("#btnReset").prop("disabled", false);
+      } else {
+        console.log(response.message);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.log("AJAX Error:", error);
+      $("#btnReset").prop("disabled", false);
+      $("#btnReset").html("Verify Account");
+    },
+  });
 
   setTimeout(() => {
     load = false;
@@ -319,62 +397,69 @@ function handleUpdatePassword(e) {
   }, 1500);
 }
 
-function getCategory() {
-  const Categoryproducts = [
-    {
-      id: 1,
+function fetchBanner(type) {
+  return $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "json",
+    data: {
+      type,
+    },
+  });
+}
+async function getBanners() {
+  let heroData = await fetchBanner("handleHeroBanner");
+  $("#heroBanner").attr("src", imageUrl + heroData.data.image);
 
-      image: "../assets/image/temp/homeCat1.png",
-      title: "veg Biriyani",
-    },
-    {
-      id: 2,
-      image: "../assets/image/temp/homeCat2.png",
-      title: "Burger",
-    },
-    {
-      image: "../assets/image/temp/homeCat3.png",
-      title: "non-veg",
-    },
-    {
-      id: 4,
+  let topData = await fetchBanner("handleTopBanner");
 
-      image: "../assets/image/temp/homeCat2.png",
-      title: "sandwitch",
-    },
-    {
-      id: 2,
-      image: "../assets/image/temp/homeCat2.png",
-      title: "Burger",
-    },
-    {
-      id: 4,
-
-      image: "../assets/image/temp/homeCat2.png",
-      title: "sandwitch",
-    },
-    {
-      id: 1,
-
-      image: "../assets/image/temp/homeCat1.png",
-      title: "veg Biriyani",
-    },
-  ];
-  let categoryPrd = "";
-  Categoryproducts?.forEach((item) => {
-    categoryPrd += `
-       <div class="body_box">
-       <div class="body_img_box">
-            <img src="${item?.image}" alt="" />
-            </div>
-            <p>${item?.title}</p>
-          </div>
-      `;
+  let topBannerHtml = "";
+  topData?.data?.forEach((item) => {
+    topBannerHtml += ` <div class="banner_sec_home1">
+          <img src="${imageUrl + item?.image}" alt="" />
+        </div>
+     `;
   });
 
-  $("#categoryShowcase1").html(categoryPrd);
-  $("#categoryPrd").html(categoryPrd);
-  $("#sugestCategoryData").html(categoryPrd);
+  $("#topBanner").html(topBannerHtml);
+
+  let bottomData = await fetchBanner("handleBottomBanner");
+  $("#bottomBanner").attr("src", imageUrl + bottomData.data.image);
+
+  console.log(heroData, topData, bottomData);
+}
+
+function getCategory() {
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "json",
+    data: {
+      type: "handleCateory",
+    },
+    success: function (response) {
+      if (response.status == "success") {
+        console.log(response?.data);
+        let categoryPrd = "";
+
+        response?.data?.forEach((item) => {
+          categoryPrd += `
+       <div class="body_box">
+       <div class="body_img_box">
+            <img src="${imageUrl + item?.image}" alt="" />
+            </div>
+            <p>${item?.name}</p>
+          </div>
+      `;
+        });
+        $("#categoryShowcase1").html(categoryPrd);
+        $("#categoryPrd").html(categoryPrd);
+        $("#sugestCategoryData").html(categoryPrd);
+      } else {
+        console.log(response?.message);
+      }
+    },
+  });
 }
 
 getCategory();
@@ -1534,7 +1619,7 @@ function getRestutantProduct() {
                  : ` <div
                      class="btn_add_data AddBtn"
                      id="AddBtn"
-                      onclick="handleToggle(this)"
+                      onclick="handleToggleBtn(this)"
                      type="button"
                    >
                      Add
@@ -1609,7 +1694,7 @@ function handleModalCartData(data) {
   $("#PrdImage").attr("src", data?.image);
 }
 
-function handleToggle(el) {
+function handleToggleBtn(el) {
   let parent = el.closest(".resturant_prd_right");
 
   parent.querySelector(".AddBtn").style.display = "none";
