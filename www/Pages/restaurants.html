@@ -11,13 +11,21 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="../assets/css/style.css" />
- 
   </head>
   <body>
     <div class="main animate-fade-in">
-         <div class="top_nav_restuurant rest_reuse">
-            <img src="../assets/image/temp/resturantBanner1.jpeg" alt="">
-            <div class="fixed_sec_ui">
+      <div class="header_nav reuse_head_arrow">
+        <div class="category_left_head">
+          <i class="bi bi-chevron-left"></i>
+          <h4 id="categoryName"></h4>
+        </div>
+        <div onclick="location.href = 'search.html'" class="search_bar">
+          <img src="../assets/image/icons/search2.svg" alt="" />
+        </div>
+      </div>
+      <div class="top_nav_restuurant rest_reuse">
+        <img id="bannerImage" src="" alt="" />
+        <!-- <div class="fixed_sec_ui">
                 <div class="icon_rest">
                     <i class="bi bi-arrow-left-short"></i>
                 </div>
@@ -25,24 +33,20 @@
                     <h4>Biryani</h4>
                     <p><b>7</b> item</p>
                 </div>
-            </div>
-            <!-- <div class="headings_resturent">
+            </div> -->
+
+        <!-- <div class="headings_resturent">
                 <h4>BIRYANI</h4>
                 <p>Taste these delectable classics, delectable Taste these delectable classics, Taste these delectable classics, Taste these delectable classics, biryanis to make your day.</p>
             </div> -->
-         
-         </div>
-            <div class="bottom_product_sec">
-                <div class="bottom_header">
-                <h4>Restaurants to explore</h4>
-                </div>
-                <div class="bottom_product_box" id="resturantShopProducts">
-               
-                  
+      </div>
 
-                </div>
-            </div>
-
+      <div class="bottom_product_sec">
+        <div class="bottom_header">
+          <h4>Restaurants to explore</h4>
+        </div>
+        <div class="bottom_product_box" id="categoryResturants"></div>
+      </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -52,6 +56,10 @@
       crossorigin="anonymous"
     ></script>
     <script src="../assets/js/script.js"></script>
-  
+    <script>
+ 
+       getCategoryParam();
+       getCategoryResturant();
+    </script>
   </body>
 </html>

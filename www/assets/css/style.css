@@ -1188,9 +1188,14 @@ font-weight: 600;
 }
 
 .top_nav_restuurant img {
-  width: 100%;
-  height: 302px;
-  /* margin-top: 10px; */
+  /* width: 100%;
+  height: 302px; */
+      width: 100%;
+    height: 167px;
+    object-fit: cover;
+    margin-top: 62px;
+    border-radius: 20px;
+    padding: 9px;
 }
 
 .bottom_product_sec {
@@ -1238,7 +1243,7 @@ font-weight: 600;
 .bottom_product_img img {
   width: 130px;
   height: 100px;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 10px;
 }
 
@@ -1310,7 +1315,11 @@ font-weight: 600;
   padding: 15px 20px;
   margin-bottom: 20px;
   padding-bottom: 20px;
+  margin-top: 2.8rem
 
+}
+.reuse_head_arrow i{
+  color: var(--theme-color);
 }
 
 .top_head i {
@@ -1821,6 +1830,7 @@ input[type="radio"] {
 .category_left_head h4 {
   font-size: 15px;
   font-weight: 600;
+  text-transform: capitalize;
 }
 
 .margin_box {

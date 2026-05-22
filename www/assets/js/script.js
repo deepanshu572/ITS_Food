@@ -74,9 +74,8 @@ function handleLogin(e) {
         $("#btnLogin").prop("disabled", false);
       } else {
         alert(response.message || "Something went wrong");
-         $("#btnLogin").prop("disabled", false);
-             $("#btnLogin").html("Login");
-
+        $("#btnLogin").prop("disabled", false);
+        $("#btnLogin").html("Login");
       }
     },
 
@@ -291,10 +290,11 @@ function handleVerification() {
       success: function (response) {
         if (response.status == "success") {
           console.log(response);
+          // alert(response.message);
           localStorage.setItem("data", response.email);
           location.href = "resetPassword.html";
         } else {
-          console.log(response.message);
+          alert(response.message);
           $("#btnVerify").prop("disabled", false);
           $("#btnVerify").html("Continue");
         }
@@ -307,6 +307,8 @@ function handleVerification() {
     });
   } else if (selectedService == "number") {
     let number = $("#mob").val();
+    $("#btnVerify").html("<span class='loader'></span> submitting...");
+    $("#btnVerify").prop("disabled", true);
     $.ajax({
       url: apiUrl,
       method: "POST",
@@ -321,7 +323,7 @@ function handleVerification() {
           localStorage.setItem("data", response.phone);
           location.href = "resetPassword.html";
         } else {
-          console.log(response.message);
+          alert(response.message);
           $("#btnVerify").prop("disabled", false);
           $("#btnVerify").html("Continue");
         }
@@ -350,7 +352,7 @@ function handleUpdatePassword(e) {
   $("#btnReset").prop("disabled", true);
   let selectedData = localStorage.getItem("data");
   let selectedService = localStorage.getItem("selectedService");
-  
+
   $.ajax({
     url: apiUrl,
     method: "POST",
@@ -444,7 +446,7 @@ function getCategory() {
 
         response?.data?.forEach((item) => {
           categoryPrd += `
-       <div class="body_box">
+       <div onclick="handleRenderResturant('${item.id}','${item.name}')" class="body_box">
        <div class="body_img_box">
             <img src="${imageUrl + item?.image}" alt="" />
             </div>
@@ -463,6 +465,11 @@ function getCategory() {
 }
 
 getCategory();
+
+function handleRenderResturant(id, name) {
+  localStorage.setItem("selectedCategory", name);
+  location.href = `restaurants.html?cid=${id}`;
+}
 
 async function handleInput(e) {
   const value = e.target.value;
@@ -669,156 +676,234 @@ function getInputValue() {
   $("#prdSearch").html(getPrdHtml);
 }
 
-function getProduct1() {
-  let getPrdHtml = "";
+function getTopResturant() {
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "json",
+    data: {
+      type: "getTopResturant",
+    },
+    success: function (response) {
+      if (response.status == "success") {
+        console.log(response.data);
+        let getPrdHtml = "";
 
-  const products = [
-    {
-      id: 1,
-      discount: "FLAT ₹150 OFF",
-      liked: true,
-      image: "../assets/image/temp/homePrd1.svg",
-      title: "Food Bazaar Bazaar Bazaar Bazaar Bazaar Rast...",
-      deliveryTime: "36 mins",
-      distance: "3 km",
-    },
-    {
-      id: 2,
-      discount: "FLAT ₹100 OFF",
-      liked: false,
-      image: "../assets/image/temp/homePrd2.svg",
-      title: "Fresh Mart Grocery Store",
-      deliveryTime: "25 mins",
-      distance: "1.5 km",
-    },
-    {
-      id: 3,
-      discount: "UPTO 50% OFF",
-      liked: true,
-      image: "../assets/image/temp/homePrd3.svg",
-      title: "Organic Veggie Hub",
-      deliveryTime: "40 mins",
-      distance: "4 km",
-    },
-    {
-      id: 4,
-      discount: "FREE DELIVERY",
-      liked: false,
-      image:
-        "https://b.zmtcdn.com/data/pictures/5/22411715/8fc8b5070d266246de26f97a6f0e80e2_o2_featured_v2.jpg?output-format=webp",
-      title: "Daily Needs Super Store",
-      deliveryTime: "18 mins",
-      distance: "900 m",
-    },
-    {
-      id: 5,
-      discount: "FLAT ₹200 OFF",
-      liked: true,
-      image:
-        "https://b.zmtcdn.com/data/pictures/6/21466036/9b5ea50c0d48a881b2cd6f3070d7127f_o2_featured_v2.jpg",
-      title: "Mega Food Plaza",
-      deliveryTime: "30 mins",
-      distance: "2.2 km",
-    },
-    {
-      id: 6,
-      discount: "FLAT ₹200 OFF",
-      liked: true,
-      image:
-        "https://b.zmtcdn.com/data/pictures/chains/1/18625991/8fa1a185a369be06f27c0fc9b4adce08_featured_v2.jpg",
-      title: "Mega Food Plaza",
-      deliveryTime: "30 mins",
-      distance: "2.2 km",
-    },
-    {
-      id: 6,
-      discount: "FLAT ₹200 OFF",
-      liked: false,
-      image: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
-      title: "Burger King Point",
-      deliveryTime: "22 mins",
-      distance: "1 km",
-    },
-
-    // 6 MORE ARRAY
-
-    {
-      id: 7,
-      discount: "20% OFF",
-      liked: true,
-      image:
-        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500",
-      title: "Pizza Town",
-      deliveryTime: "28 mins",
-      distance: "2.8 km",
-    },
-    {
-      id: 8,
-      discount: "FREE DELIVERY",
-      liked: false,
-      image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500",
-      title: "Spicy Chicken Hub",
-      deliveryTime: "35 mins",
-      distance: "3.5 km",
-    },
-    {
-      id: 9,
-      discount: "FLAT ₹80 OFF",
-      liked: true,
-      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
-      title: "Healthy Salad Point",
-      deliveryTime: "20 mins",
-      distance: "1.2 km",
-    },
-    {
-      id: 10,
-      discount: "30% OFF",
-      liked: false,
-      image:
-        "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=500",
-      title: "Coffee Cafe",
-      deliveryTime: "15 mins",
-      distance: "700 m",
-    },
-    {
-      id: 11,
-      discount: "BUY 1 GET 1",
-      liked: true,
-      image:
-        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
-      title: "Italian Pizza House",
-      deliveryTime: "32 mins",
-      distance: "2 km",
-    },
-  ];
-
-  products?.forEach((item) => {
-    getPrdHtml += `
+        response.data?.forEach((item) => {
+          getPrdHtml += `
     <div class="product_box">
           <div class="product_top_sec">
             <div class="disc_tag">
-            ${item?.discount}
+            flat 30% OFF
             </div>
             <div class="like">
              <i class="bi bi-bookmark"></i>
             </div>
-           <a href="restaurants.html"> <img  src="${item?.image}" alt="" /></a>
+           <a href="restaurantDetail.html?rid=${item.id}"> <img  src="${imageUrl + item.cover_image}" alt="" /></a>
           </div>
           <div class="product_bottom_sec">
-            <h4>${item?.title}</h4>
+            <h4>${item?.name}</h4>
             <div class="bottom_last_sec">
               <img src="../assets/image/icons/current.svg" alt="" />
-              <h5>${item?.deliveryTime}</h5>
+              <h5>${item?.address}</h5>
               <h5>•</h5>
-              <h5>${item?.distance}</h5>
+              <h5></h5>
             </div>
           </div>
         </div>`;
+        });
+        $("#prd1").html(getPrdHtml);
+      } else {
+        alert(response.message);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.log("AJAX Error:", error);
+    },
   });
-
-  $("#prd1").html(getPrdHtml);
 }
-getProduct1();
+getTopResturant();
+
+function getBottomResturant() {
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "json",
+    data: {
+      type: "getBottomResturant",
+    },
+    success: function (response) {
+      if (response.status == "success") {
+        console.log(response);
+        let restaurants = response?.data;
+        let productContainer = "";
+
+        restaurants.forEach((item, index) => {
+          productContainer += `
+  
+  <div class="product_card">
+      
+
+    <div class="owl-carousel owl-theme product_slider product_slider_${index}">
+
+      
+      ${item.food_images
+        ?.split(",")
+        .map((prd, index) => {
+          let names = item.food_name?.split(",");
+          let prices = item.food_price?.split(",");
+
+          return `
+      <div class="item">
+        <img src="${imageUrl + prd}" alt="${names[index]}">
+
+        <div class="product_txt">
+          ${names[index]} ₹${prices[index]}
+        </div>
+        
+      </div>
+    `;
+        })
+        .join("")}
+
+    </div>
+
+    <div class="product_info">
+     <div class="details">
+      <img src="../assets/image/icons/current.svg" alt="" />
+        <span>item.deliveryTime</span>
+        <span>•</span>
+        <span>item.distance</span>
+      </div>
+      <div class="product_head">
+      <h3>${item?.name}</h3>
+      <div class="product_rate"><i class="bi bi-star-fill"></i> ${item?.avg_rating}</div>
+      </div>
+
+     
+
+      <div class="offer_sec">
+      <div>
+         <div><img src="../assets/image/icons/crown.svg" alt="" /></div> <p>Extra 10% OFF</p>
+         </div>
+        <div class="line"></div>
+        <div>
+        <img src="../assets/image/icons/current.svg" alt="" /><p>   Flash Sale : FLAT 50% OFF</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  `;
+        });
+        $("#prd2").html(productContainer);
+      } else {
+        console.log(response.message);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.log("AJAX Error:", error);
+    },
+  });
+}
+getBottomResturant();
+
+function getCategoryParam() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("cid");
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "JSON",
+    data: {
+      type: "getCategoryParam",
+      id,
+    },
+    success: function (response) {
+      if (response.status == "success") {
+        console.log(response);
+        let data = response?.data?.[0];
+
+        if (data) {
+          let image = imageUrl + data.cover_image;
+          console.log(image);
+
+          $("#categoryName").html(data.name);
+          $("#bannerImage").attr("src", image);
+        }
+      } else {
+        console.log(response.message);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.log("AJAX Err: " + error);
+    },
+  });
+}
+function getCategoryResturant() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("cid");
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "JSON",
+    data: {
+      type: "getCategoryResturant",
+      id,
+    },
+    success: function (response) {
+      if (response.status == "success") {
+        let resturantPrdHtml = "";
+        console.log(response);
+        let resturant = response.data;
+
+        resturant?.forEach((item) => {
+          resturantPrdHtml += `
+       <a href="restaurantDetail.html?rid=${item.id}" class="bottom_product_wrap">
+                        <div class="bottom_product_img">
+                            <img src="${imageUrl+item?.logo}" alt="">
+                        </div>
+                        <div class="bottom_product_txt">
+                            <h4>${item?.name}</h4>
+                            <div class="product_star">
+                                <div class="icon_star">
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+
+                                </div>
+                                <p>(${item.total_reviews})</p>
+                            </div>
+                            <div class="poduct_time">
+                               <i class="bi bi-stopwatch-fill"></i>
+                                <p>36-45 mins </p>
+                            </div>
+                            <p>${item.address}</p>
+                           <div class="product_address">
+                            <p>${item.city}</p>
+                            <p>•</p>
+                            <p>${item.pincode}</p>
+                           </div>
+                        </div>
+                    </a>
+  `;
+        });
+
+        $("#categoryResturants").html(resturantPrdHtml);
+      } else {
+        console.log(response.message);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.log("Ajax err: " + error);
+    },
+  });
+}
+
+// dumy js
+
 function getProduct2() {
   let getSimilarPrdHtml = "";
 
@@ -1296,170 +1381,11 @@ function getCarousel1() {
   `;
   });
 
-  $("#prd2").html(productContainer);
+  // $("#prd2").html(productContainer);
 }
 getCarousel1();
 
-function getRestutantShop() {
-  let resturantPrdHtml = "";
 
-  const products = [
-    {
-      id: 1,
-      discount: "FLAT ₹150 OFF",
-      liked: true,
-      image: "../assets/image/temp/homePrd1.svg",
-      title: "Food Bazaar Bazaar Bazaar Bazaar Bazaar Rast...",
-      deliveryTime: "36 mins",
-      distance: "3 km",
-    },
-    {
-      id: 2,
-      discount: "FLAT ₹100 OFF",
-      liked: false,
-      image: "../assets/image/temp/homePrd2.svg",
-      title: "Fresh Mart Grocery Store",
-      deliveryTime: "25 mins",
-      distance: "1.5 km",
-    },
-    {
-      id: 3,
-      discount: "UPTO 50% OFF",
-      liked: true,
-      image: "../assets/image/temp/homePrd3.svg",
-      title: "Organic Veggie Hub",
-      deliveryTime: "40 mins",
-      distance: "4 km",
-    },
-    {
-      id: 4,
-      discount: "FREE DELIVERY",
-      liked: false,
-      image:
-        "https://b.zmtcdn.com/data/pictures/5/22411715/8fc8b5070d266246de26f97a6f0e80e2_o2_featured_v2.jpg?output-format=webp",
-      title: "Daily Needs Super Store",
-      deliveryTime: "18 mins",
-      distance: "900 m",
-    },
-    {
-      id: 5,
-      discount: "FLAT ₹200 OFF",
-      liked: true,
-      image:
-        "https://b.zmtcdn.com/data/pictures/6/21466036/9b5ea50c0d48a881b2cd6f3070d7127f_o2_featured_v2.jpg",
-      title: "Mega Food Plaza",
-      deliveryTime: "30 mins",
-      distance: "2.2 km",
-    },
-    {
-      id: 6,
-      discount: "FLAT ₹200 OFF",
-      liked: true,
-      image:
-        "https://b.zmtcdn.com/data/pictures/chains/1/18625991/8fa1a185a369be06f27c0fc9b4adce08_featured_v2.jpg",
-      title: "Mega Food Plaza",
-      deliveryTime: "30 mins",
-      distance: "2.2 km",
-    },
-    {
-      id: 6,
-      discount: "FLAT ₹200 OFF",
-      liked: false,
-      image: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
-      title: "Burger King Point",
-      deliveryTime: "22 mins",
-      distance: "1 km",
-    },
-
-    // 6 MORE ARRAY
-
-    {
-      id: 7,
-      discount: "20% OFF",
-      liked: true,
-      image:
-        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500",
-      title: "Pizza Town",
-      deliveryTime: "28 mins",
-      distance: "2.8 km",
-    },
-    {
-      id: 8,
-      discount: "FREE DELIVERY",
-      liked: false,
-      image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500",
-      title: "Spicy Chicken Hub",
-      deliveryTime: "35 mins",
-      distance: "3.5 km",
-    },
-    {
-      id: 9,
-      discount: "FLAT ₹80 OFF",
-      liked: true,
-      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
-      title: "Healthy Salad Point",
-      deliveryTime: "20 mins",
-      distance: "1.2 km",
-    },
-    {
-      id: 10,
-      discount: "30% OFF",
-      liked: false,
-      image:
-        "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=500",
-      title: "Coffee Cafe",
-      deliveryTime: "15 mins",
-      distance: "700 m",
-    },
-    {
-      id: 11,
-      discount: "BUY 1 GET 1",
-      liked: true,
-      image:
-        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
-      title: "Italian Pizza House",
-      deliveryTime: "32 mins",
-      distance: "2 km",
-    },
-  ];
-
-  products?.forEach((item) => {
-    resturantPrdHtml += `
-       <a href="restaurantDetail.html" class="bottom_product_wrap">
-                        <div class="bottom_product_img">
-                            <img src="${item?.image}" alt="">
-                        </div>
-                        <div class="bottom_product_txt">
-                            <h4>${item?.title}</h4>
-                            <div class="product_star">
-                                <div class="icon_star">
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-
-                                </div>
-                                <p>(20896)</p>
-                            </div>
-                            <div class="poduct_time">
-                               <i class="bi bi-stopwatch-fill"></i>
-                                <p>36-45 mins </p>
-                            </div>
-                            <p>North Indian, Kebabs, Biryani, Biryani North Indian, Kebabs, North Indian, Kebabs, North Indian, Kebabs</p>
-                           <div class="product_address">
-                            <p>Hinoo Chowk</p>
-                            <p>•</p>
-                            <p>3 km</p>
-                           </div>
-                        </div>
-                    </a>
-  `;
-  });
-
-  $("#resturantShopProducts").html(resturantPrdHtml);
-}
-getRestutantShop();
 
 function getCarousel2Resturant() {
   const restaurantBanner = [

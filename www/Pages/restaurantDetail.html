@@ -17,8 +17,14 @@
   <body>
     <div class="main animate-fade-in">
       <div class="top_header_wrapper">
-        <div class="top_head">
-          <i class="bi bi-arrow-left-short"></i>
+        <div class="header_nav reuse_head_arrow">
+          <div class="category_left_head">
+            <i class="bi bi-chevron-left"></i>
+            <h4>Dessert</h4>
+          </div>
+          <div onclick="location.href = 'home.html'" class="search_bar">
+            <img src="../assets/image/icons/search2.svg" alt="" />
+          </div>
         </div>
         <div class="shop_data bottom_product_txt">
           <h4><i class="bi bi-shop"></i> Rasoi Ghar</h4>
@@ -269,7 +275,9 @@
             <input type="number" value="1" />
             <button>+</button>
           </div>
-          <button onclick="location.href='cart.html'">Add Item | ₹ 145</button>
+          <button onclick="location.href = 'cart.html'">
+            Add Item | ₹ 145
+          </button>
         </div>
       </div>
     </div>
@@ -282,10 +290,9 @@
       id="offcanvasProductBox"
       aria-labelledby="offcanvasProductBoxLabel"
     >
-      <div class="offcanvas-body small" id="ProductData">
-      
-      </div>
+      <div class="offcanvas-body small" id="ProductData"></div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
@@ -295,28 +302,59 @@
     <script src="../assets/js/owl.carousel.min.js"></script>
     <script src="../assets/js/script.js"></script>
     <script>
-      $(document).ready(function () {
-        $(".product_slider").owlCarousel({
-          loop: true,
-          margin: 10,
-          nav: false,
-          dots: true,
-          autoplay: true,
-          // autoplayTimeout: 2500,
 
-          responsive: {
-            0: {
-              items: 1,
-            },
-            768: {
-              items: 1,
-            },
-            1024: {
-              items: 1,
-            },
-          },
-        });
-      });
+      function getResturantPrd() {
+        const params = new URLSearchParams(window.location.search);
+
+        const rid = params.get("rid");
+        const pid = params.get("pid");
+        if (rid) {
+          if (!pid) {
+            $.ajax({
+              url: apiUrl,
+              method: "POST",
+              dataType: "JSON",
+              data: {
+                type: "selectedResturants",
+                id:rid,
+              },
+              success: function (response) {
+                if (response.status == "succces") {
+                  console.log(response);
+                } else {
+                  console.log(response.message);
+                }
+              },
+              error: function (xhr, status, error) {
+                console.log("AJAX Err: " + error);
+              },
+            });
+          } else {
+            $.ajax({
+              url: apiUrl,
+              method: "POST",
+              dataType: "JSON",
+              data: {
+                type: "selectedResturantsPrd",
+              },
+              success: function (response) {
+                if (response.status == "succces") {
+                  console.log(response);
+                } else {
+                  console.log(response.message);
+                }
+              },
+              error: function (xhr, status, error) {
+                console.log("AJAX Err: " + error);
+              },
+            });
+          }
+        } else {
+          console.log("something wents wrong on params");
+        }
+      }
+      
+      getResturantPrd();
     </script>
   </body>
 </html>
