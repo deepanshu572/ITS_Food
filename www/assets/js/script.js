@@ -2,27 +2,75 @@ const apiUrl = "http://localhost/ITS_Food_Backend/app/api/";
 const imageUrl = "http://localhost/ITS_Food_Backend/admin/";
 const userId = localStorage.getItem("userId");
 console.log("done!");
-$(document).ready(function () {
-  $(".product_slider").owlCarousel({
-    loop: true,
-    margin: 10,
-    nav: false,
-    dots: true,
-    autoplay: true,
-    // autoplayTimeout: 5500,
+// $(document).ready(function () {
+//   $(".product_slider").owlCarousel({
+//     loop: true,
+//     margin: 10,
+//     nav: false,
+//     dots: true,
+//     autoplay: true,
+//     // autoplayTimeout: 5500,
 
-    responsive: {
-      0: {
-        items: 1,
-      },
-      768: {
-        items: 1,
-      },
-      1024: {
-        items: 1,
-      },
-    },
-  });
+//     responsive: {
+//       0: {
+//         items: 1,
+//       },
+//       768: {
+//         items: 1,
+//       },
+//       1024: {
+//         items: 1,
+//       },
+//     },
+//   });
+// });
+
+
+$(document).ready(function () {
+
+  // check owl exists
+  if ($.fn.owlCarousel) {
+
+    $(".product_slider").each(function () {
+
+      // destroy if already initialized
+      if ($(this).hasClass("owl-loaded")) {
+        $(this).trigger("destroy.owl.carousel");
+        $(this).removeClass("owl-loaded");
+        $(this).find(".owl-stage-outer").children().unwrap();
+      }
+
+      // init carousel
+      $(this).owlCarousel({
+        loop: true,
+        margin: 10,
+        nav: false,
+        dots: true,
+        autoplay: true,
+        autoplayTimeout: 5500,
+        autoplayHoverPause: true,
+        smartSpeed: 600,
+
+        responsive: {
+          0: {
+            items: 1
+          },
+          768: {
+            items: 1
+          },
+          1024: {
+            items: 1
+          }
+        }
+
+      });
+
+    });
+
+  } else {
+    console.log("Owl Carousel file not loaded");
+  }
+
 });
 
 function handleToggle(name, inpName) {
@@ -70,7 +118,7 @@ function handleLogin(e) {
 
         localStorage.setItem("userId", response?.data?.id);
 
-        location.href = "home.html";
+        location.href = "welcome.html";
         $("#btnLogin").prop("disabled", false);
       } else {
         alert(response.message || "Something went wrong");
@@ -208,8 +256,15 @@ function handleOtpRegister(e) {
     });
     load = false;
 
-    location.href = "home.html";
+    location.href = "welcome.html";
     $("#otpBtn").prop("disabled", false);
+  }
+
+  else{
+    load = false;
+     $("#otpBtn").html("Verify Otp");
+    $("#otpBtn").prop("disabled", false);
+    alert("not matched your otp : " + Otp);
   }
 }
 
@@ -464,7 +519,7 @@ function getCategory() {
   });
 }
 
-getCategory();
+
 
 function handleRenderResturant(id, name) {
   localStorage.setItem("selectedCategory", name);
@@ -696,7 +751,7 @@ function getTopResturant() {
             <div class="disc_tag">
             flat 30% OFF
             </div>
-            <div class="like">
+            <div onclick="handleSaveData(${item.id},'restaurant')" class="like" id="shop${item.id}">
              <i class="bi bi-bookmark"></i>
             </div>
            <a href="restaurantDetail.html?rid=${item.id}"> <img  src="${imageUrl + item.cover_image}" alt="" /></a>
@@ -713,6 +768,7 @@ function getTopResturant() {
         </div>`;
         });
         $("#prd1").html(getPrdHtml);
+        getSavedProduct("restaurant");
       } else {
         alert(response.message);
       }
@@ -722,7 +778,7 @@ function getTopResturant() {
     },
   });
 }
-getTopResturant();
+
 
 function getBottomResturant() {
   $.ajax({
@@ -750,12 +806,14 @@ function getBottomResturant() {
       ${item.food_images
         ?.split(",")
         .map((prd, index) => {
+          let prdId = item.food_id?.split(",");
           let names = item.food_name?.split(",");
           let prices = item.food_price?.split(",");
 
           return `
+          
       <div class="item">
-        <img src="${imageUrl + prd}" alt="${names[index]}">
+        <img  onclick="location.href='restaurantDetail.html?rid=${item?.id}&pid=${prdId[index]}'" src="${imageUrl + prd}" alt="${names[index]}">
 
         <div class="product_txt">
           ${names[index]} ₹${prices[index]}
@@ -806,7 +864,7 @@ function getBottomResturant() {
     },
   });
 }
-getBottomResturant();
+
 
 function getCategoryParam() {
   const params = new URLSearchParams(window.location.search);
@@ -861,7 +919,7 @@ function getCategoryResturant() {
           resturantPrdHtml += `
        <a href="restaurantDetail.html?rid=${item.id}" class="bottom_product_wrap">
                         <div class="bottom_product_img">
-                            <img src="${imageUrl+item?.logo}" alt="">
+                            <img src="${imageUrl + item?.logo}" alt="">
                         </div>
                         <div class="bottom_product_txt">
                             <h4>${item?.name}</h4>
@@ -901,6 +959,460 @@ function getCategoryResturant() {
     },
   });
 }
+
+function getResturantData() {
+  const params = new URLSearchParams(window.location.search);
+
+  const rid = params.get("rid");
+
+  $.ajax({
+    url: apiUrl,
+    type: "POST",
+    dataType: "JSON",
+    data: {
+      type: "getResturantData",
+      id: rid,
+    },
+    success: function (response) {
+      if (response.status == "success") {
+        console.log(response);
+        let resturant = response.data[0];
+        let resturantHtml = "";
+
+        resturantHtml += `<h4><i class="bi bi-shop"></i> ${resturant.name}</h4>
+          <p>
+            <i class="bi bi-geo-alt-fill"></i> ${resturant.address},
+          </p>
+          <div class="poduct_time">
+            <i class="bi bi-stopwatch-fill"></i>
+            <p>36-45 mins</p>
+          </div>
+          <div class="product_shop_flex">
+            <div class="product_address">
+              <p><i class="bi bi-geo-fill"></i></p>
+              <p>${resturant.city} ${resturant.state}</p>
+              
+            </div>
+            <div class="product_star">
+              <div class="icon_star">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <p>(${resturant.total_reviews})</p>
+            </div>
+          </div>`;
+
+        $("#shopDetail").html(resturantHtml);
+      } else {
+        console.log(response.message);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.log("AJAX errr: " + error);
+    },
+  });
+}
+function getSavedProduct(itemtype) {
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "JSON",
+    data: {
+      type: "getSavedProduct",
+      id: userId,
+      itemType: itemtype,
+    },
+    success: function (response) {
+      if (response.status == "success") {
+        let savedData = response.data;
+        savedData?.forEach((item) => {
+          if (itemtype == "food") {
+            $(`#btn${item.item_id}`).addClass("fill-select");
+
+            $(`#btn${item.item_id} i`)
+              .addClass("bi-bookmark-fill")
+              .removeClass("bi-bookmark");
+
+            $(`#btn${item.item_id} p`).html("Saved");
+          } else {
+            $(`#shop${item.item_id}`).addClass("fill-select");
+            $(`#shop${item.item_id} i`)
+              .addClass("bi-bookmark-fill")
+              .removeClass("bi-bookmark");
+          }
+        });
+      } else {
+        console.log(response.message);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.log("AJX err :" + error);
+    },
+  });
+}
+function getProduct() {
+  const params = new URLSearchParams(window.location.search);
+
+  const rid = params.get("rid");
+  const pid = params.get("pid");
+  if (rid) {
+    $.ajax({
+      url: apiUrl,
+      method: "POST",
+      dataType: "JSON",
+      data: {
+        type: "selectedResturants",
+        id: rid,
+      },
+      success: function (response) {
+        if (response.status == "success") {
+          let Allproducts = response.data;
+          if(pid){
+                 Allproducts =  response.data?.filter((item)=>item.id !==pid);
+          }
+          $(".selectedPrd").css("display","none");
+        
+          let resturantPrdHtml = "";
+
+          Allproducts?.forEach((item) => {
+            resturantPrdHtml += `
+          
+          <div class="resturant_products" >
+          
+            <div class="resturant_prd_left">
+            
+              ${
+                item.food_type == "veg"
+                  ? `<img src="../assets/image/icons/success.svg" alt="">`
+                  : ""
+              }            
+              ${
+                item.food_type == "nonveg"
+                  ? `<img src="../assets/image/icons/failed.svg" alt="">`
+                  : ""
+              }            
+                  
+              
+              
+              <h4>${item?.name}</h4>
+              
+              <p>₹${item?.base_price}</p>
+
+              <div class="prd_star">
+                <i class="bi bi-star-fill"></i>
+                <p>${item?.rating}</p>
+                <p>(${item?.reviews})</p>
+              </div>
+
+              <div id="btn${item.id}" onclick="handleSaveData(${item.id},'food')" class="save_btn">
+                <i class="bi bi-bookmark"></i>
+                <p>Save to Eatlist</p>
+              </div>
+
+              <div class="desc_prd">
+                <p>
+                  ${item?.description}
+                  <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasProductBox" aria-controls="offcanvasProductBox">more</button>
+                </p>
+              </div>
+
+            </div>
+
+            <div class="resturant_prd_right">
+            
+              <img onclick='handleModalData(${JSON.stringify(item)})' data-bs-toggle="offcanvas" data-bs-target="#offcanvasProductBox" aria-controls="offcanvasProductBox" src="${imageUrl}${item?.image}" alt="${item?.name}">
+
+             ${
+               !item?.varient
+                 ? `<div
+                   class="btn_add_data"
+                   onclick='handleModalCartData(${JSON.stringify(item)})'
+                   type="button"
+                   data-bs-toggle="offcanvas"
+                   data-bs-target="#offcanvasProductModal"
+                   aria-controls="offcanvasProductModal"
+                 >
+                   Add
+                 </div>`
+                 : ` <div
+                     class="btn_add_data AddBtn"
+                     id="AddBtn"
+                      onclick="handleToggleBtn(this)"
+                     type="button"
+                   >
+                     Add
+                   </div>
+                   <div class="btn_add_data button_data " style="display : none;">
+                     <button class="plus">-</button>
+                     <input type="number" value="1" />
+                     <button>+</button>
+                   </div>`
+             }
+       
+
+                    </div>
+
+                  </div>
+
+                `;
+          });
+
+          $("#resturantProduct").html(resturantPrdHtml);
+          getSavedProduct("food");
+        } else {
+          console.log(response.message);
+        }
+      },
+
+      error: function (xhr, status, error) {
+        console.log("AJAX Err: " + error);
+      },
+    });
+  } else {
+    console.log("something wents wrong on params");
+  }
+
+  if (pid) {
+    $.ajax({
+      url: apiUrl,
+      method: "POST",
+      dataType: "JSON",
+      data: {
+        type: "selectedResturantsPrd",
+        id: pid,
+      },
+      success: function (response) {
+        if (response.status == "success") {
+          let products = response.data[0];
+          $("#prdName").html(products.name);
+          let selectedPrdHtml = "";
+
+          selectedPrdHtml += `
+          
+          <div class="resturant_products" >
+          
+            <div class="resturant_prd_left">
+            
+              ${
+                products.food_type == "veg"
+                  ? `<img src="../assets/image/icons/success.svg" alt="">`
+                  : ""
+              }            
+              ${
+                products.food_type == "nonveg"
+                  ? `<img src="../assets/image/icons/failed.svg" alt="">`
+                  : ""
+              }            
+                  
+              
+              
+              <h4>${products?.name}</h4>
+              
+              <p>₹${products?.base_price}</p>
+
+              <div class="prd_star">
+                <i class="bi bi-star-fill"></i>
+                <p>${products?.rating}</p>
+                <p>(${products?.reviews})</p>
+              </div>
+
+              <div id="btn${products.id}" onclick="handleSaveData(${products.id},'food')" class="save_btn">
+                <i class="bi bi-bookmark"></i>
+                <p>Save to Eatlist</p>
+              </div>
+
+              <div class="desc_prd">
+                <p>
+                  ${products?.description}
+                  <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasProductBox" aria-controls="offcanvasProductBox">more</button>
+                </p>
+              </div>
+
+            </div>
+
+            <div class="resturant_prd_right">
+            
+              <img onclick='handleModalData(${JSON.stringify(products)})' data-bs-toggle="offcanvas" data-bs-target="#offcanvasProductBox" aria-controls="offcanvasProductBox" src="${imageUrl}${products?.image}" alt="${products?.name}">
+
+             ${
+               products?.varient
+                 ? `<div
+                   class="btn_add_data"
+                   onclick='handleModalCartData(${JSON.stringify(products)})'
+                   type="button"
+                   data-bs-toggle="offcanvas"
+                   data-bs-target="#offcanvasProductModal"
+                   aria-controls="offcanvasProductModal"
+                 >
+                   Add
+                 </div>`
+                 : ` <div
+                     class="btn_add_data AddBtn"
+                     id="AddBtn"
+                      onclick="handleToggleBtn(this)"
+                     type="button"
+                   >
+                     Add
+                   </div>
+                   <div class="btn_add_data button_data " style="display : none;">
+                     <button class="plus">-</button>
+                     <input type="number" value="1" />
+                     <button>+</button>
+                   </div>`
+             }
+       
+
+                    </div>
+
+                  </div>
+
+                `;
+
+          $("#selectedProduct").html(selectedPrdHtml);
+        } else {
+          console.log(response.message);
+        }
+      },
+      error: function (xhr, status, error) {
+        console.log("AJAX Err: " + error);
+      },
+    });
+  } else {
+    console.log("something wents wrong on params");
+  }
+}
+
+function handleModalData(data) {
+  console.log(data);
+  let productDataHtml = "";
+  productDataHtml += `  <img
+          src="${imageUrl + data?.image}"
+          alt=""
+        />
+        <div class="product_wrapper">
+          <div class="flex_wrapper">
+            <div class="resturant_prd_left">
+              <img src="../assets/image/icons/success.svg" alt="" />
+
+              <h4>${data?.name}</h4>
+
+              <p>₹${data?.base_price}</p>
+
+              <div class="prd_star">
+                <i class="bi bi-star-fill"></i>
+                <p>${data?.rating}</p>
+                <p>(${data?.reviews})</p>
+              </div>
+            </div>
+            <button>Add</button>
+          </div>
+          <p>
+               ${data?.description}
+          </p>
+        </div>`;
+
+  $("#ProductData").html(productDataHtml);
+}
+
+function handleSaveData(itemId, itemType) {
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "JSON",
+    data: {
+      type: "handleSaveData",
+      itemId,
+      itemType,
+      userId,
+    },
+    success: function (response) {
+      if (response.status == "success") {
+        if (itemType == "food") {
+          if (response.queryName == "delete") {
+            $(`#btn${itemId}`).removeClass("fill-select");
+            $(`#btn${itemId} i`).removeClass("bi-bookmark-fill");
+            $(`#btn${itemId} i`).addClass("bi-bookmark");
+            $(`#btn${itemId} p`).html("Save To Eatlist");
+          } else {
+            $(`#btn${itemId}`).addClass("fill-select");
+            $(`#btn${itemId} i`).removeClass("bi-bookmark");
+            $(`#btn${itemId} i`).addClass("bi-bookmark-fill");
+            $(`#btn${itemId} p`).html("Saved");
+          }
+        } else {
+          if (response.queryName == "delete") {
+            $(`#shop${itemId}`).removeClass("fill-select");
+            $(`#shop${itemId} i`)
+              .removeClass("bi-bookmark-fill")
+              .addClass("bi-bookmark");
+          } else {
+             $(`#shop${itemId}`).addClass("fill-select");
+            $(`#shop${itemId} i`)
+              .addClass("bi-bookmark-fill")
+              .removeClass("bi-bookmark");
+          }
+        }
+      } else {
+        console.log(response.message);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.log("AJAX err:" + error);
+    },
+  });
+}
+
+
+function handleModalCartData(data) {
+  $("#prdNameModal").text(data?.name);
+  $("#PrdImage").attr("src", imageUrl+data?.image);
+  $("#PrdImage").attr("src", imageUrl+data?.image);
+
+  $.ajax({
+    url: apiUrl,
+    method:"POST",
+    dataType:"JSON",
+    data:{
+      type:"getVarientData",
+      id:data.id
+    },
+    success:function (response) {
+      if(response.status =="success"){
+          console.log(response.data);
+          let varientData = response.data;
+          let varientHtml = '';
+          varientData.forEach((item)=>{
+            varientHtml+=`
+                <label for="varient${item.id}" class="modal_resturant_selection_box">
+              <div class="modal_resturant_left">
+                <img src="../assets/image/icons/failed.svg" alt="" />
+                <h5>${item.variant_name}</h5>
+              </div>
+              <div class="modal_resturant_right">
+                <h5>₹ ${item.price}</h5>
+                <input type="radio" id="varient${item.id}" name="selectVarient" />
+              </div>
+            </label>`;
+          });
+
+          $("#varientData").html(varientHtml);
+      }else{
+         console.log(response.message);
+      }
+      
+    },
+    error: function (xhr,status,error) {
+       console.log("AJAX error : "+ error);
+      
+    }
+  })
+}
+
+
+
 
 // dumy js
 
@@ -1385,8 +1897,6 @@ function getCarousel1() {
 }
 getCarousel1();
 
-
-
 function getCarousel2Resturant() {
   const restaurantBanner = [
     {
@@ -1437,188 +1947,7 @@ function getCarousel2Resturant() {
 }
 getCarousel2Resturant();
 
-function getRestutantProduct() {
-  let resturantPrdHtml = "";
-  let similarPrdHtml = "";
 
-  const products = [
-    {
-      id: 1,
-      name: "Veg Biryani",
-      price: "135",
-      rating: 3.5,
-      reviews: 25,
-      liked: true,
-      varient: false,
-      image: "../assets/image/temp/homePrd1.svg",
-      description:
-        "A flavorful and aromatic rice dish infused with rich spices and fresh vegetables.",
-    },
-    {
-      id: 2,
-      name: "Chicken Burger",
-      price: "189",
-      rating: 4.2,
-      reviews: 48,
-      liked: false,
-      varient: false,
-      image: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
-      description:
-        "Juicy chicken burger loaded with cheese, lettuce, and signature sauces.",
-    },
-    {
-      id: 3,
-      name: "Cheese Pizza",
-      price: "299",
-      rating: 4.5,
-      reviews: 70,
-      liked: true,
-      varient: true,
-      image:
-        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
-      description:
-        "Loaded with mozzarella cheese and baked to perfection with fresh toppings.",
-    },
-    {
-      id: 4,
-      name: "Healthy Salad",
-      price: "120",
-      rating: 4.0,
-      reviews: 18,
-      liked: false,
-      varient: true,
-      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
-      description:
-        "Fresh and healthy salad made with organic vegetables and special dressing.",
-    },
-  ];
-
-  products?.forEach((item) => {
-    resturantPrdHtml += `
-    
-    <div class="resturant_products" >
-    
-      <div class="resturant_prd_left">
-      
-        <img  src="../assets/image/icons/success.svg" alt="" />
-        
-        <h4>${item?.name}</h4>
-        
-        <p>₹${item?.price}</p>
-
-        <div class="prd_star">
-          <i class="bi bi-star-fill"></i>
-          <p>${item?.rating}</p>
-          <p>(${item?.reviews})</p>
-        </div>
-
-        <div class="save_btn ${item?.liked ? "fill-select" : ""}">
-          <i class="bi ${item?.liked ? "bi-bookmark-fill" : "bi-bookmark"}"></i>
-          <p>${item?.liked ? "Saved" : "Save to Eatlist"}</p>
-        </div>
-
-        <div class="desc_prd">
-          <p>
-            ${item?.description}
-            <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasProductBox" aria-controls="offcanvasProductBox">more</button>
-          </p>
-        </div>
-
-      </div>
-
-      <div class="resturant_prd_right">
-      
-        <img onclick='handleModalData(${JSON.stringify(item)})' data-bs-toggle="offcanvas" data-bs-target="#offcanvasProductBox" aria-controls="offcanvasProductBox" src="${item?.image}" alt="${item?.name}">
-
-             ${
-               item?.varient
-                 ? `<div
-                   class="btn_add_data"
-                   onclick='handleModalCartData(${JSON.stringify(item)})'
-                   type="button"
-                   data-bs-toggle="offcanvas"
-                   data-bs-target="#offcanvasProductModal"
-                   aria-controls="offcanvasProductModal"
-                 >
-                   Add
-                 </div>`
-                 : ` <div
-                     class="btn_add_data AddBtn"
-                     id="AddBtn"
-                      onclick="handleToggleBtn(this)"
-                     type="button"
-                   >
-                     Add
-                   </div>
-                   <div class="btn_add_data button_data " style="display : none;">
-                     <button class="plus">-</button>
-                     <input type="number" value="1" />
-                     <button>+</button>
-                   </div>`
-             }
-       
-
-      </div>
-
-    </div>
-
-  `;
-    similarPrdHtml += ` <div class="similar_product_box">
-              <div class="similar_prd_img">
-                <img src="${item?.image}" alt="">
-                <button>+</button>
-              </div>
-              <div class="similar_prd_txt">
-                <h5>${item?.name}</h5>
-                 <span>
-                <del>₹500</del>
-              <p>₹${item?.price}</p>
-              </span>
-              </div>
-            </div>`;
-  });
-
-  $("#resturantProduct").html(resturantPrdHtml);
-  $("#recomendationPrd").html(similarPrdHtml);
-}
-getRestutantProduct();
-
-function handleModalData(data) {
-  console.log(data);
-  let productDataHtml = "";
-  productDataHtml += `  <img
-          src="${data?.image}"
-          alt=""
-        />
-        <div class="product_wrapper">
-          <div class="flex_wrapper">
-            <div class="resturant_prd_left">
-              <img src="../assets/image/icons/success.svg" alt="" />
-
-              <h4>${data?.name}</h4>
-
-              <p>₹${data?.price}</p>
-
-              <div class="prd_star">
-                <i class="bi bi-star-fill"></i>
-                <p>${data?.rating}</p>
-                <p>(${data?.reviews})</p>
-              </div>
-            </div>
-            <button>Add</button>
-          </div>
-          <p>
-               ${data?.description}
-          </p>
-        </div>`;
-
-  $("#ProductData").html(productDataHtml);
-}
-
-function handleModalCartData(data) {
-  $("#prdName").text(data?.name);
-  $("#PrdImage").attr("src", data?.image);
-}
 
 function handleToggleBtn(el) {
   let parent = el.closest(".resturant_prd_right");
@@ -2148,8 +2477,4 @@ function getOrderDetail() {
   });
 
   $("#prdData").html(prdDataHtml);
-
-  // alert(id);
-
-  // alert();
 }

@@ -26,36 +26,7 @@
             <img src="../assets/image/icons/search2.svg" alt="" />
           </div>
         </div>
-        <div class="shop_data bottom_product_txt">
-          <h4><i class="bi bi-shop"></i> Rasoi Ghar</h4>
-          <p>
-            <i class="bi bi-geo-alt-fill"></i> North Indian, Kebabs, Biryani,
-            T...
-          </p>
-          <div class="poduct_time">
-            <i class="bi bi-stopwatch-fill"></i>
-            <p>36-45 mins</p>
-          </div>
-          <div class="product_shop_flex">
-            <div class="product_address">
-              <p><i class="bi bi-geo-fill"></i></p>
-              <p>Hinoo Chowk</p>
-              <p>•</p>
-
-              <p>3 km</p>
-            </div>
-            <div class="product_star">
-              <div class="icon_star">
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-                <i class="bi bi-star-fill"></i>
-              </div>
-              <p>(20896)</p>
-            </div>
-          </div>
-        </div>
+        <div class="shop_data bottom_product_txt" id="shopDetail"></div>
       </div>
       <div class="crausel_detail_shop" id="shopDetailCrousel"></div>
 
@@ -113,18 +84,21 @@
         </button>
       </div>
 
+      <div class="shop_detail_product selectedPrd">
+        <div class="header_detail">
+          <h4>Looking for “<b id="prdName"></b>”</h4>
+          <i class="bi bi-chevron-down"></i>
+        </div>
+        <div class="resturant_product_wrapper" id="selectedProduct"></div>
+      </div>
       <div class="shop_detail_product">
         <div class="header_detail">
-          <h4>Looking for “Biryani” (4)</h4>
+          <h4>Recomendation for you</h4>
           <i class="bi bi-chevron-down"></i>
         </div>
         <div class="resturant_product_wrapper" id="resturantProduct"></div>
       </div>
     </div>
-
-    <!-- <div class="footer_img">
-      <img src="../assets/image/footer_img.svg" alt="" />
-    </div> -->
 
     <!-- filter1 -->
     <div
@@ -219,7 +193,7 @@
         <div class="left_modal_head">
           <img id="PrdImage" src="" alt="" />
           <h5 class="offcanvas-title" id="offcanvasProductModalLabel">
-            <span id="prdName">Chicken Biryani</span>
+            <span id="prdNameModal">Chicken Biryani</span>
           </h5>
         </div>
         <button
@@ -246,7 +220,7 @@
             Qantity : Select any
             <p id="num">1</p>
           </h5>
-          <div class="selection_wrap">
+          <div class="selection_wrap" id="varientData">
             <label for="selectHalf" class="modal_resturant_selection_box">
               <div class="modal_resturant_left">
                 <img src="../assets/image/icons/failed.svg" alt="" />
@@ -302,59 +276,8 @@
     <script src="../assets/js/owl.carousel.min.js"></script>
     <script src="../assets/js/script.js"></script>
     <script>
-
-      function getResturantPrd() {
-        const params = new URLSearchParams(window.location.search);
-
-        const rid = params.get("rid");
-        const pid = params.get("pid");
-        if (rid) {
-          if (!pid) {
-            $.ajax({
-              url: apiUrl,
-              method: "POST",
-              dataType: "JSON",
-              data: {
-                type: "selectedResturants",
-                id:rid,
-              },
-              success: function (response) {
-                if (response.status == "succces") {
-                  console.log(response);
-                } else {
-                  console.log(response.message);
-                }
-              },
-              error: function (xhr, status, error) {
-                console.log("AJAX Err: " + error);
-              },
-            });
-          } else {
-            $.ajax({
-              url: apiUrl,
-              method: "POST",
-              dataType: "JSON",
-              data: {
-                type: "selectedResturantsPrd",
-              },
-              success: function (response) {
-                if (response.status == "succces") {
-                  console.log(response);
-                } else {
-                  console.log(response.message);
-                }
-              },
-              error: function (xhr, status, error) {
-                console.log("AJAX Err: " + error);
-              },
-            });
-          }
-        } else {
-          console.log("something wents wrong on params");
-        }
-      }
-      
-      getResturantPrd();
+      getProduct();
+      getResturantData();
     </script>
   </body>
 </html>

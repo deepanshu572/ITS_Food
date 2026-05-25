@@ -845,14 +845,20 @@ font-weight: 600;
 
 .like {
   position: absolute;
-  right: 0px;
-  top: 0px;
+     right: 5px;
+    top: 5px;
   color: rgb(255, 255, 255);
-  width: 35px;
-  height: 35px;
+  width: 25px;
+  height: 25px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 50%;
+      background: #45454591;
+}
+.like i{
+  font-size: 12px;
+  
 }
 
 .bottom_last_sec {
@@ -3209,4 +3215,7 @@ a:hover{
 }
 .filter_tab_box button:hover{
   background-color: rgba(243, 243, 243, 0.705);
+}
+.fill_shop i{
+  color:var(--theme-color) !important;
 }
