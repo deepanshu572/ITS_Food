@@ -25,14 +25,10 @@ console.log("done!");
 //   });
 // });
 
-
 $(document).ready(function () {
-
   // check owl exists
   if ($.fn.owlCarousel) {
-
     $(".product_slider").each(function () {
-
       // destroy if already initialized
       if ($(this).hasClass("owl-loaded")) {
         $(this).trigger("destroy.owl.carousel");
@@ -53,24 +49,20 @@ $(document).ready(function () {
 
         responsive: {
           0: {
-            items: 1
+            items: 1,
           },
           768: {
-            items: 1
+            items: 1,
           },
           1024: {
-            items: 1
-          }
-        }
-
+            items: 1,
+          },
+        },
       });
-
     });
-
   } else {
     console.log("Owl Carousel file not loaded");
   }
-
 });
 
 function handleToggle(name, inpName) {
@@ -258,11 +250,9 @@ function handleOtpRegister(e) {
 
     location.href = "welcome.html";
     $("#otpBtn").prop("disabled", false);
-  }
-
-  else{
+  } else {
     load = false;
-     $("#otpBtn").html("Verify Otp");
+    $("#otpBtn").html("Verify Otp");
     $("#otpBtn").prop("disabled", false);
     alert("not matched your otp : " + Otp);
   }
@@ -518,8 +508,6 @@ function getCategory() {
     },
   });
 }
-
-
 
 function handleRenderResturant(id, name) {
   localStorage.setItem("selectedCategory", name);
@@ -779,7 +767,6 @@ function getTopResturant() {
   });
 }
 
-
 function getBottomResturant() {
   $.ajax({
     url: apiUrl,
@@ -864,7 +851,6 @@ function getBottomResturant() {
     },
   });
 }
-
 
 function getCategoryParam() {
   const params = new URLSearchParams(window.location.search);
@@ -1070,11 +1056,13 @@ function getProduct() {
       success: function (response) {
         if (response.status == "success") {
           let Allproducts = response.data;
-          if(pid){
-                 Allproducts =  response.data?.filter((item)=>item.id !==pid);
+          if (pid) {
+            Allproducts = response.data?.filter((item) => item.id !== pid);
           }
-          $(".selectedPrd").css("display","none");
-        
+          if (!pid) {
+            $(".selectedPrd").css("display", "none");
+          }
+
           let resturantPrdHtml = "";
 
           Allproducts?.forEach((item) => {
@@ -1124,7 +1112,7 @@ function getProduct() {
             <div class="resturant_prd_right">
             
               <img onclick='handleModalData(${JSON.stringify(item)})' data-bs-toggle="offcanvas" data-bs-target="#offcanvasProductBox" aria-controls="offcanvasProductBox" src="${imageUrl}${item?.image}" alt="${item?.name}">
-
+                  
              ${
                !item?.varient
                  ? `<div
@@ -1238,7 +1226,7 @@ function getProduct() {
               <img onclick='handleModalData(${JSON.stringify(products)})' data-bs-toggle="offcanvas" data-bs-target="#offcanvasProductBox" aria-controls="offcanvasProductBox" src="${imageUrl}${products?.image}" alt="${products?.name}">
 
              ${
-               products?.varient
+               !products?.varient
                  ? `<div
                    class="btn_add_data"
                    onclick='handleModalCartData(${JSON.stringify(products)})'
@@ -1349,7 +1337,7 @@ function handleSaveData(itemId, itemType) {
               .removeClass("bi-bookmark-fill")
               .addClass("bi-bookmark");
           } else {
-             $(`#shop${itemId}`).addClass("fill-select");
+            $(`#shop${itemId}`).addClass("fill-select");
             $(`#shop${itemId} i`)
               .addClass("bi-bookmark-fill")
               .removeClass("bi-bookmark");
@@ -1365,28 +1353,28 @@ function handleSaveData(itemId, itemType) {
   });
 }
 
-
 function handleModalCartData(data) {
   $("#prdNameModal").text(data?.name);
-  $("#PrdImage").attr("src", imageUrl+data?.image);
-  $("#PrdImage").attr("src", imageUrl+data?.image);
+  $("#PrdImage").attr("src", imageUrl + data?.image);
 
   $.ajax({
     url: apiUrl,
-    method:"POST",
-    dataType:"JSON",
-    data:{
-      type:"getVarientData",
-      id:data.id
+    method: "POST",
+    dataType: "JSON",
+    data: {
+      type: "getVarientData",
+      id: data.id,
     },
-    success:function (response) {
-      if(response.status =="success"){
-          console.log(response.data);
-          let varientData = response.data;
-          let varientHtml = '';
-          varientData.forEach((item)=>{
-            varientHtml+=`
-                <label for="varient${item.id}" class="modal_resturant_selection_box">
+    success: function (response) {
+      if (response.status == "success") {
+        let varientData = response.data;
+        let varientHtml = "";
+        let btnHtml = "";
+        let foodId = varientData[0].food_item_id;
+        varientData.forEach((item) => {
+
+          varientHtml += `
+                <label onclick="handleTogglePrice('${item.price}','${item.id}','${item.variant_name}','${varientData[0].food_item_id}')" for="varient${item.id}" class="modal_resturant_selection_box">
               <div class="modal_resturant_left">
                 <img src="../assets/image/icons/failed.svg" alt="" />
                 <h5>${item.variant_name}</h5>
@@ -1396,23 +1384,187 @@ function handleModalCartData(data) {
                 <input type="radio" id="varient${item.id}" name="selectVarient" />
               </div>
             </label>`;
-          });
+        });
+        btnHtml += `
+        
+              <div class="btn_add_data button_data">
+              
+                  <button onclick='decrementCounter(
+                ${JSON.stringify(data)},
+                ${JSON.stringify(varientData)},
+                "${foodId}")' >-</button>
+                  <input id="inp${foodId}" type="number" value="1" />  
+                <button 
+                onclick='incrementCounter(
+                ${JSON.stringify(data)},
+                ${JSON.stringify(varientData)},
+                "${foodId}")' class="plus">+</button>
+          </div>
+          <input id="varientType${foodId}" type="text" style="display: none"/>
+          <input id="varientId${foodId}" type="number" style="display: none"/>
+          <input id="price${foodId}" type="number" style="display: none"/>
+          <button  onclick='renderCartPage(
+          
+              "${foodId}",
+            )'>
+            Add Item | ₹<b id="totalPrice${foodId}"> </b>
+          </button>`;
 
-          $("#varientData").html(varientHtml);
-      }else{
-         console.log(response.message);
+        $("#btnWrapper").html(btnHtml);
+        $("#varientData").html(varientHtml);
+      } else {
+        console.log(response.message);
       }
-      
     },
-    error: function (xhr,status,error) {
-       console.log("AJAX error : "+ error);
-      
-    }
-  })
+    error: function (xhr, status, error) {
+      console.log("AJAX error : " + error);
+    },
+  });
+}
+let qtyValue = 1;
+
+function handleTogglePrice(price,vid, name, id) {
+  $("#totalPrice").html("");
+  $(`#totalPrice${id}`).html(price);
+  $(`#price${id}`).val(price);
+  qtyValue = 1;
+  $(`#inp${id}`).val(qtyValue);
+  $(`#varientType${id}`).val(name);
+  $(`#varientId${id}`).val(vid);
+
 }
 
+function incrementCounter(data, varientData, id) {
+  qtyValue += 1;
+  let priceData = $(`#totalPrice${id}`).text();
+  let varientType = $(`#varientType${id}`).val();
+  let basePrice = $(`#price${id}`).val();
+  let updatedPrice = Number(basePrice) * Number(qtyValue);
+
+  $(`#inp${id}`).val(qtyValue);
+  $(`#totalPrice${id}`).html(updatedPrice);
+
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  let existingItem = cart.find(
+    (item) => item.id == id && item.Type == varientType,
+  );
+
+  if (existingItem) {
+    cart = cart.map((item) => {
+      if (item.id == id && item.Type == varientType) {
+        return {
+          ...item,
+          qty: qtyValue,
+          price: updatedPrice,
+        };
+      }
+
+      return item;
+    });
+  } else {
+    let product = {
+      id: id,
+      data: data,
+      varientData: varientData,
+      price: updatedPrice,
+      qty: qtyValue,
+      Type: varientType,
+    };
+
+    cart.push(product);
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+function decrementCounter(data, varientData, id) {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let priceData = $(`#totalPrice${id}`).text();
+  let varientType = $(`#varientType${id}`).val();
+  let basePrice = $(`#price${id}`).val();
+  let updatedPrice = Number(basePrice) * Number(qtyValue);
+   $(`#inp${id}`).val(qtyValue);
+  $(`#totalPrice${id}`).html(updatedPrice);
+   
+  if (qtyValue == 0) {
+    cart = cart.filter((item) => !(item.id == id && item.Type == varientType));
+    console.log("remove item !");
+     localStorage.setItem("cart", JSON.stringify(cart));
+     return false;
+  }else{
+    qtyValue -= 1;
+  }
+  
+  
 
 
+ 
+
+  let existingItem = cart.find(
+    (item) => item.id == id && item.Type == varientType,
+  );
+
+  if (existingItem) {
+    cart = cart.map((item) => {
+      if (item.id == id && item.Type == varientType) {
+        return {
+          ...item,
+          qty: qtyValue,
+          price: updatedPrice,
+        };
+      }
+
+      return item;
+    });
+  } else {
+    console.log("something wents wrong !");
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+function renderCartPage(fid) {
+ const params = new URLSearchParams(window.location.search);
+
+
+  const rid = params.get("rid");
+  let totalPrice = $(`#totalPrice${fid}`).text();
+  let qty = $(`#inp${fid}`).val();
+   let price = Math.floor($(`#price${fid}`).val());
+   let vid = $(`#varientId${fid}`).val();
+    console.log(vid,price);
+
+  $.ajax({
+    url:apiUrl,
+    method:"POST",
+    dataType:"JSON",
+    data:{
+      type:"insertCartPage",
+      userId,
+       rid,
+       fid,
+       varId : vid,
+       qty,
+       price,
+       totalPrice,
+    },
+    success: function (response) {
+        if (response.status === "success") {
+          console.log(response)
+          location.href="cart.html";
+         
+        } else {
+          console.log(response.message || "Something went wrong");
+        }
+      },
+
+      error: function (xhr, status, error) {
+        console.log("AJAX Error:", error);
+      },
+  });
+  
+}
 
 // dumy js
 
@@ -1946,8 +2098,6 @@ function getCarousel2Resturant() {
   $("#shopDetailCrousel").html(bannerContainer);
 }
 getCarousel2Resturant();
-
-
 
 function handleToggleBtn(el) {
   let parent = el.closest(".resturant_prd_right");
