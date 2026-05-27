@@ -14,6 +14,20 @@
     <style>
       .main {
         background: #f7f7f7;
+        height: 100vh;
+      }
+      .not_found{
+                 height: 90vh;
+           margin: 0rem 0 !important;
+      }
+      .not_found button{
+            margin-top: 6px;
+    background: var(--theme-color);
+    color: #fff;
+    border: none;
+    padding: 6px 13px;
+    border-radius: 4px;
+    font-size: 11px;
       }
     </style>
   </head>
@@ -25,7 +39,8 @@
           <h4>Checkout</h4>
         </a>
       </div>
-      <div class="cart_data">
+      <div id="cartWrap" class="animate-fade-in" style="display: none;">
+      <div class="cart_data" >
         <div
           class="cart_data_sec discount_data alert alert-dismissible fade show"
           role="alert"
@@ -43,7 +58,7 @@
         </div>
         <div class="cart_data_sec cart_data_sec1 ">
      
-          <div class="cart_data_box">
+          <div class="cart_data_box" id="cartData">
             <div class="cart_data_items">
               <div class="cart_data_item_left">
                 <div class="cart_item_img">
@@ -197,7 +212,7 @@
             </div>
         </div> -->
       </div>
-      <div class="footer footer_cart">
+      <div class="footer footer_cart" >
         <div class="footer_cart_wrap">
           <div
             class="footer_cart_left"
@@ -220,6 +235,7 @@
             </button>
           </div>
         </div>
+      </div>
       </div>
     </div>
 
@@ -563,5 +579,8 @@
     <script src="../assets/js/owl.carousel.min.js"></script>
 
     <script src="../assets/js/script.js"></script>
+    <script>
+        getCart();
+    </script>
   </body>
 </html>

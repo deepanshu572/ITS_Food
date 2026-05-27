@@ -1372,7 +1372,6 @@ function handleModalCartData(data) {
         let btnHtml = "";
         let foodId = varientData[0].food_item_id;
         varientData.forEach((item) => {
-
           varientHtml += `
                 <label onclick="handleTogglePrice('${item.price}','${item.id}','${item.variant_name}','${varientData[0].food_item_id}')" for="varient${item.id}" class="modal_resturant_selection_box">
               <div class="modal_resturant_left">
@@ -1390,14 +1389,12 @@ function handleModalCartData(data) {
               <div class="btn_add_data button_data">
               
                   <button onclick='decrementCounter(
-                ${JSON.stringify(data)},
-                ${JSON.stringify(varientData)},
+       
                 "${foodId}")' >-</button>
                   <input id="inp${foodId}" type="number" value="1" />  
                 <button 
                 onclick='incrementCounter(
-                ${JSON.stringify(data)},
-                ${JSON.stringify(varientData)},
+               
                 "${foodId}")' class="plus">+</button>
           </div>
           <input id="varientType${foodId}" type="text" style="display: none"/>
@@ -1423,7 +1420,7 @@ function handleModalCartData(data) {
 }
 let qtyValue = 1;
 
-function handleTogglePrice(price,vid, name, id) {
+function handleTogglePrice(price, vid, name, id) {
   $("#totalPrice").html("");
   $(`#totalPrice${id}`).html(price);
   $(`#price${id}`).val(price);
@@ -1431,10 +1428,9 @@ function handleTogglePrice(price,vid, name, id) {
   $(`#inp${id}`).val(qtyValue);
   $(`#varientType${id}`).val(name);
   $(`#varientId${id}`).val(vid);
-
 }
 
-function incrementCounter(data, varientData, id) {
+function incrementCounter(id) {
   qtyValue += 1;
   let priceData = $(`#totalPrice${id}`).text();
   let varientType = $(`#varientType${id}`).val();
@@ -1445,8 +1441,9 @@ function incrementCounter(data, varientData, id) {
   $(`#totalPrice${id}`).html(updatedPrice);
 
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  console.log(cart);
 
-  let existingItem = cart.find(
+  let existingItem = cart?.find(
     (item) => item.id == id && item.Type == varientType,
   );
 
@@ -1465,8 +1462,6 @@ function incrementCounter(data, varientData, id) {
   } else {
     let product = {
       id: id,
-      data: data,
-      varientData: varientData,
       price: updatedPrice,
       qty: qtyValue,
       Type: varientType,
@@ -1478,28 +1473,23 @@ function incrementCounter(data, varientData, id) {
   localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-function decrementCounter(data, varientData, id) {
+function decrementCounter(id) {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
   let priceData = $(`#totalPrice${id}`).text();
   let varientType = $(`#varientType${id}`).val();
   let basePrice = $(`#price${id}`).val();
   let updatedPrice = Number(basePrice) * Number(qtyValue);
-   $(`#inp${id}`).val(qtyValue);
+  $(`#inp${id}`).val(qtyValue);
   $(`#totalPrice${id}`).html(updatedPrice);
-   
+
   if (qtyValue == 0) {
     cart = cart.filter((item) => !(item.id == id && item.Type == varientType));
     console.log("remove item !");
-     localStorage.setItem("cart", JSON.stringify(cart));
-     return false;
-  }else{
+    localStorage.setItem("cart", JSON.stringify(cart));
+    return false;
+  } else {
     qtyValue -= 1;
   }
-  
-  
-
-
- 
 
   let existingItem = cart.find(
     (item) => item.id == id && item.Type == varientType,
@@ -1525,45 +1515,148 @@ function decrementCounter(data, varientData, id) {
 }
 
 function renderCartPage(fid) {
- const params = new URLSearchParams(window.location.search);
-
+  const params = new URLSearchParams(window.location.search);
 
   const rid = params.get("rid");
   let totalPrice = $(`#totalPrice${fid}`).text();
   let qty = $(`#inp${fid}`).val();
-   let price = Math.floor($(`#price${fid}`).val());
-   let vid = $(`#varientId${fid}`).val();
-    console.log(vid,price);
+  let price = Math.floor($(`#price${fid}`).val());
+  let vid = $(`#varientId${fid}`).val();
+  console.log(vid, price);
 
   $.ajax({
-    url:apiUrl,
-    method:"POST",
-    dataType:"JSON",
-    data:{
-      type:"insertCartPage",
+    url: apiUrl,
+    method: "POST",
+    dataType: "JSON",
+    data: {
+      type: "insertCartPage",
       userId,
-       rid,
-       fid,
-       varId : vid,
-       qty,
-       price,
-       totalPrice,
+      rid,
+      fid,
+      varId: vid,
+      qty,
+      price,
+      totalPrice,
     },
     success: function (response) {
-        if (response.status === "success") {
-          console.log(response)
-          location.href="cart.html";
-         
-        } else {
-          console.log(response.message || "Something went wrong");
-        }
-      },
+      if (response.status === "success") {
+        console.log(response);
+        location.href = "cart.html";
+      } else {
+        console.log(response.message || "Something went wrong");
+      }
+    },
 
-      error: function (xhr, status, error) {
-        console.log("AJAX Error:", error);
-      },
+    error: function (xhr, status, error) {
+      console.log("AJAX Error:", error);
+    },
   });
-  
+}
+
+function getCart() {
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "JSON",
+    data: {
+      type: "getCart",
+      userId,
+    },
+    success: function (response) {
+      if (response.status == "success") {
+        let cart = response.data;
+        console.log(response);
+        let cartHtml = "";
+        cart.forEach((item) => {
+          cartHtml += `  <div class="cart_data_items">
+              <div class="cart_data_item_left">
+                <div class="cart_item_img">
+                  <img
+                    src="../assets/image/icons/failed.svg"
+                    alt=""
+                  />
+                </div>
+                <div class="cart_item_txt">
+                  <h4>
+                  ${item.name}
+                  </h4>
+                   <div class="select_box">
+                    <p >${item.variant_name}</p>
+                   </div>
+                  <button>+ Add More items</button>
+                  
+                </div>
+              </div>
+              <div class="wrapper_right_cart_btn">
+                <div class="cart_data_item_btn">
+                <button onclick='decrementCounter(
+                "${item.id}",
+                "${item.food_item_id}")'>-</button>
+                <input id="inp${item.food_item_id}" type="number" value="${item.quantity}" />
+                <button  onclick='cartIncremetCounter(
+                "${item.id}",
+                "${item.food_item_id}")' class="plus" >+</button>
+                  <input id="varientType${item.food_item_id}" type="text" value="${item.variant_name}" style="display: none"/>
+                  <input id="varientId${item.food_item_id}" type="number"  style="display: none"/>
+                  <input id="price${item.food_item_id}" type="number" value="${item.price}" style="display: none"/>
+                  <input id="total${item.food_item_id}" type="number" value="${item.total}" style="display: none"/>
+              </div>
+              <span>
+              <p>₹${Math.floor(item.total)}</p>
+              </span>
+              </div>
+              
+            </div>`;
+        });
+        $("#cartWrap").css("display", "block");
+        $("#cartData").html(cartHtml);
+      } else {
+        console.log(response.message);
+
+        $("#cartWrap").css("display", "block");
+
+        $("#cartWrap").html(
+          `<div class="not_found"><img src="../assets/image/icons/notFound.gif" alt=""/>No Meal Found ! <button onclick="location.href='home.html'">Go to resturants </button></div>`,
+        );
+      }
+    },
+    error: function (xhr, status, error) {
+      console.log("AJAX err : " + error);
+    },
+  });
+}
+let cartQty;
+function cartIncremetCounter(id, foodId) {
+
+    let currentQty = Number($(`#inp${foodId}`).val());
+
+     cartQty = currentQty + 1;
+
+    console.log(currentQty, cartQty);
+
+    $(`#inp${foodId}`).val(cartQty);
+    
+
+  // $.ajax({
+  //   url:apiUrl,
+  //   method:"POST",
+  //   dataType:"JSON",
+  //   data:{
+  //     type:"cartIncrement",
+  //     id,
+  //     qty:cartQty
+  //   }
+  // })
+
+  // type,id,price,quantity   - localstorage
+  /*
+      userId, -done
+      rid, - restaurant_id
+      fid, - food_item_id
+      varId: vid, - variant_id
+      qty,
+      price, -price
+      totalPrice, - total   - database */
 }
 
 // dumy js
