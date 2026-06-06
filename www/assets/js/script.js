@@ -990,6 +990,8 @@ function getResturantData() {
               <p>(${resturant.total_reviews})</p>
             </div>
           </div>`;
+          getCarousel2Resturant(`${resturant.cover_image}`);
+
 
         $("#shopDetail").html(resturantHtml);
       } else {
@@ -1087,7 +1089,7 @@ function getProduct() {
               
               <h4>${item?.name}</h4>
               
-              <p>₹${item?.base_price}</p>
+              <p>₹${item?.discount_price}</p>
 
               <div class="prd_star">
                 <i class="bi bi-star-fill"></i>
@@ -1199,7 +1201,7 @@ function getProduct() {
               
               <h4>${products?.name}</h4>
               
-              <p>₹${products?.base_price}</p>
+              <p>₹${products?.discount_price}</p>
 
               <div class="prd_star">
                 <i class="bi bi-star-fill"></i>
@@ -1287,7 +1289,7 @@ function handleModalData(data) {
 
               <h4>${data?.name}</h4>
 
-              <p>₹${data?.base_price}</p>
+              <p>₹${data?.discount_price}</p>
 
               <div class="prd_star">
                 <i class="bi bi-star-fill"></i>
@@ -1589,20 +1591,20 @@ function getCart() {
               </div>
               <div class="wrapper_right_cart_btn">
                 <div class="cart_data_item_btn">
-                <button onclick='decrementCounter(
+                <button onclick='cartdecrementCounter(
                 "${item.id}",
+                "${item.restaurant_id}",
                 "${item.food_item_id}")'>-</button>
                 <input id="inp${item.food_item_id}" type="number" value="${item.quantity}" />
                 <button  onclick='cartIncremetCounter(
-                "${item.id}",
+                 "${item.id}",
+                  "${item.restaurant_id}",
                 "${item.food_item_id}")' class="plus" >+</button>
-                  <input id="varientType${item.food_item_id}" type="text" value="${item.variant_name}" style="display: none"/>
-                  <input id="varientId${item.food_item_id}" type="number"  style="display: none"/>
-                  <input id="price${item.food_item_id}" type="number" value="${item.price}" style="display: none"/>
-                  <input id="total${item.food_item_id}" type="number" value="${item.total}" style="display: none"/>
-              </div>
+                  <input id="varientType${item.food_item_id}" value="${item.variant_name}" type="hidden" />
+                <input id="varientId${item.food_item_id}" value="${item.variant_id}" type="hidden" />
+                <input id="price${item.food_item_id}" value="${item.price}" type="hidden" /></div>
               <span>
-              <p>₹${Math.floor(item.total)}</p>
+              <p id="totalPrice${item.food_item_id}">₹${item.total}</p>
               </span>
               </div>
               
@@ -1626,40 +1628,408 @@ function getCart() {
   });
 }
 let cartQty;
-function cartIncremetCounter(id, foodId) {
+function cartIncremetCounter(cartId,rid, id) {
 
-    let currentQty = Number($(`#inp${foodId}`).val());
+    let cartQty = Number($(`#inp${id}`).val()) + 1;
+    let varientId = $(`#varientId${id}`).val();
+    let varientType = $(`#varientType${id}`).val();
+    let basePrice = Number($(`#price${id}`).val());
 
-     cartQty = currentQty + 1;
+    let updatedPrice = basePrice * cartQty;
 
-    console.log(currentQty, cartQty);
+    $(`#inp${id}`).val(cartQty);
+    $(`#totalPrice${id}`).html(`₹${updatedPrice}`);
 
-    $(`#inp${foodId}`).val(cartQty);
-    
-
-  // $.ajax({
-  //   url:apiUrl,
-  //   method:"POST",
-  //   dataType:"JSON",
-  //   data:{
-  //     type:"cartIncrement",
-  //     id,
-  //     qty:cartQty
-  //   }
-  // })
-
-  // type,id,price,quantity   - localstorage
-  /*
-      userId, -done
-      rid, - restaurant_id
-      fid, - food_item_id
-      varId: vid, - variant_id
-      qty,
-      price, -price
-      totalPrice, - total   - database */
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    console.log(cart);
+    if (!Array.isArray(cart)) {
+    cart = [cart];
 }
 
+    let existingItem = cart?.find(
+        item => item.id == id && item.Type == varientType
+    );
+
+    if (existingItem) {
+
+        cart = cart?.map(item => {
+
+            if (item.id == id && item.Type == varientType) {
+
+                return {
+                    ...item,
+                    qty: cartQty,
+                    price: updatedPrice
+                };
+
+            }
+
+            return item;
+
+        });
+
+    } else {
+
+        cart.push({
+            id: id,
+            price: updatedPrice,
+            qty: cartQty,
+            Type: varientType
+        });
+
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    console.log(cart);
+   updateCartDataBase(cartId,varientId,rid,updatedPrice,cartQty,id)
+
+}
+function cartdecrementCounter(cartId,rid,id) {
+
+    let cartQty = Number($(`#inp${id}`).val());
+    let varientId = $(`#varientId${id}`).val();
+    let varientType = $(`#varientType${id}`).val();
+    let basePrice = Number($(`#price${id}`).val());
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+     if (cartQty <= 1) {
+    cart = cart.filter((item) => !(item.id == id && item.Type == varientType));
+    console.log("remove item !");
+    localStorage.setItem("cart", JSON.stringify(cart));
+    return false;
+  } else {
+    cartQty--;
+  }
+
+
+    cartQty--;
+
+    
+
+    let updatedPrice = basePrice * cartQty;
+
+    $(`#inp${id}`).val(cartQty);
+    $(`#totalPrice${id}`).html(`₹${updatedPrice}`);
+
+  
+    if (!Array.isArray(cart)) {
+    cart = [cart];
+}
+
+    cart = cart.map(item => {
+
+        if (item.id == id && item.Type == varientType) {
+
+            return {
+                ...item,
+                qty: cartQty,
+                price: updatedPrice
+            };
+
+        }
+
+        return item;
+
+    });
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+   updateCartDataBase(cartId,varientId,rid,updatedPrice,cartQty,id);
+
+}
+
+function updateCartDataBase(id,vid,rid,total,qty,fid) {
+
+  $.ajax({
+    url:apiUrl,
+    method:"POST",
+    dataType:"JSON",
+    data:{
+      type:"updateCartData",
+      cartId:id,
+      userId,
+      variantId :vid,
+      resturantId:rid,
+      fid,
+      total,
+      quantity:qty
+    },
+    success:function (response) {
+      if(response.status == "success"){
+        console.log(response.message);
+        if(response.message == "deleted"){
+           getCart();
+        }
+      }else{
+           console.log(response.message);
+      }  
+    },
+    error:function (xhr,status,err) {
+       console.log("AJAX Err : "+ err);
+    }
+  });
+  
+}
+
+
+function getCarousel2Resturant(img) {
+let bannerContainer = ` <div class="item_rest_img rest_reuse ">
+       <img src="${imageUrl+img}" alt="banner-image">
+      </div>`
+  $("#shopDetailCrousel").html(bannerContainer);
+}
+
+function getCoupons() {
+
+  $.ajax({
+    url:apiUrl,
+    method:"POST",
+    dataType:"JSON",
+    data:{
+      type:"getCoupons",
+    },
+    success: function (response) {
+       if(response.status == "success"){
+            let couponsData = response.data;
+             if (!Array.isArray(couponsData)) {
+    couponsData = [couponsData];
+}
+
+            let couponsHtml='';
+            couponsData.forEach((item)=>{
+                 couponsHtml+=`<button class="btn btn-primary">${item.code}</button>`;
+            });
+            $("#couponsData").html(couponsHtml);
+       }else{
+         console.log(response.message);
+       }
+    },
+    error: function (xhr,status,err) {
+          console.log("AJAX err: "+ err);
+    }
+  });
+  
+}
+
+$(".form_icon").on("click", function () {
+
+    $(".form_icon").removeClass("role_active");
+
+    $(this).addClass("role_active");
+
+    let role = $(this).find("p").text();
+    $("#selectedRole").val(role);
+
+});
+
+
+function handleAddress(e) {
+  e.preventDefault();
+  let formData = new FormData();
+
+  formData.append("type", "handleAddress");
+  formData.append("userId", userId);
+  formData.append("houseNo", $("#houseNo").val());
+  formData.append("area", $("#area").val());
+  formData.append("instruction", $("#instruction").val());
+  formData.append("city", $("#city").val());
+  formData.append("state", $("#state").val());
+  formData.append("pincode", $("#pincode").val());
+  formData.append("name", $("#name").val());
+  formData.append("number", $("#number").val());
+  formData.append("addressType", $("#selectedRole").val());
+  formData.append("landmark", $("#landmark").val());
+
+
+ $.ajax({
+    url: apiUrl,
+    method: "POST",
+    data: formData,
+    processData: false,
+    contentType: false,
+    dataType: "JSON",
+    success: function (response) {
+        if(response.status == "success"){
+            alert(response.message);
+            $("#addressForm")[0].reset();
+            getAddress();
+        } else {
+            alert(response.message);
+        }
+    },
+    error: function (xhr, status, err) {
+        console.log(xhr.responseText);
+        alert("AJAX err: " + err);
+    }
+});
+  
+}
+function getAddress() {
+
+    $.ajax({
+        url: apiUrl,
+        method: "POST",
+        dataType: "JSON",
+        data: {
+            type: "getAddress",
+            userId
+        },
+        success: function(response) {
+
+            if(response.status == "success") {
+              console.log(response)
+
+                let addressHtml = "";
+
+                response.data.forEach((item, index) => {
+
+                    addressHtml += `
+                    
+                  
+                  <div class="saved_address_data"
+                  onclick="selectAddress(
+                      this,
+                      '${item.id}',
+                      '${item.receiver_name}',
+                      '${item.receiver_phone}',
+                      '${item.house_no}',
+                      '${item.area}',
+                      '${item.pincode}',
+                      '${item.address_type}'
+                  )">
+
+                        <div class="selected_box">Selected</div>
+
+                        <div class="saved_address_item">
+
+                            <div class="saved_address_left">
+
+                                <div class="saved_icon">
+                                    <i class="bi bi-house-door-fill"></i>
+                                </div>
+
+                                <div class="saved_txt">
+
+                                    <h5>${item.receiver_name}</h5>
+
+                                    <p>
+                                        ${item.house_no},
+                                        ${item.area},
+                                        ${item.landmark},
+                                        ${item.city}
+                                    </p>
+
+                                    <div class="phone">
+                                        <i class="bi bi-telephone"></i>
+                                        <p>+91-<b>${item.receiver_phone}</b></p>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="saved_address_right">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    `;
+
+                });
+
+                $("#savedAddress").html(addressHtml);
+
+            } else {
+
+                $("#savedAddress").html(`
+                    <div class="not_found">
+                        No saved address found
+                    </div>
+                `);
+
+            }
+
+        }
+    });
+
+}
+getAddress()
+
+
+
+function selectAddress(
+    element,
+    id,
+    name,
+    phone,
+    houseNo,
+    area,
+    pincode,
+    address_type
+) {
+
+    $(".saved_address_data").removeClass("selected_address");
+
+    $(element).addClass("selected_address");
+
+    let address = `
+        <h4>
+            Delivering to
+            <b>${address_type}</b>
+        </h4>
+
+        <p>
+            ${houseNo},
+            ${area},
+            (${pincode})
+        </p>
+    `;
+
+    $("#addressvalue").html(address);
+
+    let telephone = `
+    <i class="bi bi-telephone-fill" style="color: rgb(200, 0, 0);"></i>
+        ${name},
+        +91-${phone}
+    `;
+
+    $("#telephoneValue").html(telephone);
+
+    console.log(id);
+
+}
+
+
+$(".payment_option").on("click", function () {
+
+    $(".payment_option").removeClass("selected_option");
+
+    $(this).addClass("selected_option");
+
+    let payMathod = $(this).find(".left_pay_box h5").text();
+    $("#payMethod").val(payMathod);
+
+});
+
+function handleCheckout() {
+  console.log(userId);
+  /* ordernumber,userId,resturantId, addressId, subtotal, taxAmmount, deliveryCharge, discountAmount, grandTotal, paymentMethod, orderStatus,notes */
+  /*order_id,food_item_id,varient_id,quantity,price,total*/
+  console.log("check....");
+
+  
+}
+
+
 // dumy js
+
+
+
+
+
 
 function getProduct2() {
   let getSimilarPrdHtml = "";
@@ -2142,55 +2512,8 @@ function getCarousel1() {
 }
 getCarousel1();
 
-function getCarousel2Resturant() {
-  const restaurantBanner = [
-    {
-      id: 1,
-      name: "Food Offer Banner",
-      image:
-        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1400",
-    },
-    {
-      id: 2,
-      name: "Restaurant Promo Banner",
-      image:
-        "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1400",
-    },
-    {
-      id: 3,
-      name: "Pizza Special Banner",
-      image:
-        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1400",
-    },
-    {
-      id: 4,
-      name: "Burger Combo Banner",
-      image:
-        "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1400",
-    },
-    {
-      id: 5,
-      name: "Healthy Food Banner",
-      image:
-        "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=1400",
-    },
-  ];
-  let bannerContainer = `
-  <div class="owl-carousel owl-theme product_slider">
-`;
 
-  restaurantBanner?.forEach((item) => {
-    bannerContainer += `
-    <div class="item">
-      <img src="${item?.image}" alt="banner-image">
-    </div>
-  `;
-  });
 
-  bannerContainer += `</div>`;
-  $("#shopDetailCrousel").html(bannerContainer);
-}
-getCarousel2Resturant();
 
 function handleToggleBtn(el) {
   let parent = el.closest(".resturant_prd_right");

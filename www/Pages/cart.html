@@ -98,7 +98,7 @@
            
           </div>
         </div>
-         <div class="similar_product_addd_cart cart_data_sec">
+         <div class="similar_product_addd_cart cart_data_sec" hidden>
           <div class="similar_product_cart_header">
             <div class="similar_product_icon"><i class="bi bi-ui-checks-grid"></i></div>
             <h4>Complete your meal with</h4>
@@ -171,17 +171,18 @@
           >
             <div class="left_cart_box_sec" >
               <i class="bi bi-geo-alt-fill" style="color: green;"></i>
-              <div class="">
-                <h4>Delivering to <b>Home</b></h4>
-                <p>Badal Kumar Soni, Argora Ranchi, (834001)</p>
+              <div class="" id="addressvalue">
+                <h4>Select Address</h4>
+                <!-- <h4>Delivering to <b></b></h4>
+                <p>____________</p> -->
               </div>
             </div>
             <i class="bi bi-chevron-right"></i>
           </div>
           <div class="cart_sec_box cart_sec3_box">
-            <div class="left_cart_box_sec">
-              <i class="bi bi-telephone-fill" style="color: rgb(200, 0, 0);"></i>
-              <h4>Badal kumar soni, +91-7484884014</h4>
+            <div class="left_cart_box_sec" id="telephoneValue">
+              <!-- <i class="bi bi-telephone-fill" style="color: rgb(200, 0, 0);"></i>
+              <h4>_______________</h4> -->
             </div>
           </div>
           <div
@@ -229,7 +230,7 @@
             <p id="payMethod">Cash on Delivery</p>
           </div>
           <div class="footer_cart_right btn_reuse">
-            <button>
+            <button onclick="handleCheckout()">
               <b>₹1200 </b> MRP (Tax incuded)
               <i class="bi bi-caret-right-fill"></i>
             </button>
@@ -257,6 +258,7 @@
       </div>
       <div class="offcanvas-body small">
         <div class="payment_options reuse_options">
+          <input type="text" id="payMethod" hidden>
           <label class="payment_option reuse_option selected_option">
             <div class="left_pay_box reuse_left_box">
               <input type="radio" name="payment" value="online" hidden />
@@ -309,6 +311,7 @@
         </div>
         <div class="saved_address">
           <b>Saved addresses</b>
+          <div id="savedAddress">
           <div class="saved_address_data selected_address">
             <div class="selected_box">Selected</div>
             <div class="saved_address_item">
@@ -356,6 +359,7 @@
               </div>
             </div>
           </div>
+          </div>
         </div>
       </div>
     </div>
@@ -378,8 +382,8 @@
         </button>
       </div>
       <div class="offcanvas-body small">
-        <div class="add_address_wrap">
-          <p id="roleSelect" class="hidden"></p>
+        <form onsubmit="handleAddress(event); return false;" id="addressForm" class="add_address_wrap">
+        <input type="text" id="selectedRole" hidden>
           <div class="add_address_highlight">
             A detailed address will help our delivery partner reach your
             doorstep easily.
@@ -413,24 +417,48 @@
                 type="text"
                 placeholder="Flat / House no / Building name *"
                 class="form_input"
+                id="houseNo"
               />
 
               <input
                 type="text"
                 placeholder="Apartment / Road / Area (Recommended) *"
                 class="form_input"
+                id="area"
               />
+              <input
+                type="text"
+              placeholder="e.g. Near City Mall, Opposite SBI Bank (Optional)"
+                class="form_input"
+                id="landmark"
+              />
+              
 
               <textarea
                 placeholder="e.g. Ring the bell on the red gate (Optional)"
                 maxlength="200"
                 class="form_textarea"
+                id="instruction"
               ></textarea>
 
               <input
                 type="text"
-                placeholder="Nearby landmark (optional)"
+                placeholder="e.g. Ranchi, Jamshedpur (Required) *"
                 class="form_input"
+                id="city"
+              />
+
+              <input
+                type="text"
+                placeholder="e.g. Jharkhand, Bihar (Required) *"
+                class="form_input"
+                id="state"
+              />
+               <input
+                type="text"
+                placeholder="e.g. 834001 (Required) *"
+                class="form_input"
+                id="pincode"
               />
 
               <!-- Section Title -->
@@ -439,25 +467,22 @@
               </p>
 
               <!-- User Details -->
-              <input type="text" placeholder="Your Name *" class="form_input" />
+              <input type="text" placeholder="Your Name *" id="name" class="form_input" />
 
               <input
                 type="tel"
+                id="number"
                 placeholder="Your phone number *"
                 class="form_input"
               />
 
-              <input
-                type="tel"
-                placeholder="Alternate phone number (Optional)"
-                class="form_input"
-              />
+             
             </div>
             <div class="button_save_add btn_reuse">
               <button>Save Address</button>
             </div>
           </form>
-        </div>
+        </form>
       </div>
     </div>
 
@@ -567,7 +592,11 @@
           aria-label="Close"
         ></button>
       </div>
-      <div class="offcanvas-body small">coupons data</div>
+      <div class="offcanvas-body small">
+        
+        <div id="couponsData"></div>
+
+      </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -581,6 +610,7 @@
     <script src="../assets/js/script.js"></script>
     <script>
         getCart();
+        getCoupons();
     </script>
   </body>
 </html>

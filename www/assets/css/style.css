@@ -1198,7 +1198,7 @@ font-weight: 600;
 
 }
 
-.top_nav_restuurant img {
+.rest_reuse img {
   /* width: 100%;
   height: 302px; */
       width: 100%;
@@ -1324,8 +1324,8 @@ font-weight: 600;
   border-bottom-left-radius: 25px;
   border-bottom-right-radius: 25px;
   padding: 15px 20px;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
+  /* margin-bottom: 20px;
+  padding-bottom: 20px; */
   margin-top: 2.8rem
 
 }
@@ -1463,6 +1463,7 @@ font-weight: 600;
   gap: 5px;
   /* background-color: red; */
   margin-bottom: 1rem;
+  justify-content: space-between;
 }
 
 .prd_star {
@@ -2146,6 +2147,9 @@ label.reuse_option {
   position: relative;
   overflow: hidden;
 
+}
+.selected_box{
+  display: none;
 }
 
 .selected_address .selected_box {
@@ -3224,3 +3228,19 @@ a:hover{
 .fill_shop i{
   color:var(--theme-color) !important;
 }
+
+.item_rest_img img{
+  margin: 0 !important;
+  height: 185px !important;
+}
+.banner_sec2_wrap img {
+    width: 100%;
+}
+
+
+
+
+
+
+
+
