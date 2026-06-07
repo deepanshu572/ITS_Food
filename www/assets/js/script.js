@@ -990,8 +990,7 @@ function getResturantData() {
               <p>(${resturant.total_reviews})</p>
             </div>
           </div>`;
-          getCarousel2Resturant(`${resturant.cover_image}`);
-
+        getCarousel2Resturant(`${resturant.cover_image}`);
 
         $("#shopDetail").html(resturantHtml);
       } else {
@@ -1628,71 +1627,64 @@ function getCart() {
   });
 }
 let cartQty;
-function cartIncremetCounter(cartId,rid, id) {
+function cartIncremetCounter(cartId, rid, id) {
+  let cartQty = Number($(`#inp${id}`).val()) + 1;
+  let varientId = $(`#varientId${id}`).val();
+  let varientType = $(`#varientType${id}`).val();
+  let basePrice = Number($(`#price${id}`).val());
 
-    let cartQty = Number($(`#inp${id}`).val()) + 1;
-    let varientId = $(`#varientId${id}`).val();
-    let varientType = $(`#varientType${id}`).val();
-    let basePrice = Number($(`#price${id}`).val());
+ 
 
-    let updatedPrice = basePrice * cartQty;
+  let updatedPrice = basePrice * cartQty;
 
-    $(`#inp${id}`).val(cartQty);
-    $(`#totalPrice${id}`).html(`₹${updatedPrice}`);
+  $(`#inp${id}`).val(cartQty);
+  $(`#totalPrice${id}`).html(`₹${updatedPrice}`);
 
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    console.log(cart);
-    if (!Array.isArray(cart)) {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  console.log(cart);
+  if (!Array.isArray(cart)) {
     cart = [cart];
+  }
+
+  let existingItem = cart?.find(
+    (item) => item.id == id && item.Type == varientType,
+  );
+
+  if (existingItem) {
+    cart = cart?.map((item) => {
+      if (item.id == id && item.Type == varientType) {
+        return {
+          ...item,
+          qty: cartQty,
+          price: updatedPrice,
+        };
+      }
+
+      return item;
+    });
+  } else {
+    cart.push({
+      id: id,
+      price: updatedPrice,
+      qty: cartQty,
+      Type: varientType,
+    });
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+     getSubtotal();
+   
+
+  console.log(cart);
+  updateCartDataBase(cartId, varientId, rid, updatedPrice, cartQty, id);
 }
-
-    let existingItem = cart?.find(
-        item => item.id == id && item.Type == varientType
-    );
-
-    if (existingItem) {
-
-        cart = cart?.map(item => {
-
-            if (item.id == id && item.Type == varientType) {
-
-                return {
-                    ...item,
-                    qty: cartQty,
-                    price: updatedPrice
-                };
-
-            }
-
-            return item;
-
-        });
-
-    } else {
-
-        cart.push({
-            id: id,
-            price: updatedPrice,
-            qty: cartQty,
-            Type: varientType
-        });
-
-    }
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-
-    console.log(cart);
-   updateCartDataBase(cartId,varientId,rid,updatedPrice,cartQty,id)
-
-}
-function cartdecrementCounter(cartId,rid,id) {
-
-    let cartQty = Number($(`#inp${id}`).val());
-    let varientId = $(`#varientId${id}`).val();
-    let varientType = $(`#varientType${id}`).val();
-    let basePrice = Number($(`#price${id}`).val());
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-     if (cartQty <= 1) {
+function cartdecrementCounter(cartId, rid, id) {
+  let cartQty = Number($(`#inp${id}`).val());
+  let varientId = $(`#varientId${id}`).val();
+  let varientType = $(`#varientType${id}`).val();
+  let basePrice = Number($(`#price${id}`).val());
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  if (cartQty <= 1) {
     cart = cart.filter((item) => !(item.id == id && item.Type == varientType));
     console.log("remove item !");
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -1701,127 +1693,268 @@ function cartdecrementCounter(cartId,rid,id) {
     cartQty--;
   }
 
+  cartQty--;
 
-    cartQty--;
+  let updatedPrice = basePrice * cartQty;
 
-    
+  $(`#inp${id}`).val(cartQty);
+  $(`#totalPrice${id}`).html(`₹${updatedPrice}`);
 
-    let updatedPrice = basePrice * cartQty;
-
-    $(`#inp${id}`).val(cartQty);
-    $(`#totalPrice${id}`).html(`₹${updatedPrice}`);
-
-  
-    if (!Array.isArray(cart)) {
+  if (!Array.isArray(cart)) {
     cart = [cart];
+  }
+
+  cart = cart.map((item) => {
+    if (item.id == id && item.Type == varientType) {
+      return {
+        ...item,
+        qty: cartQty,
+        price: updatedPrice,
+      };
+    }
+
+    return item;
+  });
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  updateCartDataBase(cartId, varientId, rid, updatedPrice, cartQty, id);
 }
 
-    cart = cart.map(item => {
-
-        if (item.id == id && item.Type == varientType) {
-
-            return {
-                ...item,
-                qty: cartQty,
-                price: updatedPrice
-            };
-
-        }
-
-        return item;
-
-    });
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-
-   updateCartDataBase(cartId,varientId,rid,updatedPrice,cartQty,id);
-
-}
-
-function updateCartDataBase(id,vid,rid,total,qty,fid) {
-
+function updateCartDataBase(id, vid, rid, total, qty, fid) {
   $.ajax({
-    url:apiUrl,
-    method:"POST",
-    dataType:"JSON",
-    data:{
-      type:"updateCartData",
-      cartId:id,
+    url: apiUrl,
+    method: "POST",
+    dataType: "JSON",
+    data: {
+      type: "updateCartData",
+      cartId: id,
       userId,
-      variantId :vid,
-      resturantId:rid,
+      variantId: vid,
+      resturantId: rid,
       fid,
       total,
-      quantity:qty
+      quantity: qty,
     },
-    success:function (response) {
-      if(response.status == "success"){
+    success: function (response) {
+      if (response.status == "success") {
         console.log(response.message);
-        if(response.message == "deleted"){
-           getCart();
+        if (response.message == "deleted") {
+          getCart();
         }
-      }else{
-           console.log(response.message);
-      }  
+      } else {
+        console.log(response.message);
+      }
     },
-    error:function (xhr,status,err) {
-       console.log("AJAX Err : "+ err);
-    }
+    error: function (xhr, status, err) {
+      console.log("AJAX Err : " + err);
+    },
   });
-  
 }
 
-
 function getCarousel2Resturant(img) {
-let bannerContainer = ` <div class="item_rest_img rest_reuse ">
-       <img src="${imageUrl+img}" alt="banner-image">
-      </div>`
+  let bannerContainer = ` <div class="item_rest_img rest_reuse ">
+       <img src="${imageUrl + img}" alt="banner-image">
+      </div>`;
   $("#shopDetailCrousel").html(bannerContainer);
 }
 
-function getCoupons() {
+let couponsData = [];
+let selectedCoupon = null;
 
+// ======================
+// GET COUPONS
+// ======================
+function getCoupons() {
   $.ajax({
-    url:apiUrl,
-    method:"POST",
-    dataType:"JSON",
-    data:{
-      type:"getCoupons",
+    url: apiUrl,
+    method: "POST",
+    dataType: "JSON",
+    data: {
+      type: "getCoupons",
     },
     success: function (response) {
-       if(response.status == "success"){
-            let couponsData = response.data;
-             if (!Array.isArray(couponsData)) {
-    couponsData = [couponsData];
+      if (response.status !== "success") return;
+
+      couponsData = response.data;
+
+      renderCoupons(couponsData);
+    },
+    error: function (xhr, status, error) {
+      console.log(error);
+    },
+  });
 }
 
-            let couponsHtml='';
-            couponsData.forEach((item)=>{
-                 couponsHtml+=`<button class="btn btn-primary">${item.code}</button>`;
-            });
-            $("#couponsData").html(couponsHtml);
-       }else{
-         console.log(response.message);
-       }
-    },
-    error: function (xhr,status,err) {
-          console.log("AJAX err: "+ err);
-    }
-  });
-  
+// ======================
+// VALIDATE COUPON
+// ======================
+function isCouponValid(coupon) {
+  const now = new Date();
+
+  if (coupon.status !== "active") {
+    return false;
+  }
+
+  if (now < new Date(coupon.start_date)) {
+    return false;
+  }
+
+  if (now > new Date(coupon.end_date)) {
+    return false;
+  }
+
+  if (
+    Number(coupon.usage_limit) > 0 &&
+    Number(coupon.used_count) >= Number(coupon.usage_limit)
+  ) {
+    return false;
+  }
+
+  return true;
 }
+
+// ======================
+// RENDER COUPONS
+// ======================
+function renderCoupons(coupons) {
+  let html = "";
+
+  coupons.forEach((coupon) => {
+    const valid = isCouponValid(coupon);
+
+    html += `
+      <button
+        class="coupon_btn"
+        ${!valid ? "disabled" : ""}
+        onclick="applyCoupon('${coupon.code}')"
+      >
+        ${coupon.code}
+      </button>
+    `;
+  });
+
+  $("#couponsData").html(html);
+}
+
+// ======================
+// CART SUBTOTAL
+// ======================
+function getSubtotal() {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  let data = cart.reduce((total, item) => {
+    console.log(item,item.price)
+    return total + Number(item.price);
+  }, 0);
+    $("#subTotal").html("₹"+data);
+    $("#grandTotal").html("₹"+data);
+
+  return data; // ye hona zaroori hai
+}
+
+// ======================
+// CALCULATE DISCOUNT
+// ======================
+function calculateCouponDiscount(coupon, subtotal) {
+  // Minimum Order Check
+  if (
+    Number(coupon.minimum_order_amount) > 0 &&
+    subtotal < Number(coupon.minimum_order_amount)
+  ) {
+    return {
+      success: false,
+      message: `Minimum order amount ₹${coupon.minimum_order_amount} required`,
+      discount: 0,
+    };
+  }
+
+  let discount = 0;
+
+  // Percentage Discount
+  if (coupon.discount_type === "percentage") {
+    discount =
+      (subtotal * Number(coupon.discount_value)) / 100;
+
+    // Max Discount Check
+    if (
+      Number(coupon.max_discount_amount) > 0 &&
+      discount > Number(coupon.max_discount_amount)
+    ) {
+      discount = Number(coupon.max_discount_amount);
+    }
+  }
+
+  // Flat Discount
+  else if (coupon.discount_type === "flat") {
+    discount = Number(coupon.discount_value);
+
+    if (discount > subtotal) {
+      discount = subtotal;
+    }
+  }
+
+  return {
+    success: true,
+    discount: discount,
+  };
+}
+
+// ======================
+// APPLY COUPON
+// ======================
+function applyCoupon(code) {
+  const subtotal = getSubtotal();
+
+  const coupon = couponsData.find(
+    (item) => item.code === code
+  );
+
+  if (!coupon) {
+    alert("Coupon not found");
+    return;
+  }
+
+  const result = calculateCouponDiscount(
+    coupon,
+    subtotal
+  );
+
+  if (!result.success) {
+    alert(result.message);
+    return;
+  }
+
+  selectedCoupon = coupon;
+
+  const grandTotal = subtotal - result.discount;
+
+  console.log(grandTotal)
+
+  $("#couponDisc").text(
+    `₹${result.discount.toFixed(2)}`
+  );
+  $("#amountApplied").text(result.discount.toFixed(2))
+  $("#saved").text(coupon.minimum_order_amount)
+
+  $("#grandTotal").text(
+    `₹${grandTotal.toFixed(2)}`
+  );
+
+  $(".coupon_btn").removeClass("active");
+  event.target.classList.add("active");
+}
+
+
 
 $(".form_icon").on("click", function () {
+  $(".form_icon").removeClass("role_active");
 
-    $(".form_icon").removeClass("role_active");
+  $(this).addClass("role_active");
 
-    $(this).addClass("role_active");
-
-    let role = $(this).find("p").text();
-    $("#selectedRole").val(role);
-
+  let role = $(this).find("p").text();
+  $("#selectedRole").val(role);
 });
-
 
 function handleAddress(e) {
   e.preventDefault();
@@ -1840,8 +1973,7 @@ function handleAddress(e) {
   formData.append("addressType", $("#selectedRole").val());
   formData.append("landmark", $("#landmark").val());
 
-
- $.ajax({
+  $.ajax({
     url: apiUrl,
     method: "POST",
     data: formData,
@@ -1849,41 +1981,37 @@ function handleAddress(e) {
     contentType: false,
     dataType: "JSON",
     success: function (response) {
-        if(response.status == "success"){
-            alert(response.message);
-            $("#addressForm")[0].reset();
-            getAddress();
-        } else {
-            alert(response.message);
-        }
+      if (response.status == "success") {
+        alert(response.message);
+        $("#addressForm")[0].reset();
+        getAddress();
+      } else {
+        alert(response.message);
+      }
     },
     error: function (xhr, status, err) {
-        console.log(xhr.responseText);
-        alert("AJAX err: " + err);
-    }
-});
-  
+      console.log(xhr.responseText);
+      alert("AJAX err: " + err);
+    },
+  });
 }
 function getAddress() {
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "JSON",
+    data: {
+      type: "getAddress",
+      userId,
+    },
+    success: function (response) {
+      if (response.status == "success") {
+        console.log(response);
 
-    $.ajax({
-        url: apiUrl,
-        method: "POST",
-        dataType: "JSON",
-        data: {
-            type: "getAddress",
-            userId
-        },
-        success: function(response) {
+        let addressHtml = "";
 
-            if(response.status == "success") {
-              console.log(response)
-
-                let addressHtml = "";
-
-                response.data.forEach((item, index) => {
-
-                    addressHtml += `
+        response.data.forEach((item, index) => {
+          addressHtml += `
                     
                   
                   <div class="saved_address_data"
@@ -1937,45 +2065,36 @@ function getAddress() {
                     </div>
 
                     `;
+        });
 
-                });
-
-                $("#savedAddress").html(addressHtml);
-
-            } else {
-
-                $("#savedAddress").html(`
+        $("#savedAddress").html(addressHtml);
+      } else {
+        $("#savedAddress").html(`
                     <div class="not_found">
                         No saved address found
                     </div>
                 `);
-
-            }
-
-        }
-    });
-
+      }
+    },
+  });
 }
-getAddress()
-
-
+getAddress();
 
 function selectAddress(
-    element,
-    id,
-    name,
-    phone,
-    houseNo,
-    area,
-    pincode,
-    address_type
+  element,
+  id,
+  name,
+  phone,
+  houseNo,
+  area,
+  pincode,
+  address_type,
 ) {
+  $(".saved_address_data").removeClass("selected_address");
 
-    $(".saved_address_data").removeClass("selected_address");
+  $(element).addClass("selected_address");
 
-    $(element).addClass("selected_address");
-
-    let address = `
+  let address = `
         <h4>
             Delivering to
             <b>${address_type}</b>
@@ -1988,30 +2107,26 @@ function selectAddress(
         </p>
     `;
 
-    $("#addressvalue").html(address);
+  $("#addressvalue").html(address);
 
-    let telephone = `
+  let telephone = `
     <i class="bi bi-telephone-fill" style="color: rgb(200, 0, 0);"></i>
         ${name},
         +91-${phone}
     `;
 
-    $("#telephoneValue").html(telephone);
+  $("#telephoneValue").html(telephone);
 
-    console.log(id);
-
+  console.log(id);
 }
 
-
 $(".payment_option").on("click", function () {
+  $(".payment_option").removeClass("selected_option");
 
-    $(".payment_option").removeClass("selected_option");
+  $(this).addClass("selected_option");
 
-    $(this).addClass("selected_option");
-
-    let payMathod = $(this).find(".left_pay_box h5").text();
-    $("#payMethod").val(payMathod);
-
+  let payMathod = $(this).find(".left_pay_box h5").text();
+  $("#payMethod").val(payMathod);
 });
 
 function handleCheckout() {
@@ -2019,17 +2134,9 @@ function handleCheckout() {
   /* ordernumber,userId,resturantId, addressId, subtotal, taxAmmount, deliveryCharge, discountAmount, grandTotal, paymentMethod, orderStatus,notes */
   /*order_id,food_item_id,varient_id,quantity,price,total*/
   console.log("check....");
-
-  
 }
 
-
 // dumy js
-
-
-
-
-
 
 function getProduct2() {
   let getSimilarPrdHtml = "";
@@ -2511,9 +2618,6 @@ function getCarousel1() {
   // $("#prd2").html(productContainer);
 }
 getCarousel1();
-
-
-
 
 function handleToggleBtn(el) {
   let parent = el.closest(".resturant_prd_right");

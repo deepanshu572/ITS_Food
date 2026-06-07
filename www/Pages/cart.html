@@ -59,42 +59,7 @@
         <div class="cart_data_sec cart_data_sec1 ">
      
           <div class="cart_data_box" id="cartData">
-            <div class="cart_data_items">
-              <div class="cart_data_item_left">
-                <div class="cart_item_img">
-                  <img
-                    src="../assets/image/icons/failed.svg"
-                    alt=""
-                  />
-                </div>
-                <div class="cart_item_txt">
-                  <h4>
-                    Tata Salt Vacuum Evaporated Iodised Edible Common Salt, 1 kg
-                    Pouch
-                  </h4>
-                   <div class="select_box">
-                    <select name="quantity" id="qty">
-                      <option value="half">Half</option>
-                      <option value="full">Full</option>
-                    </select>
-                   </div>
-                  <button>+ Add More items</button>
-                  
-                </div>
-              </div>
-              <div class="wrapper_right_cart_btn">
-                <div class="cart_data_item_btn">
-                <button>-</button>
-                <input type="number" value="10" />
-                <button>+</button>
-              </div>
-              <span>
-                <del>₹800</del>
-              <p>₹299</p>
-              </span>
-              </div>
-              
-            </div>
+       
            
           </div>
         </div>
@@ -135,8 +100,8 @@
               <i class="bi bi-check-circle-fill"></i>
             </div>
             <div class="txt_coupons">
-              <h4>You saved ₹36 on delivery</h4>
-              <p>Auto - applied as your order is above ₹199</p>
+              <h4 >You saved ₹<b id="saved"></b> on delivery</h4>
+              <p>applied as your order is above ₹<b id="amountApplied"></b></p>
             </div>
           </div>
           <div
@@ -515,25 +480,17 @@
                   <p>Sub Total</p>
                 </div>
                 <div class="right_bill_field">
-                  <small>₹1200</small>
+                  <small id="subTotal"></small>
                 </div>
               </div>
-              <div class="bill_field green">
-                <div class="left_bill_field">
-                  <i class="bi bi-tags-fill"></i>
-                  <p>Product Discount</p>
-                </div>
-                <div class="right_bill_field">
-                  <small>-₹1200</small>
-                </div>
-              </div>
+            
               <div class="bill_field green">
                 <div class="left_bill_field">
                   <img src="../assets/image/icons/coupons2.svg" alt="" />
                   <p>Promo Discount</p>
                 </div>
                 <div class="right_bill_field">
-                  <small>-₹1200</small>
+                  <small id="couponDisc">-₹0</small>
                 </div>
               </div>
               <div class="bill_field">
@@ -546,25 +503,17 @@
                   <p>Delivery Charge</p>
                 </div>
                 <div class="right_bill_field">
-                  <small>₹1200</small>
+                  <small id="deleveryCharge">₹0</small>
                 </div>
               </div>
-              <div class="bill_field">
-                <div class="left_bill_field">
-                  <i class="bi bi-handbag-fill"></i>
-                  <p>Handling Charge</p>
-                </div>
-                <div class="right_bill_field">
-                  <small>₹1200</small>
-                </div>
-              </div>
+            
               <div class="img-design"></div>
               <div class="bill_field bill_total">
                 <div class="left_bill_field">
                   <p>Grand Total</p>
                 </div>
                 <div class="right_bill_field">
-                  <small>₹4200</small>
+                  <small id="grandTotal">₹4200</small>
                 </div>
               </div>
             </div>
@@ -611,6 +560,8 @@
     <script>
         getCart();
         getCoupons();
+        getSubtotal();
+
     </script>
   </body>
 </html>
