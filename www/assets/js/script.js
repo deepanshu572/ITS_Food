@@ -1369,6 +1369,9 @@ function handleModalCartData(data) {
     success: function (response) {
       if (response.status == "success") {
         let varientData = response.data;
+        console.log("varientData")
+        console.log(varientData)
+        console.log("varientData")
         let varientHtml = "";
         let btnHtml = "";
         let foodId = varientData[0].food_item_id;
@@ -1390,12 +1393,12 @@ function handleModalCartData(data) {
               <div class="btn_add_data button_data">
               
                   <button onclick='decrementCounter(
-       
+                  
                 "${foodId}")' >-</button>
                   <input id="inp${foodId}" type="number" value="1" />  
                 <button 
                 onclick='incrementCounter(
-               
+                
                 "${foodId}")' class="plus">+</button>
           </div>
           <input id="varientType${foodId}" type="text" style="display: none"/>
@@ -1431,30 +1434,32 @@ function handleTogglePrice(price, vid, name, id) {
   $(`#varientId${id}`).val(vid);
 }
 
-function incrementCounter(id) {
+function incrementCounter(foodId) {
+  let variant_id = $(`#varientId${foodId}`).val();
   qtyValue += 1;
-  let priceData = $(`#totalPrice${id}`).text();
-  let varientType = $(`#varientType${id}`).val();
-  let basePrice = $(`#price${id}`).val();
+  let priceData = $(`#totalPrice${foodId}`).text();
+  let varientType = $(`#varientType${foodId}`).val();
+  let basePrice = $(`#price${foodId}`).val();
   let updatedPrice = Number(basePrice) * Number(qtyValue);
+  console.log(basePrice,updatedPrice)
 
-  $(`#inp${id}`).val(qtyValue);
-  $(`#totalPrice${id}`).html(updatedPrice);
+  $(`#inp${foodId}`).val(qtyValue);
+  $(`#totalPrice${foodId}`).html(updatedPrice);
 
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
   console.log(cart);
 
   let existingItem = cart?.find(
-    (item) => item.id == id && item.Type == varientType,
+    (item) => item.foodId == foodId && item.Type == varientType,
   );
 
   if (existingItem) {
     cart = cart.map((item) => {
-      if (item.id == id && item.Type == varientType) {
+      if (item.foodId == foodId && item.Type == varientType) {
         return {
           ...item,
           qty: qtyValue,
-          price: updatedPrice,
+          Totalprice: updatedPrice,
         };
       }
 
@@ -1462,8 +1467,10 @@ function incrementCounter(id) {
     });
   } else {
     let product = {
-      id: id,
-      price: updatedPrice,
+      id:variant_id,
+      foodId: foodId,
+      price: basePrice,
+      Totalprice: updatedPrice,
       qty: qtyValue,
       Type: varientType,
     };
@@ -1474,17 +1481,17 @@ function incrementCounter(id) {
   localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-function decrementCounter(id) {
+function decrementCounter(foodId) {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  let priceData = $(`#totalPrice${id}`).text();
-  let varientType = $(`#varientType${id}`).val();
-  let basePrice = $(`#price${id}`).val();
+  let priceData = $(`#totalPrice${foodId}`).text();
+  let varientType = $(`#varientType${foodId}`).val();
+  let basePrice = $(`#price${foodId}`).val();
   let updatedPrice = Number(basePrice) * Number(qtyValue);
-  $(`#inp${id}`).val(qtyValue);
-  $(`#totalPrice${id}`).html(updatedPrice);
+  $(`#inp${foodId}`).val(qtyValue);
+  $(`#totalPrice${foodId}`).html(updatedPrice);
 
   if (qtyValue == 0) {
-    cart = cart.filter((item) => !(item.id == id && item.Type == varientType));
+    cart = cart.filter((item) => !(item.id == foodId && item.Type == varientType));
     console.log("remove item !");
     localStorage.setItem("cart", JSON.stringify(cart));
     return false;
@@ -1493,16 +1500,16 @@ function decrementCounter(id) {
   }
 
   let existingItem = cart.find(
-    (item) => item.id == id && item.Type == varientType,
+    (item) => item.foodId == foodId && item.Type == varientType,
   );
 
   if (existingItem) {
     cart = cart.map((item) => {
-      if (item.id == id && item.Type == varientType) {
+      if (item.foodId == foodId && item.Type == varientType) {
         return {
           ...item,
           qty: qtyValue,
-          price: updatedPrice,
+          Totalprice: updatedPrice,
         };
       }
 
@@ -1542,7 +1549,7 @@ function renderCartPage(fid) {
     success: function (response) {
       if (response.status === "success") {
         console.log(response);
-        location.href = "cart.html";
+        location.href = `cart.html?rid=${rid}`;
       } else {
         console.log(response.message || "Something went wrong");
       }
@@ -1627,36 +1634,36 @@ function getCart() {
   });
 }
 let cartQty;
-function cartIncremetCounter(cartId, rid, id) {
-  let cartQty = Number($(`#inp${id}`).val()) + 1;
-  let varientId = $(`#varientId${id}`).val();
-  let varientType = $(`#varientType${id}`).val();
-  let basePrice = Number($(`#price${id}`).val());
+function cartIncremetCounter(cartId, rid, foodId) {
+  let cartQty = Number($(`#inp${foodId}`).val()) + 1;
+  let varientId = $(`#varientId${foodId}`).val();
+  let varientType = $(`#varientType${foodId}`).val();
+  let basePrice = Number($(`#price${foodId}`).val());
 
  
 
   let updatedPrice = basePrice * cartQty;
 
-  $(`#inp${id}`).val(cartQty);
-  $(`#totalPrice${id}`).html(`₹${updatedPrice}`);
+  $(`#inp${foodId}`).val(cartQty);
+  $(`#totalPrice${foodId}`).html(`₹${updatedPrice}`);
 
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
   console.log(cart);
-  if (!Array.isArray(cart)) {
-    cart = [cart];
-  }
+  // if (!Array.isArray(cart)) {
+  //   cart = [cart];
+  // }
 
   let existingItem = cart?.find(
-    (item) => item.id == id && item.Type == varientType,
+    (item) => item.foodId == foodId && item.Type == varientType,
   );
 
   if (existingItem) {
     cart = cart?.map((item) => {
-      if (item.id == id && item.Type == varientType) {
+      if (item.foodId == foodId && item.Type == varientType) {
         return {
           ...item,
           qty: cartQty,
-          price: updatedPrice,
+          Totalprice: updatedPrice,
         };
       }
 
@@ -1664,8 +1671,10 @@ function cartIncremetCounter(cartId, rid, id) {
     });
   } else {
     cart.push({
-      id: id,
-      price: updatedPrice,
+      id:varientId,
+      foodId: foodId,
+      price: basePrice,
+      Totalprice: updatedPrice,
       qty: cartQty,
       Type: varientType,
     });
@@ -1676,49 +1685,55 @@ function cartIncremetCounter(cartId, rid, id) {
    
 
   console.log(cart);
-  updateCartDataBase(cartId, varientId, rid, updatedPrice, cartQty, id);
+  updateCartDataBase(cartId, varientId, rid, updatedPrice, cartQty, foodId);
 }
-function cartdecrementCounter(cartId, rid, id) {
-  let cartQty = Number($(`#inp${id}`).val());
-  let varientId = $(`#varientId${id}`).val();
-  let varientType = $(`#varientType${id}`).val();
-  let basePrice = Number($(`#price${id}`).val());
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  if (cartQty <= 1) {
-    cart = cart.filter((item) => !(item.id == id && item.Type == varientType));
-    console.log("remove item !");
-    localStorage.setItem("cart", JSON.stringify(cart));
-    return false;
-  } else {
+function cartdecrementCounter(cartId, rid, foodId) {
+    let cartQty = Number($(`#inp${foodId}`).val());
+    let varientId = $(`#varientId${foodId}`).val();
+    let varientType = $(`#varientType${foodId}`).val();
+    let basePrice = Number($(`#price${foodId}`).val());
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
     cartQty--;
-  }
 
-  cartQty--;
+    if (cartQty == 0) {
+        cart = cart.filter(
+            (item) => !(item.foodId == foodId && item.Type == varientType)
+        );
 
-  let updatedPrice = basePrice * cartQty;
+        localStorage.setItem("cart", JSON.stringify(cart));
 
-  $(`#inp${id}`).val(cartQty);
-  $(`#totalPrice${id}`).html(`₹${updatedPrice}`);
-
-  if (!Array.isArray(cart)) {
-    cart = [cart];
-  }
-
-  cart = cart.map((item) => {
-    if (item.id == id && item.Type == varientType) {
-      return {
-        ...item,
-        qty: cartQty,
-        price: updatedPrice,
-      };
+        updateCartDataBase(cartId, varientId, rid, 0, 0, foodId);
+        return;
     }
 
-    return item;
-  });
+    let updatedPrice = basePrice * cartQty;
 
-  localStorage.setItem("cart", JSON.stringify(cart));
+    $(`#inp${foodId}`).val(cartQty);
+    $(`#totalPrice${foodId}`).html(`₹${updatedPrice}`);
 
-  updateCartDataBase(cartId, varientId, rid, updatedPrice, cartQty, id);
+    cart = cart.map((item) => {
+        if (item.foodId == foodId && item.Type == varientType) {
+            return {
+                ...item,
+                qty: cartQty,
+                Totalprice: updatedPrice,
+            };
+        }
+        return item;
+    });
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    updateCartDataBase(
+        cartId,
+        varientId,
+        rid,
+        updatedPrice,
+        cartQty,
+        foodId
+    );
 }
 
 function updateCartDataBase(id, vid, rid, total, qty, fid) {
@@ -2090,6 +2105,8 @@ function selectAddress(
   pincode,
   address_type,
 ) {
+
+  $("#addressId").val(id);
   $(".saved_address_data").removeClass("selected_address");
 
   $(element).addClass("selected_address");
@@ -2130,7 +2147,39 @@ $(".payment_option").on("click", function () {
 });
 
 function handleCheckout() {
-  console.log(userId);
+  const params = new URLSearchParams(window.location.search);
+const rid = params.get("rid");
+let addressId = $("#addressId").val();
+let subTotal = $("#subTotal").text();
+let couponDisc = $("#couponDisc").text();
+let deleveryCharge = $("#deleveryCharge").text();
+let grandTotal = $("#grandTotal").text();
+let payMethod = $("#payMethod").val();
+
+let formData = new FormData();
+
+formData.append("type", "placeOrder");
+formData.append("restaurant_id", rid);
+formData.append("user_id", userId);
+formData.append("address_id", addressId);
+formData.append("subtotal", subTotal);
+formData.append("discount_amount", couponDisc);
+formData.append("delivery_charge", deleveryCharge);
+formData.append("grand_total", grandTotal);
+formData.append("payment_method", payMethod);
+
+$.ajax({
+    url: apiUrl,
+    method: "POST",
+    data: formData,
+    processData: false,
+    contentType: false,
+    dataType: "json",
+    success: function(response) {
+        console.log(response);
+    }
+});
+
   /* ordernumber,userId,resturantId, addressId, subtotal, taxAmmount, deliveryCharge, discountAmount, grandTotal, paymentMethod, orderStatus,notes */
   /*order_id,food_item_id,varient_id,quantity,price,total*/
   console.log("check....");

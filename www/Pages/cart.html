@@ -16,6 +16,9 @@
         background: #f7f7f7;
         height: 100vh;
       }
+      .tax img{
+        width: 13px;
+      }
       .not_found{
                  height: 90vh;
            margin: 0rem 0 !important;
@@ -32,6 +35,8 @@
     </style>
   </head>
   <body>
+
+    <input type="number" id="addressId"  style="display: none;"/>
     <div class="main margin_box">
       <div class="header_nav">
         <a href="restaurantDetail.html" class="category_left_head">
@@ -277,53 +282,7 @@
         <div class="saved_address">
           <b>Saved addresses</b>
           <div id="savedAddress">
-          <div class="saved_address_data selected_address">
-            <div class="selected_box">Selected</div>
-            <div class="saved_address_item">
-              <div class="saved_address_left">
-                <div class="saved_icon">
-                  <i class="bi bi-house-door-fill"></i>
-                </div>
-                <div class="saved_txt">
-                  <h5>Deepanshu Kumar</h5>
-                  <p>
-                    Rospa tower, mainroad, kalam academy, mahatma gandhi rd,
-                    Ranchi
-                  </p>
-                  <div class="phone">
-                    <i class="bi bi-telephone"></i>
-                    <p>+91-<b>7903737980</b></p>
-                  </div>
-                </div>
-              </div>
-              <div class="saved_address_right">
-                <i class="bi bi-three-dots-vertical"></i>
-              </div>
-            </div>
-          </div>
-          <div class="saved_address_data">
-            <div class="saved_address_item">
-              <div class="saved_address_left">
-                <div class="saved_icon">
-                  <i class="bi bi-house-door-fill"></i>
-                </div>
-                <div class="saved_txt">
-                  <h5>Deepanshu Kumar</h5>
-                  <p>
-                    Rospa tower, mainroad, kalam academy, mahatma gandhi rd,
-                    Ranchi
-                  </p>
-                  <div class="phone">
-                    <i class="bi bi-telephone"></i>
-                    <p>+91-<b>7903737980</b></p>
-                  </div>
-                </div>
-              </div>
-              <div class="saved_address_right">
-                <i class="bi bi-three-dots-vertical"></i>
-              </div>
-            </div>
-          </div>
+         
           </div>
         </div>
       </div>
@@ -484,6 +443,7 @@
                 </div>
               </div>
             
+            
               <div class="bill_field green">
                 <div class="left_bill_field">
                   <img src="../assets/image/icons/coupons2.svg" alt="" />
@@ -491,6 +451,15 @@
                 </div>
                 <div class="right_bill_field">
                   <small id="couponDisc">-₹0</small>
+                </div>
+              </div>
+                <div class="bill_field">
+                <div class="left_bill_field tax">
+                  <img src="../assets/image/icons/failed.svg" alt="" />
+                  <p>Tax amount</p>
+                </div>
+                <div class="right_bill_field">
+                  <small id="couponDisc">₹20</small>
                 </div>
               </div>
               <div class="bill_field">
@@ -513,7 +482,7 @@
                   <p>Grand Total</p>
                 </div>
                 <div class="right_bill_field">
-                  <small id="grandTotal">₹4200</small>
+                  <small id="grandTotal">₹0</small>
                 </div>
               </div>
             </div>
