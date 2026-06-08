@@ -25,96 +25,12 @@
             <div class="icon_status">
                 <img src="../assets/image/icons/box.svg" alt="">
             </div>
-            <h5>Your order is : <b>Deliverd</b></h5>
+            <h5>Your order is : <b id="status"></b></h5>
         </div>
         <div class="orderDetailData" id="orderDetailData"></div>
-         <div class="order_data_item">
-          <div class="order_top_wrap">
-            <div class="order_item_img">
-              <img
-              id="shopImg"
-                src=""
-                alt=""
-              />
-            </div>
-            <div class="order_item_txt">
-                <h4 id="shopName"></h4>
-                <p id="shopAddress">Ratu Road, Ranchi</p>
-            </div>
-          </div>
-          <div class="order_middle_wrap" id="prdData">
-           
-          </div>
-        
-        </div>
-          <div class="cart_data_sec4 order_Detail_bill">
-          <div class="bill_wrapper">
-            <div class="flex_header">
-              <h4>Bill details</h4>
-              
-            </div>
-
-            <div class="bill_format_data">
-              <div class="bill_field">
-                <div class="left_bill_field">
-                  <i class="bi bi-card-text"></i>
-                  <p>Sub Total</p>
-                </div>
-                <div class="right_bill_field">
-                  <small>₹1200</small>
-                </div>
-              </div>
-              <div class="bill_field green">
-                <div class="left_bill_field">
-                  <i class="bi bi-tags-fill"></i>
-                  <p>Product Discount</p>
-                </div>
-                <div class="right_bill_field">
-                  <small>-₹1200</small>
-                </div>
-              </div>
-              <div class="bill_field green">
-                <div class="left_bill_field">
-                  <img src="../assets/image/icons/coupons2.svg" alt="" />
-                  <p>Promo Discount</p>
-                </div>
-                <div class="right_bill_field">
-                  <small>-₹1200</small>
-                </div>
-              </div>
-              <div class="bill_field">
-                <div class="left_bill_field">
-                  <img
-                    style="width: 15px"
-                    src="../assets/image/icons/delivery.png"
-                    alt=""
-                  />
-                  <p>Delivery Charge</p>
-                </div>
-                <div class="right_bill_field">
-                  <small>₹1200</small>
-                </div>
-              </div>
-              <div class="bill_field">
-                <div class="left_bill_field">
-                  <i class="bi bi-handbag-fill"></i>
-                  <p>Handling Charge</p>
-                </div>
-                <div class="right_bill_field">
-                  <small>₹1200</small>
-                </div>
-              </div>
-              <div class="img-design"></div>
-              <div class="bill_field bill_total">
-                <div class="left_bill_field">
-                  <p>Grand Total</p>
-                </div>
-                <div class="right_bill_field">
-                  <small>₹4200</small>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div id="ordersData"></div>
+          <div class="cart_data_sec4 order_Detail_bill" id="billData">
+         
         </div>
       </div>
       
@@ -129,7 +45,9 @@
     <script src="../assets/js/owl.carousel.min.js"></script>
     <script src="../assets/js/script.js"></script>
     <script>
-        getOrderDetail();
+             getOrderDetail();
+             getOrderCalcData();
+
     </script>
   </body>
 </html>

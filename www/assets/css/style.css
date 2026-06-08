@@ -26,7 +26,8 @@
   --theme-color: #F31A17;
   --theme-hover-color: #f31b1794;
   --theme-light-color: #ffc2c138;
-  --theme-gray: #6A6A6A;
+  /* --theme-gray: #6A6A6A; */
+  --theme-gray: #6a6a6a69;
   --theme-success: #05A225;
 
 
@@ -3246,5 +3247,271 @@ a:hover{
 
 
 .active{
-  background-color: red;
+  background-color: var(--theme-gray) !important;
 }
+
+.coupon-card {
+  position: relative;
+      margin-bottom: 1rem;
+}
+.coupon-card img{
+  width: 100%;
+}
+.coupon-header {
+   margin: 0px 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px dashed green;
+    padding: 10px;
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.coupon-header h3 {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.coupon-header div {
+  background: #79ff796b;
+    font-size: 11px;
+    border-radius: 5px;
+    color: black;
+    font-weight: 600;
+    padding: 6px 7px;
+}
+
+.coupon-body {
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+button.coupon_btn.apply-btn {
+    background: green;
+    color: #fff;
+    border: none;
+    padding: 4px 14px;
+    border-radius: 5px;
+}
+.coupon-card img{
+  width: 100%;
+    position: absolute;
+    z-index: -1;
+}
+
+.coupon-title {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.coupon-info p {
+    color: gray;
+    font-size: 11px;
+}
+
+.coupon-title h4 {
+    font-size: 16px;
+}
+
+.filter_reuse{
+  border-radius: 30px;
+}
+.filter_reuse .modal_fixed_bottom{
+  gap:5px;
+}
+.filter_reuse .offcanvas-body{
+ background-color: #fff !important;
+ padding-left: 0 !important;
+ padding-top: 0 !important;
+}
+.filter_reuse .offcanvas-header {
+  margin-bottom: 0 !important;
+}
+.filter_options {
+    margin-top: 15px;
+    width: 100%;
+}
+
+
+.filter_modal {
+    display: flex;
+    /* align-items: center; */
+    gap: 0;
+    height: 100%;
+}
+
+.filter_sidebar > div {
+      white-space: nowrap;
+    padding: 10px;
+    font-weight: 800;
+}
+
+.filter_sidebar {
+    border-right: 1px solid #cfcfcf;
+    padding-right: 20px;
+    margin-right: 25px;
+        width: 6rem;
+            margin-top: 15px;
+
+}
+
+.content_filter {
+    height: 100%;
+}
+
+.filter_option_item {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    /* padding: 10px 0; */
+}
+
+.radio_item {
+    width: 100%;
+    padding: 5px 0px !important;
+}
+.active_sort{
+  border-left: 5px solid var(--theme-color);
+}
+.filter_option_item >label >input{
+  margin-right:10px;
+
+}
+.active_disable{
+   pointer-events: none;
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--theme-gray) !important;
+}
+
+
+
+/* 
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:sans-serif;
+}
+
+.onboarding{
+    min-height:100vh;
+    background:#fff;
+    padding:25px;
+    display:flex;
+    flex-direction:column;
+}
+
+.content{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    text-align:center;
+}
+
+.tag{
+    display:inline-block;
+    margin:auto;
+    padding:8px 16px;
+    background:#fff1f1;
+    color:#ff2d2d;
+    border-radius:50px;
+    font-size:13px;
+    font-weight:600;
+}
+
+.content h1{
+    margin-top:20px;
+    font-size:38px;
+    line-height:1.15;
+    color:#111;
+}
+
+.content p{
+    margin-top:15px;
+    color:#777;
+    font-size:15px;
+    line-height:1.7;
+    max-width:320px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.dots{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin-top:30px;
+}
+
+.dots span{
+    width:8px;
+    height:8px;
+    border-radius:20px;
+    background:#ddd;
+}
+
+.dots .active{
+    width:28px;
+    background:#ff2d2d;
+}
+
+.start_btn{
+    margin-top:35px;
+    width:100%;
+    height:58px;
+    border:none;
+    border-radius:18px;
+    background:#ff2d2d;
+    color:#fff;
+    font-size:16px;
+    font-weight:600;
+    box-shadow:0 12px 25px rgba(255,45,45,.2);
+}
+
+.skip_btn{
+    margin-top:18px;
+    border:none;
+    background:none;
+    color:#888;
+    font-size:15px;
+}
+
+
+
+.delivery_visual{
+    height:300px;
+    position:relative;
+}
+
+.rider_card{
+    width:180px;
+    height:180px;
+    margin:auto;
+    border-radius:50%;
+    overflow:hidden;
+    animation:bounce 4s infinite;
+}
+
+.route{
+    width:2px;
+    height:90px;
+    border-left:3px dashed #ff2d2d;
+    margin:auto;
+}
+
+.home_icon{
+    width:60px;
+    height:60px;
+    background:#fff1f1;
+    border-radius:20px;
+    margin:auto;
+} */

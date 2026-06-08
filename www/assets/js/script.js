@@ -522,46 +522,74 @@ async function handleInput(e) {
     return $("#searchData").html("");
   }
 
-  let load = true;
+  $("#load").html("<span class='loader'></span>");
 
-  if (load) {
-    $("#load").html("<span class='loader'></span>");
-  }
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "JSON",
+    data: {
+      type: "handleSearch",
+      query: value,
+    },
+    success: function (response) {
+      if (response.status == "success") {
+        console.log(response.data);
+        let data = response.data;
+        let searchHtml = "";
+        $("#load").html("<i class='bi bi-mic'></i>");
+        data.forEach((item) => {
+          searchHtml += `<a href="searchDetail.html?query=${item?.name}" class="search_txt">
+                <div class="search_txt_img_desc">
+                  <img src="${imageUrl + item.image}" alt="" />
+                  <h4>${item?.name}</h4>
+                </div>
+              <i class="bi bi-chevron-right"></i>
+              </a>`;
+        });
 
-  let response = await fetch(
-    "https://www.themealdb.com/api/json/v1/1/categories.php",
-  );
+        $("#searchData").html(searchHtml);
+      } else {
+         let searchHtml = "";
+        console.log(response.message);
+        $("#load").html("<i class='bi bi-mic'></i>");
+        searchHtml += `<div class="not_found"><img src="../assets/image/icons/notFound.gif" alt=""/>No Meal Found !</div>`;
 
-  let data = await response.json();
-
-  if (data) {
-    load = false;
-    $("#load").html("<i class='bi bi-mic'></i>");
-  }
-
-  console.log(data?.categories);
-
-  let AllData = data?.categories?.filter((item) => {
-    return item?.strCategory?.includes(value);
+        $("#searchData").html(searchHtml);
+      }
+    },
   });
-  let searchHtml = "";
-  console.log(AllData);
 
-  if (AllData.length > 0) {
-    AllData?.forEach((item) => {
-      searchHtml += `<a href="searchDetail.html?query=${item.strCategory}" class="search_txt">
-          <div class="search_txt_img_desc">
-            <img src="${item.strCategoryThumb}" alt="" />
-            <h4>${item?.strCategory}</h4>
-          </div>
-        <i class="bi bi-chevron-right"></i>
-        </a>
-      `;
-    });
-  } else {
-    searchHtml += `<div class="not_found"><img src="../assets/image/icons/notFound.gif" alt=""/>No Meal Found !</div>`;
-  }
-  $("#searchData").html(searchHtml);
+  // let data = await response.json();
+
+  // if (data) {
+  //   load = false;
+  //   $("#load").html("<i class='bi bi-mic'></i>");
+  // }
+
+  // console.log(data?.categories);
+
+  // let AllData = data?.categories?.filter((item) => {
+  //   return item?.strCategory?.includes(value);
+  // });
+  // let searchHtml = "";
+  // console.log(AllData);
+
+  // if (AllData.length > 0) {
+  //   AllData?.forEach((item) => {
+  //     searchHtml += `<a href="searchDetail.html?query=${item.strCategory}" class="search_txt">
+  //         <div class="search_txt_img_desc">
+  //           <img src="${item.strCategoryThumb}" alt="" />
+  //           <h4>${item?.strCategory}</h4>
+  //         </div>
+  //       <i class="bi bi-chevron-right"></i>
+  //       </a>
+  //     `;
+  //   });
+  // } else {
+  //   searchHtml += `<div class="not_found"><img src="../assets/image/icons/notFound.gif" alt=""/>No Meal Found !</div>`;
+  // }
+  // $("#searchData").html(searchHtml);
 }
 
 function getInputValue() {
@@ -1369,9 +1397,9 @@ function handleModalCartData(data) {
     success: function (response) {
       if (response.status == "success") {
         let varientData = response.data;
-        console.log("varientData")
-        console.log(varientData)
-        console.log("varientData")
+        console.log("varientData");
+        console.log(varientData);
+        console.log("varientData");
         let varientHtml = "";
         let btnHtml = "";
         let foodId = varientData[0].food_item_id;
@@ -1404,11 +1432,11 @@ function handleModalCartData(data) {
           <input id="varientType${foodId}" type="text" style="display: none"/>
           <input id="varientId${foodId}" type="number" style="display: none"/>
           <input id="price${foodId}" type="number" style="display: none"/>
-          <button  onclick='renderCartPage(
+          <button class="active_disable cart_btn_add" onclick='renderCartPage(
           
               "${foodId}",
             )'>
-            Add Item | ₹<b id="totalPrice${foodId}"> </b>
+            Add Item | ₹<b id="totalPrice${Math.floor(foodId)}"> </b>
           </button>`;
 
         $("#btnWrapper").html(btnHtml);
@@ -1432,16 +1460,20 @@ function handleTogglePrice(price, vid, name, id) {
   $(`#inp${id}`).val(qtyValue);
   $(`#varientType${id}`).val(name);
   $(`#varientId${id}`).val(vid);
+  $(".cart_btn_add").removeClass("active_disable")
 }
 
 function incrementCounter(foodId) {
+  const params = new URLSearchParams(window.location.search);
+
+  const rid = params.get("rid");
   let variant_id = $(`#varientId${foodId}`).val();
   qtyValue += 1;
   let priceData = $(`#totalPrice${foodId}`).text();
   let varientType = $(`#varientType${foodId}`).val();
   let basePrice = $(`#price${foodId}`).val();
   let updatedPrice = Number(basePrice) * Number(qtyValue);
-  console.log(basePrice,updatedPrice)
+  console.log(basePrice, updatedPrice);
 
   $(`#inp${foodId}`).val(qtyValue);
   $(`#totalPrice${foodId}`).html(updatedPrice);
@@ -1467,8 +1499,9 @@ function incrementCounter(foodId) {
     });
   } else {
     let product = {
-      id:variant_id,
+      id: variant_id,
       foodId: foodId,
+      restaurant_id: rid,
       price: basePrice,
       Totalprice: updatedPrice,
       qty: qtyValue,
@@ -1491,7 +1524,9 @@ function decrementCounter(foodId) {
   $(`#totalPrice${foodId}`).html(updatedPrice);
 
   if (qtyValue == 0) {
-    cart = cart.filter((item) => !(item.id == foodId && item.Type == varientType));
+    cart = cart.filter(
+      (item) => !(item.id == foodId && item.Type == varientType),
+    );
     console.log("remove item !");
     localStorage.setItem("cart", JSON.stringify(cart));
     return false;
@@ -1562,6 +1597,10 @@ function renderCartPage(fid) {
 }
 
 function getCart() {
+  const params = new URLSearchParams(window.location.search);
+
+  const rid = params.get("rid");
+
   $.ajax({
     url: apiUrl,
     method: "POST",
@@ -1572,7 +1611,8 @@ function getCart() {
     },
     success: function (response) {
       if (response.status == "success") {
-        let cart = response.data;
+        console.log(response.data);
+        let cart = response.data.filter((item) => item.restaurant_id == rid);
         console.log(response);
         let cartHtml = "";
         cart.forEach((item) => {
@@ -1610,17 +1650,25 @@ function getCart() {
                 <input id="varientId${item.food_item_id}" value="${item.variant_id}" type="hidden" />
                 <input id="price${item.food_item_id}" value="${item.price}" type="hidden" /></div>
               <span>
-              <p id="totalPrice${item.food_item_id}">₹${item.total}</p>
+              <p id="totalPrice${item.food_item_id}">₹${Math.floor(item.total)}</p>
               </span>
               </div>
               
             </div>`;
         });
-        $("#cartWrap").css("display", "block");
-        $("#cartData").html(cartHtml);
+        if (cart.length > 0) {
+          console.log(cart.length);
+          $("#cartWrap").css("display", "block");
+          $("#cartData").html(cartHtml);
+        } else {
+          $("#cartWrap").css("display", "block");
+
+          $("#cartWrap").html(
+            `<div class="not_found"><img src="../assets/image/icons/notFound.gif" alt=""/>No Meal Found ! <button onclick="location.href='home.html'">Go to resturants </button></div>`,
+          );
+        }
       } else {
         console.log(response.message);
-
         $("#cartWrap").css("display", "block");
 
         $("#cartWrap").html(
@@ -1639,8 +1687,6 @@ function cartIncremetCounter(cartId, rid, foodId) {
   let varientId = $(`#varientId${foodId}`).val();
   let varientType = $(`#varientType${foodId}`).val();
   let basePrice = Number($(`#price${foodId}`).val());
-
- 
 
   let updatedPrice = basePrice * cartQty;
 
@@ -1671,8 +1717,9 @@ function cartIncremetCounter(cartId, rid, foodId) {
     });
   } else {
     cart.push({
-      id:varientId,
+      id: varientId,
       foodId: foodId,
+      restaurant_id: rid,
       price: basePrice,
       Totalprice: updatedPrice,
       qty: cartQty,
@@ -1681,59 +1728,54 @@ function cartIncremetCounter(cartId, rid, foodId) {
   }
 
   localStorage.setItem("cart", JSON.stringify(cart));
-     getSubtotal();
-   
+  getSubtotal();
 
   console.log(cart);
   updateCartDataBase(cartId, varientId, rid, updatedPrice, cartQty, foodId);
 }
 function cartdecrementCounter(cartId, rid, foodId) {
-    let cartQty = Number($(`#inp${foodId}`).val());
-    let varientId = $(`#varientId${foodId}`).val();
-    let varientType = $(`#varientType${foodId}`).val();
-    let basePrice = Number($(`#price${foodId}`).val());
+  let cartQty = Number($(`#inp${foodId}`).val());
+  let varientId = $(`#varientId${foodId}`).val();
+  let varientType = $(`#varientType${foodId}`).val();
+  let basePrice = Number($(`#price${foodId}`).val());
 
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-    cartQty--;
+  cartQty--;
 
-    if (cartQty == 0) {
-        cart = cart.filter(
-            (item) => !(item.foodId == foodId && item.Type == varientType)
-        );
-
-        localStorage.setItem("cart", JSON.stringify(cart));
-
-        updateCartDataBase(cartId, varientId, rid, 0, 0, foodId);
-        return;
-    }
-
-    let updatedPrice = basePrice * cartQty;
-
-    $(`#inp${foodId}`).val(cartQty);
-    $(`#totalPrice${foodId}`).html(`₹${updatedPrice}`);
-
-    cart = cart.map((item) => {
-        if (item.foodId == foodId && item.Type == varientType) {
-            return {
-                ...item,
-                qty: cartQty,
-                Totalprice: updatedPrice,
-            };
-        }
-        return item;
-    });
+  if (cartQty == 0) {
+    $("#cartWrap").html(
+      `<div class="not_found"><img src="../assets/image/icons/notFound.gif" alt=""/>No Meal Found ! <button onclick="location.href='home.html'">Go to resturants </button></div>`,
+    );
+    cart = cart.filter(
+      (item) => !(item.foodId == foodId && item.Type == varientType),
+    );
 
     localStorage.setItem("cart", JSON.stringify(cart));
 
-    updateCartDataBase(
-        cartId,
-        varientId,
-        rid,
-        updatedPrice,
-        cartQty,
-        foodId
-    );
+    updateCartDataBase(cartId, varientId, rid, 0, 0, foodId);
+    return;
+  }
+
+  let updatedPrice = basePrice * cartQty;
+
+  $(`#inp${foodId}`).val(cartQty);
+  $(`#totalPrice${foodId}`).html(`₹${updatedPrice}`);
+
+  cart = cart.map((item) => {
+    if (item.foodId == foodId && item.Type == varientType) {
+      return {
+        ...item,
+        qty: cartQty,
+        Totalprice: updatedPrice,
+      };
+    }
+    return item;
+  });
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  updateCartDataBase(cartId, varientId, rid, updatedPrice, cartQty, foodId);
 }
 
 function updateCartDataBase(id, vid, rid, total, qty, fid) {
@@ -1839,14 +1881,34 @@ function renderCoupons(coupons) {
     const valid = isCouponValid(coupon);
 
     html += `
-      <button
-        class="coupon_btn"
-        ${!valid ? "disabled" : ""}
-        onclick="applyCoupon('${coupon.code}')"
-      >
-        ${coupon.code}
-      </button>
-    `;
+<div class="coupon-card">
+    <img src="../assets/image/icons/couponsBox.svg" alt="coupon bg" class="coupon-bg">
+
+    <div class="coupon-header">
+        <h3>${coupon.code}</h3>
+        <div>Valid Until ${coupon.end_date.split(" ")[0]}</div>
+    </div>
+
+    <div class="coupon-body">
+        <div class="coupon-info">
+            <div class="coupon-title">
+                <i class="bi bi-gift-fill"></i>
+                <h4>${coupon.discount_value}% OFF</h4>
+            </div>
+            <p>Min Order ₹${coupon.minimum_order_amount}</p>
+        </div>
+
+        <button
+            class="coupon_btn apply-btn"
+            ${!valid ? "disabled" : ""}
+            id="${coupon.code}"
+            onclick="applyCoupon('${coupon.code}')"
+        >
+            Apply
+        </button>
+    </div>
+</div>
+`;
   });
 
   $("#couponsData").html(html);
@@ -1858,14 +1920,19 @@ function renderCoupons(coupons) {
 function getSubtotal() {
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  let data = cart.reduce((total, item) => {
-    console.log(item,item.price)
-    return total + Number(item.price);
-  }, 0);
-    $("#subTotal").html("₹"+data);
-    $("#grandTotal").html("₹"+data);
+  // let data = cart.reduce((total, item) => {
+  //   return total + Number(item.price);
+  // }, 0);
 
-  return data; // ye hona zaroori hai
+  let dataTotal = cart.reduce((total, item) => {
+    return total + Number(item.Totalprice);
+  }, 0);
+  $("#subTotal").html(dataTotal);
+  $("#grandTotal").html(dataTotal + 20 + 20);
+  $("#checkPlaceOrder").html(dataTotal + 20 + 20);
+  $("#payAmtTotal").html(dataTotal + 20 + 20);
+
+  return dataTotal; // ye hona zaroori hai
 }
 
 // ======================
@@ -1888,8 +1955,7 @@ function calculateCouponDiscount(coupon, subtotal) {
 
   // Percentage Discount
   if (coupon.discount_type === "percentage") {
-    discount =
-      (subtotal * Number(coupon.discount_value)) / 100;
+    discount = (subtotal * Number(coupon.discount_value)) / 100;
 
     // Max Discount Check
     if (
@@ -1921,19 +1987,14 @@ function calculateCouponDiscount(coupon, subtotal) {
 function applyCoupon(code) {
   const subtotal = getSubtotal();
 
-  const coupon = couponsData.find(
-    (item) => item.code === code
-  );
+  const coupon = couponsData.find((item) => item.code === code);
 
   if (!coupon) {
     alert("Coupon not found");
     return;
   }
 
-  const result = calculateCouponDiscount(
-    coupon,
-    subtotal
-  );
+  const result = calculateCouponDiscount(coupon, subtotal);
 
   if (!result.success) {
     alert(result.message);
@@ -1944,23 +2005,23 @@ function applyCoupon(code) {
 
   const grandTotal = subtotal - result.discount;
 
-  console.log(grandTotal)
+  console.log(subtotal, result.discount);
 
-  $("#couponDisc").text(
-    `₹${result.discount.toFixed(2)}`
-  );
-  $("#amountApplied").text(result.discount.toFixed(2))
-  $("#saved").text(coupon.minimum_order_amount)
+  $("#couponDisc").text(`${Math.floor(result.discount.toFixed(2))}`);
+  $("#amountApplied").text(result.discount.toFixed(2));
+  $("#saved").text(coupon.minimum_order_amount);
 
-  $("#grandTotal").text(
-    `₹${grandTotal.toFixed(2)}`
-  );
+  $("#grandTotal").text(`${Math.floor(grandTotal.toFixed(2))}`);
 
   $(".coupon_btn").removeClass("active");
+  $(".coupon_btn").text("Apply");
+
+  $(`#${code}`).text("Applied");
   event.target.classList.add("active");
+  bootstrap.Offcanvas.getOrCreateInstance(
+    $("#offcanvasBottomCoupons")[0],
+  ).hide();
 }
-
-
 
 $(".form_icon").on("click", function () {
   $(".form_icon").removeClass("role_active");
@@ -2093,7 +2154,6 @@ function getAddress() {
     },
   });
 }
-getAddress();
 
 function selectAddress(
   element,
@@ -2105,7 +2165,6 @@ function selectAddress(
   pincode,
   address_type,
 ) {
-
   $("#addressId").val(id);
   $(".saved_address_data").removeClass("selected_address");
 
@@ -2143,46 +2202,298 @@ $(".payment_option").on("click", function () {
   $(this).addClass("selected_option");
 
   let payMathod = $(this).find(".left_pay_box h5").text();
-  $("#payMethod").val(payMathod);
+  $("#payMethod").html(payMathod);
 });
 
 function handleCheckout() {
   const params = new URLSearchParams(window.location.search);
-const rid = params.get("rid");
-let addressId = $("#addressId").val();
-let subTotal = $("#subTotal").text();
-let couponDisc = $("#couponDisc").text();
-let deleveryCharge = $("#deleveryCharge").text();
-let grandTotal = $("#grandTotal").text();
-let payMethod = $("#payMethod").val();
+  const rid = params.get("rid");
+  let addressId = $("#addressId").val();
+  let subTotal = $("#subTotal").text();
+  let couponDisc = $("#couponDisc").text();
+  let deleveryCharge = $("#deleveryCharge").text();
+  let grandTotal = $("#grandTotal").text();
+  let payMethod = $("#payMethod").html();
+  let taxAmt = $("#taxAmount").text();
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  cartData = cart.filter((item) => item.restaurant_id == rid);
 
-let formData = new FormData();
+  let formData = new FormData();
 
-formData.append("type", "placeOrder");
-formData.append("restaurant_id", rid);
-formData.append("user_id", userId);
-formData.append("address_id", addressId);
-formData.append("subtotal", subTotal);
-formData.append("discount_amount", couponDisc);
-formData.append("delivery_charge", deleveryCharge);
-formData.append("grand_total", grandTotal);
-formData.append("payment_method", payMethod);
+  formData.append("type", "placeOrder");
+  formData.append("restaurant_id", rid);
+  formData.append("user_id", userId);
+  formData.append("address_id", addressId);
+  formData.append("subtotal", subTotal);
+  formData.append("discount_amount", couponDisc);
+  formData.append("delivery_charge", deleveryCharge);
+  formData.append("grand_total", grandTotal);
+  formData.append("payment_method", payMethod);
+  formData.append("taxAmt", taxAmt);
 
-$.ajax({
+  formData.append("cart", JSON.stringify(cartData));
+  console.log(cart);
+
+  $.ajax({
     url: apiUrl,
     method: "POST",
     data: formData,
     processData: false,
     contentType: false,
     dataType: "json",
-    success: function(response) {
-        console.log(response);
-    }
-});
+    success: function (response) {
+      if (response.status == "success") {
+        console.log(response.message);
 
-  /* ordernumber,userId,resturantId, addressId, subtotal, taxAmmount, deliveryCharge, discountAmount, grandTotal, paymentMethod, orderStatus,notes */
-  /*order_id,food_item_id,varient_id,quantity,price,total*/
-  console.log("check....");
+        localStorage.setItem("cart", JSON.stringify([]));
+        handleCartDelete(rid);
+        location.href = "orders.html";
+      } else {
+        console.log(response.message);
+      }
+    },
+  });
+}
+
+function handleCartDelete(rid) {
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "JSON",
+    data: {
+      type: "handleCartDelete",
+      id: rid,
+    },
+    success: function (response) {
+      if (response.status == "success") {
+        console.log(response.message);
+      } else {
+        console.log(response.message);
+      }
+    },
+  });
+}
+
+function getOrders() {
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "json",
+    data: {
+      type: "getOrder",
+      user_id: userId,
+    },
+    success: function (response) {
+      if (response.status == "success") {
+        let orders = response.data;
+        let ordersHtml = "";
+        let itemsHtml = "";
+        localStorage.setItem("orders", JSON.stringify(orders));
+        orders.forEach((order) => {
+          console.log(order);
+
+          const foodItems = order.food_items.split("||");
+
+          foodItems.forEach((item) => {
+            const [name, type] = item?.split("|") || "undefined";
+
+            itemsHtml += `
+                <div class="order_middle_box">
+              ${type == "nonveg" ? `<img src="../assets/image/icons/failed.svg" alt="">` : ""}
+              ${type == "veg" ? `<img src="../assets/image/icons/success.svg" alt="">` : ""}
+
+                <p>${name}</p>
+              </div>
+            `;
+          });
+
+          ordersHtml += `
+    <div onclick="location.href='orderDetails.html?id=${order.id}'" class="order_data_item">
+
+      <div class="order_top_wrap">
+        <div class="order_item_img">
+          <img src="${imageUrl + order.restaurant_image}" alt="">
+        </div>
+
+        <div class="order_item_txt">
+          <h4>${order.restaurant_name}</h4>
+          <p>${order.restaurant_address}</p>
+        </div>
+      </div>
+
+      <div class="order_middle_wrap">
+        ${itemsHtml}
+      </div>
+
+      <div class="order_bottom_wrap">
+        <div class="order_bottom_top">
+          <h5>
+            Order placed on
+            <b>${order.ordered_at}</b>
+          </h5>
+
+          <p>Total Bill <b>₹${Math.floor(order.grand_total)}</b></p>
+        </div>
+
+        <div class="order_bottom_bottom status">
+          <h5>${order.order_status}</h5>
+          <a href="orderDetails.html?id=${order.id}">View Detail</a>
+        </div>
+      </div>
+
+    </div>
+  `;
+        });
+
+        $("#ordersData").html(ordersHtml);
+      } else {
+        console.log(response.messaage);
+      }
+    },
+  });
+}
+
+function getOrderDetail() {
+  const allOrders = JSON.parse(localStorage.getItem("orders")) || [];
+
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get("id");
+
+  const order = allOrders.find((item) => item.id == orderId);
+
+  if (!order) {
+    $("#ordersData").html("<p>Order not found</p>");
+    return;
+  }
+
+  let itemsHtml = "";
+
+  const foodItems = order.food_items.split("||");
+
+  foodItems.forEach((item) => {
+    const [name, type] = item.split("|");
+
+    itemsHtml += `
+            <div class="order_middle_box">
+                ${
+                  type === "nonveg"
+                    ? '<img src="../assets/image/icons/failed.svg" alt="">'
+                    : '<img src="../assets/image/icons/success.svg" alt="">'
+                }
+                <p>${name}</p>
+            </div>
+        `;
+  });
+
+  const ordersHtml = `
+        <div class="order_data_item">
+
+            <div class="order_top_wrap">
+                <div class="order_item_img">
+                    <img src="${imageUrl + order.restaurant_image}" alt="">
+                </div>
+
+                <div class="order_item_txt">
+                    <h4>${order.restaurant_name}</h4>
+                    <p>${order.restaurant_address}</p>
+                </div>
+            </div>
+
+            <div class="order_middle_wrap">
+                ${itemsHtml}
+            </div>
+
+            
+
+        </div>
+    `;
+
+  $("#ordersData").html(ordersHtml);
+}
+function getOrderCalcData() {
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get("id");
+
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "JSON",
+    data: {
+      type: "getOrderCalcData",
+      id: orderId,
+    },
+    success: function (response) {
+      if (response.status == "success") {
+        let data = response.data[0];
+        $("#status").html(data.order_status);
+
+        let billHtml = `
+        <div class="bill_format_data">
+
+          <div class="bill_field">
+            <div class="left_bill_field">
+              <i class="bi bi-card-text"></i>
+              <p>Sub Total</p>
+            </div>
+            <div class="right_bill_field">
+              <small>₹${data.subtotal}</small>
+            </div>
+          </div>
+
+          <div class="bill_field green">
+            <div class="left_bill_field">
+              <i class="bi bi-tags-fill"></i>
+              <p>Discount</p>
+            </div>
+            <div class="right_bill_field">
+              <small>-₹${data.discount_amount}</small>
+            </div>
+          </div>
+
+          <div class="bill_field">
+            <div class="left_bill_field">
+              <img
+                style="width:15px"
+                src="../assets/image/icons/delivery.png"
+                alt=""
+              />
+              <p>Delivery Charge</p>
+            </div>
+            <div class="right_bill_field">
+              <small>₹${data.delivery_charge}</small>
+            </div>
+          </div>
+
+          <div class="bill_field">
+            <div class="left_bill_field">
+              <i class="bi bi-receipt"></i>
+              <p>Tax</p>
+            </div>
+            <div class="right_bill_field">
+              <small>₹${data.tax_amount}</small>
+            </div>
+          </div>
+
+          <div class="img-design"></div>
+
+          <div class="bill_field bill_total">
+            <div class="left_bill_field">
+              <p>Grand Total</p>
+            </div>
+            <div class="right_bill_field">
+              <small>₹${data.grand_total}</small>
+            </div>
+          </div>
+
+        </div>
+      `;
+
+        $("#billData").html(billHtml);
+      } else {
+        console.log(response.message);
+      }
+    },
+  });
 }
 
 // dumy js
@@ -2675,525 +2986,247 @@ function handleToggleBtn(el) {
   parent.querySelector(".button_data").style.display = "flex";
 }
 
-function getOrders() {
-  const orders = [
-    {
-      id: 1,
-      restaurantName: "Food Bazaar Rajdhani",
-      location: "Ratu Road, Ranchi",
-      orderDate: "09 Jul 2025",
-      orderTime: "2:26PM",
-      totalBill: "148.16",
-      status: "Delivered",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
-      items: [
-        {
-          name: "Chicken Biryani",
-          status: "failed",
-          icon: "../assets/image/icons/failed.svg",
-        },
-        {
-          name: "Veg Biryani",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
+// function getOrderDetail() {
+//   const orders = [
+//     {
+//       id: 1,
+//       restaurantName: "Food Bazaar Rajdhani",
+//       location: "Ratu Road, Ranchi",
+//       orderDate: "09 Jul 2025",
+//       orderTime: "2:26PM",
+//       totalBill: "148.16",
+//       status: "Delivered",
+//       restaurantImage:
+//         "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
+//       items: [
+//         {
+//           name: "Chicken Biryani",
+//           status: "failed",
+//           icon: "../assets/image/icons/failed.svg",
+//         },
+//         {
+//           name: "Veg Biryani",
+//           status: "success",
+//           icon: "../assets/image/icons/success.svg",
+//         },
+//       ],
+//     },
 
-    {
-      id: 2,
-      restaurantName: "Burger Point",
-      location: "Main Road, Ranchi",
-      orderDate: "10 Jul 2025",
-      orderTime: "1:10PM",
-      totalBill: "299.00",
-      status: "Pending",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
-      items: [
-        {
-          name: "Chicken Burger",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
+//     {
+//       id: 2,
+//       restaurantName: "Burger Point",
+//       location: "Main Road, Ranchi",
+//       orderDate: "10 Jul 2025",
+//       orderTime: "1:10PM",
+//       totalBill: "299.00",
+//       status: "Pending",
+//       restaurantImage:
+//         "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
+//       items: [
+//         {
+//           name: "Chicken Burger",
+//           status: "success",
+//           icon: "../assets/image/icons/success.svg",
+//         },
+//       ],
+//     },
 
-    {
-      id: 3,
-      restaurantName: "Pizza Hub",
-      location: "Lalpur, Ranchi",
-      orderDate: "11 Jul 2025",
-      orderTime: "7:45PM",
-      totalBill: "420.50",
-      status: "Delivered",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1548365328-9f547fb0953b?w=500",
-      items: [
-        {
-          name: "Cheese Pizza",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-        {
-          name: "Cold Drink",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
+//     {
+//       id: 3,
+//       restaurantName: "Pizza Hub",
+//       location: "Lalpur, Ranchi",
+//       orderDate: "11 Jul 2025",
+//       orderTime: "7:45PM",
+//       totalBill: "420.50",
+//       status: "Delivered",
+//       restaurantImage:
+//         "https://images.unsplash.com/photo-1548365328-9f547fb0953b?w=500",
+//       items: [
+//         {
+//           name: "Cheese Pizza",
+//           status: "success",
+//           icon: "../assets/image/icons/success.svg",
+//         },
+//         {
+//           name: "Cold Drink",
+//           status: "success",
+//           icon: "../assets/image/icons/success.svg",
+//         },
+//       ],
+//     },
 
-    {
-      id: 4,
-      restaurantName: "Healthy Bowl",
-      location: "Kanke Road, Ranchi",
-      orderDate: "12 Jul 2025",
-      orderTime: "3:20PM",
-      totalBill: "180.00",
-      status: "Cancelled",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
-      items: [
-        {
-          name: "Healthy Salad",
-          status: "failed",
-          icon: "../assets/image/icons/failed.svg",
-        },
-      ],
-    },
+//     {
+//       id: 4,
+//       restaurantName: "Healthy Bowl",
+//       location: "Kanke Road, Ranchi",
+//       orderDate: "12 Jul 2025",
+//       orderTime: "3:20PM",
+//       totalBill: "180.00",
+//       status: "Cancelled",
+//       restaurantImage:
+//         "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
+//       items: [
+//         {
+//           name: "Healthy Salad",
+//           status: "failed",
+//           icon: "../assets/image/icons/failed.svg",
+//         },
+//       ],
+//     },
 
-    {
-      id: 5,
-      restaurantName: "Tandoori Nights",
-      location: "Doranda, Ranchi",
-      orderDate: "13 Jul 2025",
-      orderTime: "9:00PM",
-      totalBill: "560.99",
-      status: "Delivered",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500",
-      items: [
-        {
-          name: "Paneer Tikka",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-        {
-          name: "Butter Naan",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
+//     {
+//       id: 5,
+//       restaurantName: "Tandoori Nights",
+//       location: "Doranda, Ranchi",
+//       orderDate: "13 Jul 2025",
+//       orderTime: "9:00PM",
+//       totalBill: "560.99",
+//       status: "Delivered",
+//       restaurantImage:
+//         "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500",
+//       items: [
+//         {
+//           name: "Paneer Tikka",
+//           status: "success",
+//           icon: "../assets/image/icons/success.svg",
+//         },
+//         {
+//           name: "Butter Naan",
+//           status: "success",
+//           icon: "../assets/image/icons/success.svg",
+//         },
+//       ],
+//     },
 
-    {
-      id: 6,
-      restaurantName: "Momo Express",
-      location: "Harmu, Ranchi",
-      orderDate: "14 Jul 2025",
-      orderTime: "5:30PM",
-      totalBill: "220.40",
-      status: "Delivered",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1526318896980-cf78c088247c?w=500",
-      items: [
-        {
-          name: "Chicken Momos",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
+//     {
+//       id: 6,
+//       restaurantName: "Momo Express",
+//       location: "Harmu, Ranchi",
+//       orderDate: "14 Jul 2025",
+//       orderTime: "5:30PM",
+//       totalBill: "220.40",
+//       status: "Delivered",
+//       restaurantImage:
+//         "https://images.unsplash.com/photo-1526318896980-cf78c088247c?w=500",
+//       items: [
+//         {
+//           name: "Chicken Momos",
+//           status: "success",
+//           icon: "../assets/image/icons/success.svg",
+//         },
+//       ],
+//     },
 
-    {
-      id: 7,
-      restaurantName: "Sweet Cravings",
-      location: "Upper Bazar, Ranchi",
-      orderDate: "15 Jul 2025",
-      orderTime: "8:15PM",
-      totalBill: "310.25",
-      status: "Delivered",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=500",
-      items: [
-        {
-          name: "Chocolate Cake",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-        {
-          name: "Ice Cream",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
+//     {
+//       id: 7,
+//       restaurantName: "Sweet Cravings",
+//       location: "Upper Bazar, Ranchi",
+//       orderDate: "15 Jul 2025",
+//       orderTime: "8:15PM",
+//       totalBill: "310.25",
+//       status: "Delivered",
+//       restaurantImage:
+//         "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=500",
+//       items: [
+//         {
+//           name: "Chocolate Cake",
+//           status: "success",
+//           icon: "../assets/image/icons/success.svg",
+//         },
+//         {
+//           name: "Ice Cream",
+//           status: "success",
+//           icon: "../assets/image/icons/success.svg",
+//         },
+//       ],
+//     },
 
-    {
-      id: 8,
-      restaurantName: "South Spice",
-      location: "Circular Road, Ranchi",
-      orderDate: "16 Jul 2025",
-      orderTime: "11:50AM",
-      totalBill: "275.00",
-      status: "Pending",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=500",
-      items: [
-        {
-          name: "Masala Dosa",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
+//     {
+//       id: 8,
+//       restaurantName: "South Spice",
+//       location: "Circular Road, Ranchi",
+//       orderDate: "16 Jul 2025",
+//       orderTime: "11:50AM",
+//       totalBill: "275.00",
+//       status: "Pending",
+//       restaurantImage:
+//         "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=500",
+//       items: [
+//         {
+//           name: "Masala Dosa",
+//           status: "success",
+//           icon: "../assets/image/icons/success.svg",
+//         },
+//       ],
+//     },
 
-    {
-      id: 9,
-      restaurantName: "Roll Factory",
-      location: "Booty More, Ranchi",
-      orderDate: "17 Jul 2025",
-      orderTime: "6:40PM",
-      totalBill: "199.90",
-      status: "Delivered",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500",
-      items: [
-        {
-          name: "Egg Roll",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-        {
-          name: "Chicken Roll",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
+//     {
+//       id: 9,
+//       restaurantName: "Roll Factory",
+//       location: "Booty More, Ranchi",
+//       orderDate: "17 Jul 2025",
+//       orderTime: "6:40PM",
+//       totalBill: "199.90",
+//       status: "Delivered",
+//       restaurantImage:
+//         "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500",
+//       items: [
+//         {
+//           name: "Egg Roll",
+//           status: "success",
+//           icon: "../assets/image/icons/success.svg",
+//         },
+//         {
+//           name: "Chicken Roll",
+//           status: "success",
+//           icon: "../assets/image/icons/success.svg",
+//         },
+//       ],
+//     },
 
-    {
-      id: 10,
-      restaurantName: "Coffee Cafe",
-      location: "Morabadi, Ranchi",
-      orderDate: "18 Jul 2025",
-      orderTime: "4:05PM",
-      totalBill: "145.00",
-      status: "Delivered",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=500",
-      items: [
-        {
-          name: "Cold Coffee",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-        {
-          name: "Sandwich",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
-  ];
-  let ordersHtml = "";
+//     {
+//       id: 10,
+//       restaurantName: "Coffee Cafe",
+//       location: "Morabadi, Ranchi",
+//       orderDate: "18 Jul 2025",
+//       orderTime: "4:05PM",
+//       totalBill: "145.00",
+//       status: "Delivered",
+//       restaurantImage:
+//         "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=500",
+//       items: [
+//         {
+//           name: "Cold Coffee",
+//           status: "success",
+//           icon: "../assets/image/icons/success.svg",
+//         },
+//         {
+//           name: "Sandwich",
+//           status: "success",
+//           icon: "../assets/image/icons/success.svg",
+//         },
+//       ],
+//     },
+//   ];
+//   const params = new URLSearchParams(window.location.search);
 
-  orders.forEach((order) => {
-    let itemsHtml = "";
+//   const id = params.get("id");
+//   console.log(id);
+//   let prdDataHtml = "";
 
-    order.items.forEach((item) => {
-      itemsHtml += `
-      <div class="order_middle_box">
-        <img src="${item.icon}" alt="">
-        <p>${item.name}</p>
-      </div>
-    `;
-    });
+//   let filteredData = orders.find((item) => item.id === Number(id));
+//   console.log(filteredData);
 
-    ordersHtml += `
-    <div onclick="location.href='orderDetails.html?id=${order?.id}'" class="order_data_item">
-      
-      <div class="order_top_wrap">
-        <div class="order_item_img">
-          <img src="${order.restaurantImage}" alt="">
-        </div>
+//   $("#shopImg").attr("src", filteredData?.restaurantImage);
+//   $("#shopName").html(filteredData?.restaurantName);
+//   $("#shopAddress").html(filteredData?.location);
 
-        <div class="order_item_txt">
-          <h4>${order.restaurantName}</h4>
-          <p>${order.location}</p>
-        </div>
-      </div>
+//   filteredData?.items?.forEach((prd) => {
+//     prdDataHtml += ` <div class="order_middle_box">
+//                 <img src="${prd?.icon}" alt="">
+//                 <p>${prd?.name}</p>
+//             </div>`;
+//   });
 
-      <div class="order_middle_wrap">
-        ${itemsHtml}
-      </div>
-
-      <div class="order_bottom_wrap">
-        <div class="order_bottom_top">
-          <h5>
-            Order placed on 
-            <b>${order.orderDate},</b> ${order.orderTime}
-          </h5>
-
-          <p>Total Bill <b>₹${order.totalBill}</b></p>
-        </div>
-
-        <div class="order_bottom_bottom status">
-          <h5>${order.status}</h5>
-          <a href="">View Detail</a>
-        </div>
-      </div>
-
-    </div>
-  `;
-  });
-
-  $("#ordersData").html(ordersHtml);
-}
-getOrders();
-
-function getOrderDetail() {
-  const orders = [
-    {
-      id: 1,
-      restaurantName: "Food Bazaar Rajdhani",
-      location: "Ratu Road, Ranchi",
-      orderDate: "09 Jul 2025",
-      orderTime: "2:26PM",
-      totalBill: "148.16",
-      status: "Delivered",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
-      items: [
-        {
-          name: "Chicken Biryani",
-          status: "failed",
-          icon: "../assets/image/icons/failed.svg",
-        },
-        {
-          name: "Veg Biryani",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
-
-    {
-      id: 2,
-      restaurantName: "Burger Point",
-      location: "Main Road, Ranchi",
-      orderDate: "10 Jul 2025",
-      orderTime: "1:10PM",
-      totalBill: "299.00",
-      status: "Pending",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
-      items: [
-        {
-          name: "Chicken Burger",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
-
-    {
-      id: 3,
-      restaurantName: "Pizza Hub",
-      location: "Lalpur, Ranchi",
-      orderDate: "11 Jul 2025",
-      orderTime: "7:45PM",
-      totalBill: "420.50",
-      status: "Delivered",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1548365328-9f547fb0953b?w=500",
-      items: [
-        {
-          name: "Cheese Pizza",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-        {
-          name: "Cold Drink",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
-
-    {
-      id: 4,
-      restaurantName: "Healthy Bowl",
-      location: "Kanke Road, Ranchi",
-      orderDate: "12 Jul 2025",
-      orderTime: "3:20PM",
-      totalBill: "180.00",
-      status: "Cancelled",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
-      items: [
-        {
-          name: "Healthy Salad",
-          status: "failed",
-          icon: "../assets/image/icons/failed.svg",
-        },
-      ],
-    },
-
-    {
-      id: 5,
-      restaurantName: "Tandoori Nights",
-      location: "Doranda, Ranchi",
-      orderDate: "13 Jul 2025",
-      orderTime: "9:00PM",
-      totalBill: "560.99",
-      status: "Delivered",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500",
-      items: [
-        {
-          name: "Paneer Tikka",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-        {
-          name: "Butter Naan",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
-
-    {
-      id: 6,
-      restaurantName: "Momo Express",
-      location: "Harmu, Ranchi",
-      orderDate: "14 Jul 2025",
-      orderTime: "5:30PM",
-      totalBill: "220.40",
-      status: "Delivered",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1526318896980-cf78c088247c?w=500",
-      items: [
-        {
-          name: "Chicken Momos",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
-
-    {
-      id: 7,
-      restaurantName: "Sweet Cravings",
-      location: "Upper Bazar, Ranchi",
-      orderDate: "15 Jul 2025",
-      orderTime: "8:15PM",
-      totalBill: "310.25",
-      status: "Delivered",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=500",
-      items: [
-        {
-          name: "Chocolate Cake",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-        {
-          name: "Ice Cream",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
-
-    {
-      id: 8,
-      restaurantName: "South Spice",
-      location: "Circular Road, Ranchi",
-      orderDate: "16 Jul 2025",
-      orderTime: "11:50AM",
-      totalBill: "275.00",
-      status: "Pending",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=500",
-      items: [
-        {
-          name: "Masala Dosa",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
-
-    {
-      id: 9,
-      restaurantName: "Roll Factory",
-      location: "Booty More, Ranchi",
-      orderDate: "17 Jul 2025",
-      orderTime: "6:40PM",
-      totalBill: "199.90",
-      status: "Delivered",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500",
-      items: [
-        {
-          name: "Egg Roll",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-        {
-          name: "Chicken Roll",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
-
-    {
-      id: 10,
-      restaurantName: "Coffee Cafe",
-      location: "Morabadi, Ranchi",
-      orderDate: "18 Jul 2025",
-      orderTime: "4:05PM",
-      totalBill: "145.00",
-      status: "Delivered",
-      restaurantImage:
-        "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=500",
-      items: [
-        {
-          name: "Cold Coffee",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-        {
-          name: "Sandwich",
-          status: "success",
-          icon: "../assets/image/icons/success.svg",
-        },
-      ],
-    },
-  ];
-  const params = new URLSearchParams(window.location.search);
-
-  const id = params.get("id");
-  console.log(id);
-  let prdDataHtml = "";
-
-  let filteredData = orders.find((item) => item.id === Number(id));
-  console.log(filteredData);
-
-  $("#shopImg").attr("src", filteredData?.restaurantImage);
-  $("#shopName").html(filteredData?.restaurantName);
-  $("#shopAddress").html(filteredData?.location);
-
-  filteredData?.items?.forEach((prd) => {
-    prdDataHtml += ` <div class="order_middle_box">
-                <img src="${prd?.icon}" alt="">
-                <p>${prd?.name}</p>
-            </div>`;
-  });
-
-  $("#prdData").html(prdDataHtml);
-}
+//   $("#prdData").html(prdDataHtml);
+// }

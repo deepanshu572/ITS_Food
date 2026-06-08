@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>APP</title>
+    <title>ITS-Food</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -11,37 +11,48 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="../assets/css/style.css" />
-    <style>
-     
-    </style>
+    
+   
   </head>
   <body>
-    <div class="main animate-fade-in margin_box">
-      
+   
+ <div class="tracking_visual">
 
-      <div class="search_header">
-       
-        <div class="serch_bar reuse_search">
-       <i class="bi bi-chevron-left"></i>
-          <input oninput="handleInput(event)" type="search" id="searchInput" placeholder="Search here..." />
-            <div class="line_search"></div>
-            <div class="mic_wrap" id="load">
-          <i class="bi bi-mic"></i></div>
-        </div>
-       
-      </div>
-      <div class="search_data_fetch" id="searchData">
-          
-      </div>
-      <div class="search_data_suggestion">
-
-        <h4>WHAT’S ON YOUR MIND?</h4>
-        <div class="search_wrap_suggestion" id="sugestCategoryData">
-
-        </div>
-        
-      </div>
+    <div class="main_food">
+        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80" alt="">
     </div>
+
+    <div class="badge rating">
+        ⭐ 4.8 Rating
+    </div>
+
+    <div class="badge delivery">
+        🚚 Live Tracking
+    </div>
+
+    <div class="badge restaurant">
+        🍴 1200+ Partners
+    </div>
+
+</div>
+
+<div class="content">
+
+    <span class="tag">
+        Order Tracking
+    </span>
+
+    <h1>
+        Track Orders
+        In Real Time
+    </h1>
+
+    <p>
+        Stay updated with live tracking and
+        get notified every step of the way.
+    </p>
+
+</div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script
@@ -50,8 +61,5 @@
       crossorigin="anonymous"
     ></script>
     <script src="../assets/js/script.js"></script>
-    <script>
-      getCategory();
-    </script>
   </body>
 </html>

@@ -49,7 +49,7 @@
           </button>
         </div>
       </div>
-      <div class="filters_btn">
+      <!-- <div class="filters_btn">
         <button
           type="button"
           data-bs-toggle="offcanvas"
@@ -82,6 +82,22 @@
         >
           Cost <i class="bi bi-chevron-down"></i>
         </button>
+      </div> -->
+      <div class="filter_data_tab">
+        <div class="filter_tab_box">
+          <button type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasFilterOption1"
+          aria-controls="offcanvasFilterOption1"><i class="bi bi-sliders"></i> Filter <i class="bi bi-caret-down-fill"></i></button>
+        </div>
+        <div class="filter_tab_box">
+          <button type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasFilterOption2"
+          aria-controls="offcanvasFilterOption2"> Sort by <i class="bi bi-caret-down-fill"></i></button>
+        </div>
+       
+      
       </div>
 
       <div class="shop_detail_product selectedPrd">
@@ -102,23 +118,66 @@
 
     <!-- filter1 -->
     <div
-      class="offcanvas offcanvas-bottom"
+      class="offcanvas offcanvas-bottom reuse_modal_box filter_reuse modalResturant "
       tabindex="-1"
       id="offcanvasFilterOption1"
       aria-labelledby="offcanvasFilterOption1Label"
     >
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasFilterOption1Label">
-          Offcanvas bottom
+      <div class="offcanvas-header ">
+          <h5 class="offcanvas-title" id="offcanvasBottomAddressLabel">
+          Sort BY
         </h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="offcanvas"
-          aria-label="Close"
-        ></button>
+
+        <button type="button" data-bs-dismiss="offcanvas" aria-label="Close">
+          <i class="bi bi-x"></i>
+        </button>
       </div>
-      <div class="offcanvas-body small">...</div>
+      <div class="offcanvas-body small">
+        <div class="content_filter">
+          <div class="filter_modal">
+   
+
+            <!-- Left Menu -->
+            <div class="filter_sidebar">
+                <div class="filter_tab active_sort">Sort</div>
+            </div>
+
+            <!-- Right Content -->
+            <div class="filter_options">
+
+                <!-- <h4>SORT BY</h4> -->
+                <div class="filter_option_item">
+
+                <label class="radio_item">
+                    <input type="radio" name="sort" checked>
+                    <span></span>
+                    Relevance (Default)
+                </label>
+
+                <label class="radio_item">
+                    <input type="radio" name="sort">
+                    <span></span>
+                    Cost: Low to High
+                </label>
+
+                <label class="radio_item">
+                    <input type="radio" name="sort">
+                    <span></span>
+                    Cost: High to Low
+                </label>
+                </div>
+
+            </div>
+
+        </div>
+
+        </div>
+        <div class="modal_fixed_bottom" >
+        <button class="active">Clear Filter</button>
+          <button>
+            Apply
+          </button></div>
+      </div>
     </div>
     <!-- filter2 -->
     <div
