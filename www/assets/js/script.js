@@ -539,7 +539,11 @@ async function handleInput(e) {
         let searchHtml = "";
         $("#load").html("<i class='bi bi-mic'></i>");
         data.forEach((item) => {
-          searchHtml += `<a href="searchDetail.html?query=${item?.name}" class="search_txt">
+          searchHtml += `<a href="#" onclick="handleSearch(
+  '${item?.name}',
+  '${item?.food_type}',
+  '${encodeURIComponent(JSON.stringify(data))}'
+)" class="search_txt">
                 <div class="search_txt_img_desc">
                   <img src="${imageUrl + item.image}" alt="" />
                   <h4>${item?.name}</h4>
@@ -550,7 +554,7 @@ async function handleInput(e) {
 
         $("#searchData").html(searchHtml);
       } else {
-         let searchHtml = "";
+        let searchHtml = "";
         console.log(response.message);
         $("#load").html("<i class='bi bi-mic'></i>");
         searchHtml += `<div class="not_found"><img src="../assets/image/icons/notFound.gif" alt=""/>No Meal Found !</div>`;
@@ -559,37 +563,147 @@ async function handleInput(e) {
       }
     },
   });
+}
+function handleSearch(selectedName, food_type, data) {
+  data = JSON.parse(decodeURIComponent(data));
+  location.href = `searchDetail.html?query=${selectedName}`;
 
-  // let data = await response.json();
+  let ids = data
+    .filter((item) => item.name === selectedName)
+    .map((item) => item.id)
+    .join(",");
 
-  // if (data) {
-  //   load = false;
-  //   $("#load").html("<i class='bi bi-mic'></i>");
-  // }
+  localStorage.setItem("searchIds", ids);
+  localStorage.setItem("foodType", food_type);
+}
+function searchDataFetch() {
+  let ids = localStorage.getItem("searchIds");
+  let food_type = localStorage.getItem("foodType");
 
-  // console.log(data?.categories);
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "JSON",
+    data: {
+      type: "searchDataFetch",
+      ids,
+    },
+    success: function (response) {
+      if (response.status == "success") {
+        let productContainer = "";
+        response.data.forEach((item, index) => {
+          productContainer += `
+        
+        <a href="restaurants.html?id=${item.id}" class="product_card">
 
-  // let AllData = data?.categories?.filter((item) => {
-  //   return item?.strCategory?.includes(value);
-  // });
-  // let searchHtml = "";
-  // console.log(AllData);
+          <div class="owl-carousel owl-theme product_slider product_slider_${index}">
+            
+            <div class="item">
+              <img src="${imageUrl + item.food_images}" alt="${item.food_name}">
+              <div class="product_txt">
+                ${item.food_name} ₹${item.food_price}
+              </div>
+            </div>
 
-  // if (AllData.length > 0) {
-  //   AllData?.forEach((item) => {
-  //     searchHtml += `<a href="searchDetail.html?query=${item.strCategory}" class="search_txt">
-  //         <div class="search_txt_img_desc">
-  //           <img src="${item.strCategoryThumb}" alt="" />
-  //           <h4>${item?.strCategory}</h4>
-  //         </div>
-  //       <i class="bi bi-chevron-right"></i>
-  //       </a>
-  //     `;
-  //   });
-  // } else {
-  //   searchHtml += `<div class="not_found"><img src="../assets/image/icons/notFound.gif" alt=""/>No Meal Found !</div>`;
-  // }
-  // $("#searchData").html(searchHtml);
+          </div>
+
+          <div class="product_info">
+
+            <div class="details">
+              <img src="../assets/image/icons/current.svg" alt="" />
+              <span>25-30 min</span>
+              <span>•</span>
+              <span>2.5 km</span>
+            </div>
+
+            <div class="product_head">
+              <h3>${item.name}</h3>
+              <div class="product_rate">
+                <i class="bi bi-star-fill"></i>
+                ${item.avg_rating}
+              </div>
+            </div>
+
+            <div class="offer_sec">
+              <div>
+                <div>
+                  <img src="../assets/image/icons/crown.svg" alt="" />
+                </div>
+                <p>Extra 10% OFF</p>
+              </div>
+
+              <div class="line"></div>
+
+              <div>
+                <img src="../assets/image/icons/current.svg" alt="" />
+                <p>Flash Sale : FLAT 50% OFF</p>
+              </div>
+            </div>
+
+          </div>
+
+        </a>
+        
+        `;
+        });
+        $("#prdSearch2").html(productContainer);
+      } else {
+        console.log(response.message);
+      }
+    },
+  });
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "JSON",
+    data: {
+      type: "similarDataFetch",
+      food_type,
+    },
+    success: function (response) {
+      if (response.status == "success") {
+        console.log(response.data);
+        let restaurantData = response.data;
+        let getSimilarPrdHtml = "";
+
+        restaurantData.forEach((item) => {
+          getSimilarPrdHtml += `
+    <div class="product_box">
+      <div class="product_top_sec">
+        <div class="disc_tag">
+          ⭐ ${item.avg_rating}
+        </div>
+
+        <div onclick="handleSaveData(${item.id},'restaurant')" class="like"  id="shop${item.id}">
+          <i class="bi bi-bookmark"></i>
+        </div>
+
+        <a href="restaurants.html?id=${item.id}">
+          <img src="${imageUrl + item.cover_image}" alt="${item.name}" />
+        </a>
+      </div>
+
+      <div class="product_bottom_sec">
+        <h4>${item.name}</h4>
+
+        <div class="bottom_last_sec">
+          <img src="../assets/image/icons/current.svg" alt="" />
+          <h5>${item.city}</h5>
+          <h5>•</h5>
+          <h5>${item.state}</h5>
+        </div>
+      </div>
+    </div>
+  `;
+        });
+
+        $("#recomendation").html(getSimilarPrdHtml);
+        getSavedProduct("restaurant");
+      } else {
+        console.log(response.message);
+      }
+    },
+  });
 }
 
 function getInputValue() {
@@ -1386,6 +1500,8 @@ function handleModalCartData(data) {
   $("#prdNameModal").text(data?.name);
   $("#PrdImage").attr("src", imageUrl + data?.image);
 
+  let cartData = JSON.parse(localStorage.getItem("cart")) || [];
+
   $.ajax({
     url: apiUrl,
     method: "POST",
@@ -1397,56 +1513,126 @@ function handleModalCartData(data) {
     success: function (response) {
       if (response.status == "success") {
         let varientData = response.data;
-        console.log("varientData");
-        console.log(varientData);
-        console.log("varientData");
+
+        if (!varientData.length) return;
+
+        let foodId = varientData[0].food_item_id;
+
+        // Current food item from cart
+        let currentCartItem = cartData.find((item) => item.foodId == foodId);
+
+        let qty = currentCartItem ? currentCartItem.qty : 1;
+        let totalPrice = currentCartItem ? currentCartItem.Totalprice : "";
+
         let varientHtml = "";
         let btnHtml = "";
-        let foodId = varientData[0].food_item_id;
+
         varientData.forEach((item) => {
+          let checked = "";
+
+          if (currentCartItem && currentCartItem.id == item.id) {
+            checked = "checked";
+          }
+
           varientHtml += `
-                <label onclick="handleTogglePrice('${item.price}','${item.id}','${item.variant_name}','${varientData[0].food_item_id}')" for="varient${item.id}" class="modal_resturant_selection_box">
+            <label
+              onclick="handleTogglePrice(
+                '${item.price}',
+                '${item.id}',
+                '${item.variant_name}',
+                '${foodId}'
+              )"
+              for="varient${item.id}"
+              class="modal_resturant_selection_box"
+            >
               <div class="modal_resturant_left">
                 <img src="../assets/image/icons/failed.svg" alt="" />
                 <h5>${item.variant_name}</h5>
               </div>
+
               <div class="modal_resturant_right">
                 <h5>₹ ${item.price}</h5>
-                <input type="radio" id="varient${item.id}" name="selectVarient" />
+                <input
+                  type="radio"
+                  id="varient${item.id}"
+                  name="selectVarient"
+                  ${checked}
+                />
               </div>
-            </label>`;
+            </label>
+          `;
         });
+
         btnHtml += `
-        
-              <div class="btn_add_data button_data">
-              
-                  <button onclick='decrementCounter(
-                  
-                "${foodId}")' >-</button>
-                  <input id="inp${foodId}" type="number" value="1" />  
-                <button 
-                onclick='incrementCounter(
-                
-                "${foodId}")' class="plus">+</button>
+          <div class="btn_add_data button_data">
+            <button onclick='decrementCounter("${foodId}")'>-</button>
+
+            <input
+              id="inp${foodId}"
+              type="number"
+              value="${qty}"
+            />
+
+            <button
+              onclick='incrementCounter("${foodId}")'
+              class="plus"
+            >
+              +
+            </button>
           </div>
-          <input id="varientType${foodId}" type="text" style="display: none"/>
-          <input id="varientId${foodId}" type="number" style="display: none"/>
-          <input id="price${foodId}" type="number" style="display: none"/>
-          <button class="active_disable cart_btn_add" onclick='renderCartPage(
-          
-              "${foodId}",
-            )'>
-            Add Item | ₹<b id="totalPrice${Math.floor(foodId)}"> </b>
-          </button>`;
+
+          <input
+            id="varientType${foodId}"
+            type="hidden"
+          />
+
+          <input
+            id="varientId${foodId}"
+            type="hidden"
+          />
+
+          <input
+            id="price${foodId}"
+            type="hidden"
+          />
+
+          <button
+            class=" cart_btn_add"
+            onclick='renderCartPage("${foodId}")'
+          >
+            Add Item | ₹
+            <b id="totalPrice${foodId}">
+              ${totalPrice}
+            </b>
+          </button>
+        `;
 
         $("#btnWrapper").html(btnHtml);
         $("#varientData").html(varientHtml);
+
+        // Restore cart values
+        if (currentCartItem) {
+          $(`#varientType${foodId}`).val(currentCartItem.Type);
+          $(`#varientId${foodId}`).val(currentCartItem.id);
+          $(`#price${foodId}`).val(currentCartItem.price);
+        } else {
+          // Default first variant selected
+          let firstVariant = varientData[0];
+
+          $(`#varient${firstVariant.id}`).prop("checked", true);
+
+          $(`#varientType${foodId}`).val(firstVariant.variant_name);
+          $(`#varientId${foodId}`).val(firstVariant.id);
+          $(`#price${foodId}`).val(firstVariant.price);
+
+          $(`#totalPrice${foodId}`).text(firstVariant.price);
+        }
       } else {
         console.log(response.message);
       }
     },
     error: function (xhr, status, error) {
-      console.log("AJAX error : " + error);
+      console.log("AJAX Error:", error);
     },
   });
 }
@@ -1460,7 +1646,7 @@ function handleTogglePrice(price, vid, name, id) {
   $(`#inp${id}`).val(qtyValue);
   $(`#varientType${id}`).val(name);
   $(`#varientId${id}`).val(vid);
-  $(".cart_btn_add").removeClass("active_disable")
+  $(".cart_btn_add").removeClass("active_disable");
 }
 
 function incrementCounter(foodId) {
@@ -1524,9 +1710,15 @@ function decrementCounter(foodId) {
   $(`#totalPrice${foodId}`).html(updatedPrice);
 
   if (qtyValue == 0) {
-    cart = cart.filter(
-      (item) => !(item.id == foodId && item.Type == varientType),
-    );
+    $(`#inp${foodId}`).val(1);
+    const offcanvasEl = document.getElementById("offcanvasProductModal");
+    const offcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
+
+    if (offcanvas) {
+      offcanvas.hide();
+    }
+    $(`#totalPrice${foodId}`).html(Number(basePrice));
+    cart = cart.filter((item) => item.id != foodId && item.Type != varientType);
     console.log("remove item !");
     localStorage.setItem("cart", JSON.stringify(cart));
     return false;
@@ -2369,9 +2561,11 @@ function getOrderDetail() {
   let itemsHtml = "";
 
   const foodItems = order.food_items.split("||");
+  console.log(foodItems);
 
   foodItems.forEach((item) => {
     const [name, type] = item.split("|");
+     console.log(foodItems);
 
     itemsHtml += `
             <div class="order_middle_box">
@@ -2496,488 +2690,270 @@ function getOrderCalcData() {
   });
 }
 
-// dumy js
+function handleFilter(type, element = null) {
+  if (element) {
+    $(".filter_sidebar").removeClass("active_sort");
+    $(element).addClass("active_sort");
+  }
 
-function getProduct2() {
-  let getSimilarPrdHtml = "";
+  let filterHtml = "";
 
-  const recomendation = [
-    {
-      id: 1,
-      discount: "FLAT ₹150 OFF",
-      liked: true,
-      image: "../assets/image/temp/homePrd1.svg",
-      title: "Food Bazaar Bazaar Bazaar Bazaar Bazaar Rast...",
-      deliveryTime: "36 mins",
-      distance: "3 km",
-    },
-    {
-      id: 2,
-      discount: "FLAT ₹100 OFF",
-      liked: false,
-      image: "../assets/image/temp/homePrd2.svg",
-      title: "Fresh Mart Grocery Store",
-      deliveryTime: "25 mins",
-      distance: "1.5 km",
-    },
-    {
-      id: 3,
-      discount: "UPTO 50% OFF",
-      liked: true,
-      image: "../assets/image/temp/homePrd3.svg",
-      title: "Organic Veggie Hub",
-      deliveryTime: "40 mins",
-      distance: "4 km",
-    },
-    {
-      id: 4,
-      discount: "FREE DELIVERY",
-      liked: false,
-      image:
-        "https://b.zmtcdn.com/data/pictures/5/22411715/8fc8b5070d266246de26f97a6f0e80e2_o2_featured_v2.jpg?output-format=webp",
-      title: "Daily Needs Super Store",
-      deliveryTime: "18 mins",
-      distance: "900 m",
-    },
-    {
-      id: 5,
-      discount: "FLAT ₹200 OFF",
-      liked: true,
-      image:
-        "https://b.zmtcdn.com/data/pictures/6/21466036/9b5ea50c0d48a881b2cd6f3070d7127f_o2_featured_v2.jpg",
-      title: "Mega Food Plaza",
-      deliveryTime: "30 mins",
-      distance: "2.2 km",
-    },
-    {
-      id: 6,
-      discount: "FLAT ₹200 OFF",
-      liked: true,
-      image:
-        "https://b.zmtcdn.com/data/pictures/chains/1/18625991/8fa1a185a369be06f27c0fc9b4adce08_featured_v2.jpg",
-      title: "Mega Food Plaza",
-      deliveryTime: "30 mins",
-      distance: "2.2 km",
-    },
-    {
-      id: 6,
-      discount: "FLAT ₹200 OFF",
-      liked: false,
-      image: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
-      title: "Burger King Point",
-      deliveryTime: "22 mins",
-      distance: "1 km",
-    },
+  if (type === "foodType") {
+    filterHtml = `
+        <div class="filter_options">
+            <h4>Food Type</h4>
+            <div class="filter_option_item">
+                <label class="radio_item">
+    <input type="radio" name="foodType" value="All" checked>
+    <span></span>
+    All
+</label>
+                <label class="radio_item">
+    <input type="radio" name="foodType" value="veg">
+    <span></span>
+    Veg
+</label>
 
-    // 6 MORE ARRAY
-
-    {
-      id: 7,
-      discount: "20% OFF",
-      liked: true,
-      image:
-        "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500",
-      title: "Pizza Town",
-      deliveryTime: "28 mins",
-      distance: "2.8 km",
-    },
-    {
-      id: 8,
-      discount: "FREE DELIVERY",
-      liked: false,
-      image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500",
-      title: "Spicy Chicken Hub",
-      deliveryTime: "35 mins",
-      distance: "3.5 km",
-    },
-    {
-      id: 9,
-      discount: "FLAT ₹80 OFF",
-      liked: true,
-      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
-      title: "Healthy Salad Point",
-      deliveryTime: "20 mins",
-      distance: "1.2 km",
-    },
-    {
-      id: 10,
-      discount: "30% OFF",
-      liked: false,
-      image:
-        "https://images.unsplash.com/photo-1525755662778-989d0524087e?w=500",
-      title: "Coffee Cafe",
-      deliveryTime: "15 mins",
-      distance: "700 m",
-    },
-    {
-      id: 11,
-      discount: "BUY 1 GET 1",
-      liked: true,
-      image:
-        "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
-      title: "Italian Pizza House",
-      deliveryTime: "32 mins",
-      distance: "2 km",
-    },
-  ];
-
-  recomendation?.forEach((item) => {
-    getSimilarPrdHtml += `
-     <div class="product_box">
-          <div class="product_top_sec">
-            <div class="disc_tag">
-            ${item?.discount}
+<label class="radio_item">
+    <input type="radio" name="foodType" value="nonveg">
+    <span></span>
+    NonVeg
+</label>
             </div>
-            <div class="like">
-             <i class="bi bi-bookmark"></i>
-            </div>
-           <a href="restaurants.html"> <img  src="${item?.image}" alt="" /></a>
-          </div>
-          <div class="product_bottom_sec">
-            <h4>${item?.title}</h4>
-            <div class="bottom_last_sec">
-              <img src="../assets/image/icons/current.svg" alt="" />
-              <h5>${item?.deliveryTime}</h5>
-              <h5>•</h5>
-              <h5>${item?.distance}</h5>
-            </div>
-          </div>
         </div>`;
-  });
+  } else if (type === "sort") {
+    filterHtml = `
+        <div class="filter_options">
+            <h4>SORT BY</h4>
+            <div class="filter_option_item">
+               
+<label class="radio_item">
+    <input type="radio" name="sort2" value="relevance" checked>
+    <span></span>
+    Relevance
+</label>
 
-  let productContainer = "";
-  const restaurants = [
-    {
-      id: 1,
-      hotelName: "Second Wife Restaurant",
-      category: "Biryani • North Indian • Mughlai",
-      rating: 4.0,
-      deliveryTime: "30-45 mins",
-      distance: "3 km",
+<label class="radio_item">
+    <input type="radio" name="sort2" value="low_to_high">
+    <span></span>
+    Low to High
+</label>
 
-      products: [
-        {
-          name: "Chicken Dum Biryani",
-          price: "₹199",
-          image:
-            "https://images.unsplash.com/photo-1563379091339-03246963d29c?w=500",
-        },
-        {
-          name: "Mutton Biryani",
-          price: "₹249",
-          image:
-            "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=500",
-        },
-        {
-          name: "Chicken Korma",
-          price: "₹179",
-          image:
-            "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=500",
-        },
-        {
-          name: "Butter Naan Combo",
-          price: "₹149",
-          image:
-            "https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?w=500",
-        },
-      ],
-    },
-
-    {
-      id: 2,
-      hotelName: "Burger Point",
-      category: "Burger • Fast Food • Snacks",
-      rating: 4.3,
-      deliveryTime: "20-30 mins",
-      distance: "2 km",
-
-      products: [
-        {
-          name: "Cheese Burger",
-          price: "₹129",
-          image:
-            "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500",
-        },
-        {
-          name: "Double Patty Burger",
-          price: "₹199",
-          image:
-            "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
-        },
-        {
-          name: "Chicken Burger",
-          price: "₹159",
-          image:
-            "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=500",
-        },
-        {
-          name: "French Fries Combo",
-          price: "₹99",
-          image:
-            "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=500",
-        },
-      ],
-    },
-
-    {
-      id: 3,
-      hotelName: "Pizza Hub",
-      category: "Pizza • Italian • Cheese Burst",
-      rating: 4.5,
-      deliveryTime: "25-40 mins",
-      distance: "4 km",
-
-      products: [
-        {
-          name: "Cheese Pizza",
-          price: "₹299",
-          image:
-            "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
-        },
-        {
-          name: "Farmhouse Pizza",
-          price: "₹349",
-          image:
-            "https://images.unsplash.com/photo-1548365328-9f547fb0953b?w=500",
-        },
-        {
-          name: "Pepperoni Pizza",
-          price: "₹399",
-          image:
-            "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=500",
-        },
-        {
-          name: "Veg Loaded Pizza",
-          price: "₹279",
-          image:
-            "https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=500",
-        },
-      ],
-    },
-  ];
-
-  restaurants.forEach((item, index) => {
-    productContainer += `
-  
-  <a href="restaurants.html" class="product_card">
-      
-
-    <div class="owl-carousel owl-theme product_slider product_slider_${index}">
-      
-      ${item.products
-        .map(
-          (prd) => `
-          <div class="item">
-            <img src="${prd?.image}" alt="${prd?.name}">
-             <div class="product_txt">${prd?.name} ${prd?.price}</div>
-          </div>
-         
-        `,
-        )
-        .join("")}
-
-    </div>
-
-    <div class="product_info">
-     <div class="details">
-      <img src="../assets/image/icons/current.svg" alt="" />
-        <span>${item.deliveryTime}</span>
-        <span>•</span>
-        <span>${item.distance}</span>
-      </div>
-      <div class="product_head">
-      <h3>${item.hotelName}</h3>
-      <div class="product_rate"><i class="bi bi-star-fill"></i> ${item?.rating}</div>
-      </div>
-
-     
-
-      <div class="offer_sec">
-      <div>
-         <div><img src="../assets/image/icons/crown.svg" alt="" /></div> <p>Extra 10% OFF</p>
-         </div>
-        <div class="line"></div>
-        <div>
-        <img src="../assets/image/icons/current.svg" alt="" /><p>   Flash Sale : FLAT 50% OFF</p>
-        </div>
-      </div>
-    </div>
-
-  </a>
-  `;
-  });
-
-  $("#recomendation").html(getSimilarPrdHtml);
-  $("#prdSearch2").html(productContainer);
+<label class="radio_item">
+    <input type="radio" name="sort2" value="high_to_low">
+    <span></span>
+    High to Low
+</label>
+            </div>
+        </div>`;
+  }
+  $("#rightFilter").html(filterHtml);
 }
-getProduct2();
 
-function getCarousel1() {
-  const restaurants = [
-    {
-      id: 1,
-      hotelName: "Second Wife Restaurant",
-      category: "Biryani • North Indian • Mughlai",
-      rating: 4.0,
-      deliveryTime: "30-45 mins",
-      distance: "3 km",
+$(document).ready(function () {
+  handleFilter("foodType");
+});
 
-      products: [
-        {
-          name: "Chicken Dum Biryani",
-          price: "₹199",
-          image:
-            "https://images.unsplash.com/photo-1563379091339-03246963d29c?w=500",
-        },
-        {
-          name: "Mutton Biryani",
-          price: "₹249",
-          image:
-            "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=500",
-        },
-        {
-          name: "Chicken Korma",
-          price: "₹179",
-          image:
-            "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=500",
-        },
-        {
-          name: "Butter Naan Combo",
-          price: "₹149",
-          image:
-            "https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?w=500",
-        },
-      ],
-    },
+$(document).on("change", "input[name='foodType']", function () {
+  $("#selectedFoodType").val($(this).val());
+  let foodType = $("#selectedFoodType").val();
 
-    {
-      id: 2,
-      hotelName: "Burger Point",
-      category: "Burger • Fast Food • Snacks",
-      rating: 4.3,
-      deliveryTime: "20-30 mins",
-      distance: "2 km",
+  console.log(foodType);
+});
 
-      products: [
-        {
-          name: "Cheese Burger",
-          price: "₹129",
-          image:
-            "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500",
-        },
-        {
-          name: "Double Patty Burger",
-          price: "₹199",
-          image:
-            "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
-        },
-        {
-          name: "Chicken Burger",
-          price: "₹159",
-          image:
-            "https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=500",
-        },
-        {
-          name: "French Fries Combo",
-          price: "₹99",
-          image:
-            "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=500",
-        },
-      ],
-    },
+$(document).on("change", "input[name='sort2']", function () {
+  $("#selectedSort").val($(this).val());
+  let sort = $("#selectedSort").val();
 
-    {
-      id: 3,
-      hotelName: "Pizza Hub",
-      category: "Pizza • Italian • Cheese Burst",
-      rating: 4.5,
-      deliveryTime: "25-40 mins",
-      distance: "4 km",
+  console.log(sort);
+});
 
-      products: [
-        {
-          name: "Cheese Pizza",
-          price: "₹299",
-          image:
-            "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
-        },
-        {
-          name: "Farmhouse Pizza",
-          price: "₹349",
-          image:
-            "https://images.unsplash.com/photo-1548365328-9f547fb0953b?w=500",
-        },
-        {
-          name: "Pepperoni Pizza",
-          price: "₹399",
-          image:
-            "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=500",
-        },
-        {
-          name: "Veg Loaded Pizza",
-          price: "₹279",
-          image:
-            "https://images.unsplash.com/photo-1594007654729-407eedc4be65?w=500",
-        },
-      ],
-    },
-  ];
-  let productContainer = "";
+$("#searchResturant").on("input", function () {
+  handleApplyFilter();
+});
 
-  restaurants.forEach((item, index) => {
-    productContainer += `
-  
-  <a href="restaurants.html" class="product_card">
-      
+function handleApplyFilter() {
+  let sort = $("#selectedSort").val();
+  let foodType = $("#selectedFoodType").val();
+  const params = new URLSearchParams(window.location.search);
+  let search = $("#searchResturant").val().trim().toLowerCase();
 
-    <div class="owl-carousel owl-theme product_slider product_slider_${index}">
-      
-      ${item.products
-        .map(
-          (prd) => `
-          <div class="item">
-            <img src="${prd?.image}" alt="${prd?.name}">
-             <div class="product_txt">${prd?.name} ${prd?.price}</div>
-          </div>
-         
-        `,
-        )
-        .join("")}
+  const rid = params.get("rid");
+  const pid = params.get("pid");
+  if (rid) {
+    $.ajax({
+      url: apiUrl,
+      method: "POST",
+      dataType: "JSON",
+      data: {
+        type: "selectedResturants",
+        id: rid,
+      },
+      success: function (response) {
+        if (response.status == "success") {
+          let Allproducts = response.data;
 
-    </div>
+          if (pid) {
+            Allproducts = response.data?.filter((item) => item.id !== pid);
+          }
+          if (!pid) {
+            $(".selectedPrd").css("display", "none");
+          }
 
-    <div class="product_info">
-     <div class="details">
-      <img src="../assets/image/icons/current.svg" alt="" />
-        <span>${item.deliveryTime}</span>
-        <span>•</span>
-        <span>${item.distance}</span>
-      </div>
-      <div class="product_head">
-      <h3>${item.hotelName}</h3>
-      <div class="product_rate"><i class="bi bi-star-fill"></i> ${item?.rating}</div>
-      </div>
+          Allproducts = [...response.data];
+          let count = 0;
 
-     
+          if (search) {
+            Allproducts = Allproducts.filter((item) =>
+              item.name.toLowerCase().includes(search),
+            );
+          }
 
-      <div class="offer_sec">
-      <div>
-         <div><img src="../assets/image/icons/crown.svg" alt="" /></div> <p>Extra 10% OFF</p>
-         </div>
-        <div class="line"></div>
-        <div>
-        <img src="../assets/image/icons/current.svg" alt="" /><p>   Flash Sale : FLAT 50% OFF</p>
-        </div>
-      </div>
-    </div>
+          // Food Type Filter
+          if (foodType !== "All") {
+            Allproducts = Allproducts.filter(
+              (item) => item.food_type === foodType,
+            );
+            $("#filter_tab_box").addClass("activeFilter");
+            count++;
+          }
 
-  </a>
-  `;
-  });
+          // Sorting
+          if (sort === "low_to_high") {
+            Allproducts.sort(
+              (a, b) =>
+                parseFloat(a.discount_price) - parseFloat(b.discount_price),
+            );
+            count++;
+          } else if (sort === "high_to_low") {
+            Allproducts.sort(
+              (a, b) =>
+                parseFloat(b.discount_price) - parseFloat(a.discount_price),
+            );
+            count++;
+          }
+          if (count > 0) {
+            $(".filter_tab_box").addClass("activeFilter");
+            $("#countFilter").html(count);
+          }
 
-  // $("#prd2").html(productContainer);
+          console.log(Allproducts);
+
+          let resturantPrdHtml = "";
+
+          Allproducts?.forEach((item) => {
+            resturantPrdHtml += `
+          
+          <div class="resturant_products" >
+          
+            <div class="resturant_prd_left">
+            
+              ${
+                item.food_type == "veg"
+                  ? `<img src="../assets/image/icons/success.svg" alt="">`
+                  : ""
+              }            
+              ${
+                item.food_type == "nonveg"
+                  ? `<img src="../assets/image/icons/failed.svg" alt="">`
+                  : ""
+              }            
+                  
+              
+              
+              <h4>${item?.name}</h4>
+              
+              <p>₹${item?.discount_price}</p>
+
+              <div class="prd_star">
+                <i class="bi bi-star-fill"></i>
+                <p>${item?.rating}</p>
+                <p>(${item?.reviews})</p>
+              </div>
+
+              <div id="btn${item.id}" onclick="handleSaveData(${item.id},'food')" class="save_btn">
+                <i class="bi bi-bookmark"></i>
+                <p>Save to Eatlist</p>
+              </div>
+
+              <div class="desc_prd">
+                <p>
+                  ${item?.description}
+                  <button data-bs-toggle="offcanvas" data-bs-target="#offcanvasProductBox" aria-controls="offcanvasProductBox">more</button>
+                </p>
+              </div>
+
+            </div>
+
+            <div class="resturant_prd_right">
+            
+              <img onclick='handleModalData(${JSON.stringify(item)})' data-bs-toggle="offcanvas" data-bs-target="#offcanvasProductBox" aria-controls="offcanvasProductBox" src="${imageUrl}${item?.image}" alt="${item?.name}">
+                  
+             ${
+               !item?.varient
+                 ? `<div
+                   class="btn_add_data"
+                   onclick='handleModalCartData(${JSON.stringify(item)})'
+                   type="button"
+                   data-bs-toggle="offcanvas"
+                   data-bs-target="#offcanvasProductModal"
+                   aria-controls="offcanvasProductModal"
+                 >
+                   Add
+                 </div>`
+                 : ` <div
+                     class="btn_add_data AddBtn"
+                     id="AddBtn"
+                      onclick="handleToggleBtn(this)"
+                     type="button"
+                   >
+                     Add
+                   </div>
+                   <div class="btn_add_data button_data " style="display : none;">
+                     <button class="plus">-</button>
+                     <input type="number" value="1" />
+                     <button>+</button>
+                   </div>`
+             }
+       
+
+                    </div>
+
+                  </div>
+
+                `;
+          });
+
+          $("#resturantProduct").html(resturantPrdHtml);
+          getSavedProduct("food");
+        } else {
+          console.log(response.message);
+        }
+      },
+
+      error: function (xhr, status, error) {
+        console.log("AJAX Err: " + error);
+      },
+    });
+  } else {
+    console.log("something wents wrong on params");
+  }
 }
-getCarousel1();
+function clearFilters() {
+  // Hidden inputs reset
+  $("#selectedFoodType").val("All");
+  $("#selectedSort").val("relevance");
+
+  // Radio reset
+  $("input[name='foodType'][value='All']").prop("checked", true);
+  $("input[name='sort2'][value='relevance']").prop("checked", true);
+
+  // Products reload
+  getProduct(); // ya jo bhi function products render karta hai
+  $(".filter_tab_box").removeClass("activeFilter");
+  $("#countFilter").html("");
+  alert();
+}
 
 function handleToggleBtn(el) {
   let parent = el.closest(".resturant_prd_right");
@@ -2986,247 +2962,4 @@ function handleToggleBtn(el) {
   parent.querySelector(".button_data").style.display = "flex";
 }
 
-// function getOrderDetail() {
-//   const orders = [
-//     {
-//       id: 1,
-//       restaurantName: "Food Bazaar Rajdhani",
-//       location: "Ratu Road, Ranchi",
-//       orderDate: "09 Jul 2025",
-//       orderTime: "2:26PM",
-//       totalBill: "148.16",
-//       status: "Delivered",
-//       restaurantImage:
-//         "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500",
-//       items: [
-//         {
-//           name: "Chicken Biryani",
-//           status: "failed",
-//           icon: "../assets/image/icons/failed.svg",
-//         },
-//         {
-//           name: "Veg Biryani",
-//           status: "success",
-//           icon: "../assets/image/icons/success.svg",
-//         },
-//       ],
-//     },
-
-//     {
-//       id: 2,
-//       restaurantName: "Burger Point",
-//       location: "Main Road, Ranchi",
-//       orderDate: "10 Jul 2025",
-//       orderTime: "1:10PM",
-//       totalBill: "299.00",
-//       status: "Pending",
-//       restaurantImage:
-//         "https://images.unsplash.com/photo-1550547660-d9450f859349?w=500",
-//       items: [
-//         {
-//           name: "Chicken Burger",
-//           status: "success",
-//           icon: "../assets/image/icons/success.svg",
-//         },
-//       ],
-//     },
-
-//     {
-//       id: 3,
-//       restaurantName: "Pizza Hub",
-//       location: "Lalpur, Ranchi",
-//       orderDate: "11 Jul 2025",
-//       orderTime: "7:45PM",
-//       totalBill: "420.50",
-//       status: "Delivered",
-//       restaurantImage:
-//         "https://images.unsplash.com/photo-1548365328-9f547fb0953b?w=500",
-//       items: [
-//         {
-//           name: "Cheese Pizza",
-//           status: "success",
-//           icon: "../assets/image/icons/success.svg",
-//         },
-//         {
-//           name: "Cold Drink",
-//           status: "success",
-//           icon: "../assets/image/icons/success.svg",
-//         },
-//       ],
-//     },
-
-//     {
-//       id: 4,
-//       restaurantName: "Healthy Bowl",
-//       location: "Kanke Road, Ranchi",
-//       orderDate: "12 Jul 2025",
-//       orderTime: "3:20PM",
-//       totalBill: "180.00",
-//       status: "Cancelled",
-//       restaurantImage:
-//         "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500",
-//       items: [
-//         {
-//           name: "Healthy Salad",
-//           status: "failed",
-//           icon: "../assets/image/icons/failed.svg",
-//         },
-//       ],
-//     },
-
-//     {
-//       id: 5,
-//       restaurantName: "Tandoori Nights",
-//       location: "Doranda, Ranchi",
-//       orderDate: "13 Jul 2025",
-//       orderTime: "9:00PM",
-//       totalBill: "560.99",
-//       status: "Delivered",
-//       restaurantImage:
-//         "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500",
-//       items: [
-//         {
-//           name: "Paneer Tikka",
-//           status: "success",
-//           icon: "../assets/image/icons/success.svg",
-//         },
-//         {
-//           name: "Butter Naan",
-//           status: "success",
-//           icon: "../assets/image/icons/success.svg",
-//         },
-//       ],
-//     },
-
-//     {
-//       id: 6,
-//       restaurantName: "Momo Express",
-//       location: "Harmu, Ranchi",
-//       orderDate: "14 Jul 2025",
-//       orderTime: "5:30PM",
-//       totalBill: "220.40",
-//       status: "Delivered",
-//       restaurantImage:
-//         "https://images.unsplash.com/photo-1526318896980-cf78c088247c?w=500",
-//       items: [
-//         {
-//           name: "Chicken Momos",
-//           status: "success",
-//           icon: "../assets/image/icons/success.svg",
-//         },
-//       ],
-//     },
-
-//     {
-//       id: 7,
-//       restaurantName: "Sweet Cravings",
-//       location: "Upper Bazar, Ranchi",
-//       orderDate: "15 Jul 2025",
-//       orderTime: "8:15PM",
-//       totalBill: "310.25",
-//       status: "Delivered",
-//       restaurantImage:
-//         "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=500",
-//       items: [
-//         {
-//           name: "Chocolate Cake",
-//           status: "success",
-//           icon: "../assets/image/icons/success.svg",
-//         },
-//         {
-//           name: "Ice Cream",
-//           status: "success",
-//           icon: "../assets/image/icons/success.svg",
-//         },
-//       ],
-//     },
-
-//     {
-//       id: 8,
-//       restaurantName: "South Spice",
-//       location: "Circular Road, Ranchi",
-//       orderDate: "16 Jul 2025",
-//       orderTime: "11:50AM",
-//       totalBill: "275.00",
-//       status: "Pending",
-//       restaurantImage:
-//         "https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=500",
-//       items: [
-//         {
-//           name: "Masala Dosa",
-//           status: "success",
-//           icon: "../assets/image/icons/success.svg",
-//         },
-//       ],
-//     },
-
-//     {
-//       id: 9,
-//       restaurantName: "Roll Factory",
-//       location: "Booty More, Ranchi",
-//       orderDate: "17 Jul 2025",
-//       orderTime: "6:40PM",
-//       totalBill: "199.90",
-//       status: "Delivered",
-//       restaurantImage:
-//         "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=500",
-//       items: [
-//         {
-//           name: "Egg Roll",
-//           status: "success",
-//           icon: "../assets/image/icons/success.svg",
-//         },
-//         {
-//           name: "Chicken Roll",
-//           status: "success",
-//           icon: "../assets/image/icons/success.svg",
-//         },
-//       ],
-//     },
-
-//     {
-//       id: 10,
-//       restaurantName: "Coffee Cafe",
-//       location: "Morabadi, Ranchi",
-//       orderDate: "18 Jul 2025",
-//       orderTime: "4:05PM",
-//       totalBill: "145.00",
-//       status: "Delivered",
-//       restaurantImage:
-//         "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=500",
-//       items: [
-//         {
-//           name: "Cold Coffee",
-//           status: "success",
-//           icon: "../assets/image/icons/success.svg",
-//         },
-//         {
-//           name: "Sandwich",
-//           status: "success",
-//           icon: "../assets/image/icons/success.svg",
-//         },
-//       ],
-//     },
-//   ];
-//   const params = new URLSearchParams(window.location.search);
-
-//   const id = params.get("id");
-//   console.log(id);
-//   let prdDataHtml = "";
-
-//   let filteredData = orders.find((item) => item.id === Number(id));
-//   console.log(filteredData);
-
-//   $("#shopImg").attr("src", filteredData?.restaurantImage);
-//   $("#shopName").html(filteredData?.restaurantName);
-//   $("#shopAddress").html(filteredData?.location);
-
-//   filteredData?.items?.forEach((prd) => {
-//     prdDataHtml += ` <div class="order_middle_box">
-//                 <img src="${prd?.icon}" alt="">
-//                 <p>${prd?.name}</p>
-//             </div>`;
-//   });
-
-//   $("#prdData").html(prdDataHtml);
-// }
+// dumy js

@@ -11,48 +11,86 @@
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="../assets/css/style.css" />
-    
+  
    
   </head>
   <body>
    
- <div class="tracking_visual">
+<section class="onboarding">
 
-    <div class="main_food">
-        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80" alt="">
+    <!-- Background Blobs -->
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+
+    <!-- Delivery Hero -->
+    <div class="delivery_section">
+
+        <!-- Route -->
+        <div class="route_line"></div>
+
+        <!-- Location Pins -->
+        <div class="location start_pin">
+            📍
+        </div>
+
+        <div class="location end_pin">
+            🏠
+        </div>
+
+        <!-- Delivery Boy -->
+        <div class="delivery_boy">
+            <img src="https://cdn-icons-png.flaticon.com/512/1046/1046784.png" alt="">
+        </div>
+
+        <!-- Floating Cards -->
+
+        <div class="delivery_card eta_card">
+            🚀 15 Min
+        </div>
+
+        <div class="delivery_card rating_card">
+            ⭐ 4.9 Rating
+        </div>
+
+        <div class="delivery_card offer_card">
+            🎁 Free Delivery
+        </div>
+
     </div>
 
-    <div class="badge rating">
-        ⭐ 4.8 Rating
+    <!-- Content -->
+
+    <div class="content">
+
+        <span class="tag">
+            Fast Delivery
+        </span>
+
+        <h1>
+            Delivered
+            <span>To Your Door</span>
+        </h1>
+
+        <p>
+            Track your order in real-time and get
+            your favorite meals delivered hot and fresh
+            in just a few minutes.
+        </p>
+
+        <div class="dots">
+            <span></span>
+            <span></span>
+            <span class="active_onboard"></span>
+        </div>
+
+        <button class="btn_onboard"  onclick="location.href='register.html'">
+            Start Ordering
+        </button>
+
     </div>
 
-    <div class="badge delivery">
-        🚚 Live Tracking
-    </div>
-
-    <div class="badge restaurant">
-        🍴 1200+ Partners
-    </div>
-
-</div>
-
-<div class="content">
-
-    <span class="tag">
-        Order Tracking
-    </span>
-
-    <h1>
-        Track Orders
-        In Real Time
-    </h1>
-
-    <p>
-        Stay updated with live tracking and
-        get notified every step of the way.
-    </p>
-
-</div>
+</section>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script

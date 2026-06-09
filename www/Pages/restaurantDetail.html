@@ -32,7 +32,7 @@
 
       <div class="home_search">
         <div class="home_search_wrap">
-          <label for=""
+          <!-- <label for=""
             >Search for
             <div class="animate_wrap">
               <p class="animate_Inp" id="animateInp">‘Bread’</p>
@@ -40,8 +40,8 @@
               <p class="animate_Inp" id="animateInp">‘Bread’</p>
               <p class="animate_Inp" id="animateInp">‘Bread’</p>
             </div>
-          </label>
-          <input type="text" placeholder="" />
+          </label> -->
+          <input type="text" id="searchResturant" placeholder="Search for ‘Bread’" />
 
           <div class="line"></div>
           <button>
@@ -85,19 +85,17 @@
       </div> -->
       <div class="filter_data_tab">
         <div class="filter_tab_box">
-          <button type="button"
-          data-bs-toggle="offcanvas"
-          data-bs-target="#offcanvasFilterOption1"
-          aria-controls="offcanvasFilterOption1"><i class="bi bi-sliders"></i> Filter <i class="bi bi-caret-down-fill"></i></button>
+          <button
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasFilterOption1"
+            aria-controls="offcanvasFilterOption1"
+          >
+            <i class="bi bi-sliders"></i> Filter <b id="countFilter"></b>
+            <i class="bi bi-caret-down-fill"></i>
+          </button>
         </div>
-        <div class="filter_tab_box">
-          <button type="button"
-          data-bs-toggle="offcanvas"
-          data-bs-target="#offcanvasFilterOption2"
-          aria-controls="offcanvasFilterOption2"> Sort by <i class="bi bi-caret-down-fill"></i></button>
-        </div>
-       
-      
+    
       </div>
 
       <div class="shop_detail_product selectedPrd">
@@ -118,15 +116,13 @@
 
     <!-- filter1 -->
     <div
-      class="offcanvas offcanvas-bottom reuse_modal_box filter_reuse modalResturant "
+      class="offcanvas offcanvas-bottom reuse_modal_box filter_reuse modalResturant"
       tabindex="-1"
       id="offcanvasFilterOption1"
       aria-labelledby="offcanvasFilterOption1Label"
     >
-      <div class="offcanvas-header ">
-          <h5 class="offcanvas-title" id="offcanvasBottomAddressLabel">
-          Sort BY
-        </h5>
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasBottomAddressLabel">Filter</h5>
 
         <button type="button" data-bs-dismiss="offcanvas" aria-label="Close">
           <i class="bi bi-x"></i>
@@ -135,48 +131,32 @@
       <div class="offcanvas-body small">
         <div class="content_filter">
           <div class="filter_modal">
-   
-
+            <input type="hidden" id="selectedFoodType" value="veg">
+<input type="hidden" id="selectedSort" value="relevance">
             <!-- Left Menu -->
-            <div class="filter_sidebar">
-                <div class="filter_tab active_sort">Sort</div>
+            <div class="left_wrap">
+              <div
+                class="filter_sidebar active_sort"
+                onclick="handleFilter('foodType', this)"
+              >
+                <div class="line_box"></div>
+                <div class="filter_tab">Veg/Non-Veg</div>
+              </div>
+
+              <div class="filter_sidebar" onclick="handleFilter('sort', this)">
+                <div class="line_box"></div>
+                <div class="filter_tab">Sort</div>
+              </div>
             </div>
 
             <!-- Right Content -->
-            <div class="filter_options">
-
-                <!-- <h4>SORT BY</h4> -->
-                <div class="filter_option_item">
-
-                <label class="radio_item">
-                    <input type="radio" name="sort" checked>
-                    <span></span>
-                    Relevance (Default)
-                </label>
-
-                <label class="radio_item">
-                    <input type="radio" name="sort">
-                    <span></span>
-                    Cost: Low to High
-                </label>
-
-                <label class="radio_item">
-                    <input type="radio" name="sort">
-                    <span></span>
-                    Cost: High to Low
-                </label>
-                </div>
-
-            </div>
-
+            <div id="rightFilter"></div>
+          </div>
         </div>
-
+        <div class="modal_fixed_bottom">
+          <button class="active" onclick="clearFilters()">Clear Filter</button>
+          <button onclick="handleApplyFilter()">Apply</button>
         </div>
-        <div class="modal_fixed_bottom" >
-        <button class="active">Clear Filter</button>
-          <button>
-            Apply
-          </button></div>
       </div>
     </div>
     <!-- filter2 -->
@@ -188,46 +168,6 @@
     >
       <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasFilterOption2Label">
-          Offcanvas bottom
-        </h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="offcanvas"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="offcanvas-body small">...</div>
-    </div>
-    <!-- filter3 -->
-    <div
-      class="offcanvas offcanvas-bottom"
-      tabindex="-1"
-      id="offcanvasFilterOption3"
-      aria-labelledby="offcanvasFilterOption3Label"
-    >
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasFilterOption3Label">
-          Offcanvas bottom
-        </h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="offcanvas"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="offcanvas-body small">...</div>
-    </div>
-    <!-- filter4 -->
-    <div
-      class="offcanvas offcanvas-bottom"
-      tabindex="-1"
-      id="offcanvasFilterOption4"
-      aria-labelledby="offcanvasFilterOption4Label"
-    >
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasFilterOption4Label">
           Offcanvas bottom
         </h5>
         <button
@@ -279,12 +219,10 @@
             Qantity : Select any
             <p id="num">1</p>
           </h5>
-          <div class="selection_wrap" id="varientData">
-         
-          </div>
+          <div class="selection_wrap" id="varientData"></div>
         </div>
         <div class="modal_fixed_bottom" id="btnWrapper">
-        
+          
         </div>
       </div>
     </div>
@@ -311,6 +249,8 @@
     <script>
       getProduct();
       getResturantData();
+
+    
     </script>
   </body>
 </html>
