@@ -15,32 +15,33 @@
   </head>
   <body>
     <div class="main margin_box">
-         <div class="header_nav">
-        <div class="category_left_head">
-          <i class="bi bi-arrow-left-short"></i>
-          <h4>Profile</h4>
+       <div class="header_nav " onclick="location.href='home.html'">
+          <div class="category_left_head">
+            <i class="bi bi-chevron-left"></i>
+            <h4>Profile</h4>
+          </div>
+         
         </div>
 
       </div>
       <div class="profile_data">
         <div class="profile_header">
-             <!-- <h4>My Profile</h4> -->
         <div class="profile_img">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTO9ESZHI8upSNAdvi1ioAc35y5HS3CjEkGnw&s" alt="">
+            <img src="" alt="">
         <div class="camera">
            <i class="bi bi-camera-fill"></i>
         </div>
         </div> 
-           <h5>Deepak Kumar</h5>
+           <h5 id="name"></h5>
             <div class="phone">
                 <i class="bi bi-telephone-fill"></i>
-                <p>+91-<b>7903737980</b></p>
+                <p>+91-<b id="phone"></b></p>
             </div>
         
         </div>
 
         <div class="profile_data">
-            <a href="#" class="profile_link">
+            <!-- <a href="#" class="profile_link">
                   <div class="profile_link_left">
                     <i class="bi bi-person"></i>
                     <p>Edit Profile</p>
@@ -49,7 +50,7 @@
                   <div class="profile_link_right">
                     <i class="bi bi-chevron-right"></i>
                   </div>
-            </a>
+            </a> -->
             <a href="#" class="profile_link">
                   <div class="profile_link_left">
                    <i class="bi bi-key"></i>
@@ -60,7 +61,7 @@
                     <i class="bi bi-chevron-right"></i>
                   </div>
             </a>
-            <a href="order.html" class="profile_link">
+            <a href="orders.html" class="profile_link">
                   <div class="profile_link_left">
                    <i class="bi bi-cart4"></i>
                     <p>Order</p>
@@ -130,5 +131,8 @@
     <script src="../assets/js/owl.carousel.min.js"></script>
 
     <script src="../assets/js/script.js"></script>
+    <script>
+      getUser();
+    </script>
   </body>
 </html>

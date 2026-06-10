@@ -1574,7 +1574,7 @@ function handleModalCartData(data) {
             />
 
             <button
-              onclick='incrementCounter("${foodId}")'
+              onclick='incrementCounter("${foodId}","${data?.name}")'
               class="plus"
             >
               +
@@ -1649,7 +1649,7 @@ function handleTogglePrice(price, vid, name, id) {
   $(".cart_btn_add").removeClass("active_disable");
 }
 
-function incrementCounter(foodId) {
+function incrementCounter(foodId, name) {
   const params = new URLSearchParams(window.location.search);
 
   const rid = params.get("rid");
@@ -1687,6 +1687,7 @@ function incrementCounter(foodId) {
     let product = {
       id: variant_id,
       foodId: foodId,
+      name: name,
       restaurant_id: rid,
       price: basePrice,
       Totalprice: updatedPrice,
@@ -1832,7 +1833,9 @@ function getCart() {
                 <button onclick='cartdecrementCounter(
                 "${item.id}",
                 "${item.restaurant_id}",
-                "${item.food_item_id}")'>-</button>
+                "${item.food_item_id}",
+                "${item.name}",)
+                '>-</button>
                 <input id="inp${item.food_item_id}" type="number" value="${item.quantity}" />
                 <button  onclick='cartIncremetCounter(
                  "${item.id}",
@@ -1874,7 +1877,7 @@ function getCart() {
   });
 }
 let cartQty;
-function cartIncremetCounter(cartId, rid, foodId) {
+function cartIncremetCounter(cartId, rid, foodId, name) {
   let cartQty = Number($(`#inp${foodId}`).val()) + 1;
   let varientId = $(`#varientId${foodId}`).val();
   let varientType = $(`#varientType${foodId}`).val();
@@ -1910,6 +1913,7 @@ function cartIncremetCounter(cartId, rid, foodId) {
   } else {
     cart.push({
       id: varientId,
+      name: name,
       foodId: foodId,
       restaurant_id: rid,
       price: basePrice,
@@ -2201,6 +2205,7 @@ function applyCoupon(code) {
 
   $("#couponDisc").text(`${Math.floor(result.discount.toFixed(2))}`);
   $("#amountApplied").text(result.discount.toFixed(2));
+  $("#saved2").text(coupon.minimum_order_amount);
   $("#saved").text(coupon.minimum_order_amount);
 
   $("#grandTotal").text(`${Math.floor(grandTotal.toFixed(2))}`);
@@ -2436,10 +2441,10 @@ function handleCheckout() {
     success: function (response) {
       if (response.status == "success") {
         console.log(response.message);
+        
 
-        localStorage.setItem("cart", JSON.stringify([]));
         handleCartDelete(rid);
-        location.href = "orders.html";
+        location.href = `placeOrder.html?id=${response.order_id}`;
       } else {
         console.log(response.message);
       }
@@ -2447,7 +2452,45 @@ function handleCheckout() {
   });
 }
 
+function getCurrentOrderData() {
+  const params = new URLSearchParams(window.location.search);
+  const order_id = params.get("id");
+  $.ajax({
+    url:apiUrl,
+    method:"POST",
+    dataType:"JSON",
+    data:{
+      type: "getCurrentOrder",
+      order_id
+    },
+    success : function (response) {
+      if(response.status == "success"){
+           console.log(response.data);
+           let orderData = response.data;
+           let orderHtml='';
+           orderData.map((item)=>{
+            orderHtml+=`<div class="place_order_data_item">
+                     <h5>${item.food_name}</h5>
+                     <p>${item.total}</p>
+                </div>`;
+           });
+           $("#orderData").html(orderHtml);
+      }else{
+         console.log(response.message)
+
+      }
+    }
+  })
+  
+
+}
+
 function handleCartDelete(rid) {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    cart = cart.filter(item => item.restaurant_id != rid);
+
+    localStorage.setItem("cart", JSON.stringify(cart));
   $.ajax({
     url: apiUrl,
     method: "POST",
@@ -2565,7 +2608,7 @@ function getOrderDetail() {
 
   foodItems.forEach((item) => {
     const [name, type] = item.split("|");
-     console.log(foodItems);
+    console.log(foodItems);
 
     itemsHtml += `
             <div class="order_middle_box">
@@ -2962,4 +3005,27 @@ function handleToggleBtn(el) {
   parent.querySelector(".button_data").style.display = "flex";
 }
 
-// dumy js
+
+
+function getUser() {
+  $.ajax({
+    url:apiUrl,
+    method:"POST",
+    dataType:"JSON",
+    data:{
+      type:"getUser",
+      userId
+    },
+    success: function (response) {
+      if(response.status == "success"){
+        console.log(response.data);
+        let userData = response.data;
+        $("#name").html(userData.name)
+        $("#phone").html(userData.phone);
+      }else{
+        console.log(response.message);
+      }
+    }
+  })
+     
+}

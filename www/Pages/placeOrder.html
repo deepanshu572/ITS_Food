@@ -19,7 +19,7 @@
 
     <div class="place_order_data">
         <div class="place_order_head">
-            <div class="back">
+            <div class="back" onclick="location.href='orders.html'">
                 <i class="bi bi-arrow-left-short"></i>
             </div>
             <h4>Deliver Your order</h4>
@@ -54,16 +54,21 @@
                 <h4>Your Delivery Time</h4>
                 <b>Estimated 30 min</b>
                 <div class="place_order_status_sec">
-                    <div class="place_order_icon"></div>
-                    <div class="place_order_icon"></div>
-                    <div class="place_order_icon"></div>
-                    <div class="place_order_icon"></div>
+                    <div class="place_order_icon"> <img src="../assets/image/icons/order.svg" alt=""></div>
+                    <div class="border_order border_order_active"></div>
+                    <div class="place_order_icon"> <img src="../assets/image/icons/cook.svg" alt=""></div>
+                   <div class="border_order border_order_active"></div>
+                    <div class="place_order_icon"> <img src="../assets/image/icons/delivery.svg" alt=""></div>
+                   <div class="border_order"></div>
+                    <div class="place_order_icon"> <img src="../assets/image/icons/tick.svg" alt=""></div>
+                   
                 </div>
-                <b>Order</b>
-                <div class="place_order_data">
-                     <h5>Chicken briyani</h5>
-                     <p>180.3</p>
-                </div>
+                <p>Order</p>
+                <div id="orderData" class="order_data"></div>
+              
+            </div>
+            <div class="btn_reuse reuse_order">
+                <button onclick="location.href='orders.html'">Go To order</button>
             </div>
         </div>
     </div>
@@ -75,6 +80,9 @@
       crossorigin="anonymous"
     ></script>
     <script src="../assets/js/script.js"></script>
+    <script>
+       getCurrentOrderData();
+    </script>
 
 </body>
 </html>
