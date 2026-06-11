@@ -2228,6 +2228,27 @@ $(".form_icon").on("click", function () {
   let role = $(this).find("p").text();
   $("#selectedRole").val(role);
 });
+function toggleAddressBtn (){
+  $("#btnToggleAddress").html(`
+    <button type="button" onclick="handleAddress(event)">
+        Add Address
+    </button>
+`);
+ 
+         $("#addressId").val("");
+  $("#houseNo").val("");
+  $("#area").val("");
+  $("#instruction").val("");
+  $("#city").val("");
+  $("#state").val("");
+  $("#pincode").val("");
+  $("#name").val("");
+  $("#number").val("");
+  $("#landmark").val("");
+  $("#selectedRole").val("");
+$("#offcanvasBottomAddressLabel").html("Add Address");
+
+}
 
 function handleAddress(e) {
   e.preventDefault();
@@ -2256,7 +2277,19 @@ function handleAddress(e) {
     success: function (response) {
       if (response.status == "success") {
         alert(response.message);
-        $("#addressForm")[0].reset();
+        
+         $("#addressId").val("");
+  $("#houseNo").val("");
+  $("#area").val("");
+  $("#instruction").val("");
+  $("#city").val("");
+  $("#state").val("");
+  $("#pincode").val("");
+  $("#name").val("");
+  $("#number").val("");
+  $("#landmark").val("");
+  $("#selectedRole").val("");
+        
         getAddress();
       } else {
         alert(response.message);
@@ -2288,7 +2321,13 @@ function getAddress() {
                     
                   
                   <div class="saved_address_data"
-                  onclick="selectAddress(
+                 >
+
+                        <div class="selected_box">Selected</div>
+
+                        <div class="saved_address_item">
+
+                            <div class="saved_address_left"  onclick="selectAddress(
                       this,
                       '${item.id}',
                       '${item.receiver_name}',
@@ -2298,12 +2337,6 @@ function getAddress() {
                       '${item.pincode}',
                       '${item.address_type}'
                   )">
-
-                        <div class="selected_box">Selected</div>
-
-                        <div class="saved_address_item">
-
-                            <div class="saved_address_left">
 
                                 <div class="saved_icon">
                                     <i class="bi bi-house-door-fill"></i>
@@ -2329,9 +2362,17 @@ function getAddress() {
 
                             </div>
 
-                            <div class="saved_address_right">
-                                <i class="bi bi-three-dots-vertical"></i>
-                            </div>
+                           <div class="saved_address_right">
+    <button  data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasBottomAddAddress"
+            aria-controls="offcanvasBottomAddAddress" class="address_action edit_btn" onclick='editAddress(${JSON.stringify(item)})'>
+        <i class="bi bi-pencil-square"></i>
+    </button>
+
+    <button class="address_action delete_btn" onclick="deleteAddress('${item.id}')">
+        <i class="bi bi-trash-fill"></i>
+    </button>
+</div>
 
                         </div>
 
@@ -2363,7 +2404,7 @@ function selectAddress(
   address_type,
 ) {
   $("#addressId").val(id);
-  $(".saved_address_data").removeClass("selected_address");
+  $(".saved_address_left").removeClass("selected_address");
 
   $(element).addClass("selected_address");
 
@@ -2391,6 +2432,102 @@ function selectAddress(
   $("#telephoneValue").html(telephone);
 
   console.log(id);
+}
+function editAddress(data) {
+  console.log(data)
+  $("#addressId").val(data.id);
+  $("#houseNo").val(data.house_no);
+  $("#area").val(data.area);
+  $("#instruction").val(data.instructions);
+  $("#city").val(data.city);
+  $("#state").val(data.state);
+  $("#pincode").val(data.pincode);
+  $("#name").val(data.receiver_name);
+  $("#number").val(data.receiver_phone);
+  $("#landmark").val(data.landmark);
+  $("#selectedRole").val(data.address_type);
+  $("#btnToggleAddress").html(`
+    <button type="button" onclick="updateAddress(event)">
+        Update Address
+    </button>
+`);
+$("#offcanvasBottomAddressLabel").html("Update Address");
+
+}
+function updateAddress(e) {
+  e.preventDefault();
+
+  let formData = new FormData();
+
+  formData.append("type", "updateAddress");
+  formData.append("addressId", $("#addressId").val()); // hidden input
+  formData.append("userId", userId);
+  formData.append("houseNo", $("#houseNo").val());
+  formData.append("area", $("#area").val());
+  formData.append("instruction", $("#instruction").val());
+  formData.append("city", $("#city").val());
+  formData.append("state", $("#state").val());
+  formData.append("pincode", $("#pincode").val());
+  formData.append("name", $("#name").val());
+  formData.append("number", $("#number").val());
+  formData.append("addressType", $("#selectedRole").val());
+  formData.append("landmark", $("#landmark").val());
+
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    data: formData,
+    processData: false,
+    contentType: false,
+    dataType: "JSON",
+    success: function (response) {
+      if (response.status === "success") {
+        alert(response.message);
+        
+        getAddress(); // refresh address list
+
+         $("#addressId").val("");
+  $("#houseNo").val("");
+  $("#area").val("");
+  $("#instruction").val("");
+  $("#city").val("");
+  $("#state").val("");
+  $("#pincode").val("");
+  $("#name").val("");
+  $("#number").val("");
+  $("#landmark").val("");
+  $("#selectedRole").val("");
+      } else {
+        alert(response.message);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.log(error);
+    }
+  });
+}
+function deleteAddress(id) {
+  $.ajax({
+    url: apiUrl,
+    method: "POST",
+    dataType: "JSON",
+    data: {
+        type: "deleteAddress",
+        addressId: id,
+        userId: userId
+    },
+    success: function(response){
+      if(response.status == "success"){
+        alert("delete successfully !");
+         getAddresses();
+      }
+      else{
+        alert(response.message);
+
+      }
+    }
+});
+  
 }
 
 $(".payment_option").on("click", function () {

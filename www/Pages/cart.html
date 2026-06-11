@@ -277,6 +277,7 @@
             data-bs-toggle="offcanvas"
             data-bs-target="#offcanvasBottomAddAddress"
             aria-controls="offcanvasBottomAddAddress"
+            onclick="toggleAddressBtn()"
           >
             + Add New <i class="bi bi-chevron-right"></i>
           </button>
@@ -298,7 +299,7 @@
       tabindex="-1"
       id="offcanvasBottomAddAddress"
       aria-labelledby="offcanvasBottomAddAddressLabel"
-    >
+      >
       <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasBottomAddressLabel">
           Add Address
@@ -309,13 +310,13 @@
         </button>
       </div>
       <div class="offcanvas-body small">
-        <form onsubmit="handleAddress(event); return false;" id="addressForm" class="add_address_wrap">
+        <div id="addressForm" class="add_address_wrap">
         <input type="text" id="selectedRole" hidden>
           <div class="add_address_highlight">
             A detailed address will help our delivery partner reach your
             doorstep easily.
           </div>
-          <form class="add_address_form_sec">
+          <div class="add_address_form_sec">
             <h4>Save address as*</h4>
             <div class="form_address_wrap">
               <div class="form_icons">
@@ -405,11 +406,11 @@
 
              
             </div>
-            <div class="button_save_add btn_reuse">
-              <button>Save Address</button>
+            <div class="button_save_add btn_reuse" id="btnToggleAddress">
+              <button onclick="handleAddress(event)">Save Address</button>
             </div>
-          </form>
-        </form>
+          </div>
+        </div>
       </div>
     </div>
 

@@ -2246,7 +2246,7 @@ label.reuse_option {
 }
 
 .saved_address_right i {
-  font-size: 20px;
+    font-size: 16px;
   color: rgb(58, 58, 58);
 }
 
@@ -4214,4 +4214,39 @@ button.coupon_btn.apply-btn {
 .location_select h4 {
     font-size: 15px;
     font-weight: 800;
+}
+
+
+
+
+
+.saved_address_right{
+    display:flex;
+    gap:8px;
+}
+
+.address_action{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    border:1px solid rgba(0,0,0,0.08);
+    background:rgba(255,255,255,0.8);
+    backdrop-filter:blur(10px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.address_action:hover{
+    transform:scale(1.08);
+}
+
+.edit_btn{
+    color:#0d6efd;
+}
+
+.delete_btn{
+    color:#dc3545;
 }
