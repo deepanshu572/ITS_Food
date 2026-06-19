@@ -1,5 +1,5 @@
-const apiUrl = "http://localhost/ITS_Food_Backend/app/api/";
-const imageUrl = "http://localhost/ITS_Food_Backend/admin/";
+const apiUrl = "https://indiantechsolution.com/demos/multivendor/food/app/api/";
+const imageUrl = "https://indiantechsolution.com/demos/multivendor/food/admin/api/";
 const userId = localStorage.getItem("userId");
 console.log("done!");
 // $(document).ready(function () {
