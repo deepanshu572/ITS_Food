@@ -1,5 +1,5 @@
 const apiUrl = "https://indiantechsolution.com/demos/multivendor/food/app/api/";
-const imageUrl = "https://indiantechsolution.com/demos/multivendor/food/admin/api/";
+const imageUrl = "https://indiantechsolution.com/demos/multivendor/food/admin/";
 const userId = localStorage.getItem("userId");
 console.log("done!");
 // $(document).ready(function () {
